@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNCC Career Guide - Student Login</title>
+    <style>
+        :root {
+            --uncc-green: #005035;
+            --uncc-gold: #b3a369;
+            --light-gray: #f5f5f5;
+            --med-gray: #e0e0e0;
+            --dark-gray: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--uncc-green);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            background-color: var(--uncc-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--uncc-green);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .login-image {
+            flex: 1;
+            background-color: var(--uncc-green);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+        }
+
+        .image-content {
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .login-image h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .login-image p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: var(--uncc-gold);
+            font-weight: bold;
+        }
+
+        .login-form {
+            flex: 1;
+            padding: 3rem;
+            background-color: white;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h2 {
+            color: var(--uncc-green);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--med-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--uncc-green);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--uncc-green);
+        }
+
+        .login-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--uncc-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-btn:hover {
+            background-color: #003d28;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .login-options a {
+            color: var(--uncc-green);
+            text-decoration: none;
+        }
+
+        .login-options a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid var(--med-gray);
+        }
+
+        .divider::before {
+            margin-right: 1rem;
+        }
+
+        .divider::after {
+            margin-left: 1rem;
+        }
+
+        .sso-options {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .sso-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: white;
+            border: 1px solid var(--med-gray);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .sso-btn:hover {
+            background-color: var(--light-gray);
+            transform: translateY(-2px);
+        }
+
+        .create-account {
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .create-account a {
+            color: var(--uncc-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .create-account a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: var(--uncc-green);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 900px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+
+            .login-image {
+                padding: 2rem;
+            }
+
+            .login-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-img">UNCC</div>
+                <h1>Career Guide</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="login-container">
+            <div class="login-image">
+                <div class="image-content">
+                    <h2>Welcome to Your Career Dashboard</h2>
+                    <p>Access all the tools and resources you need to navigate your career journey at UNC Charlotte.</p>
+
+                    <ul class="feature-list">
+                        <li>Personalized job recommendations</li>
+                        <li>Resume and cover letter builder</li>
+                        <li>Skill development roadmap</li>
+                        <li>Mentorship connections</li>
+                        <li>Event registrations and reminders</li>
+                        <li>Career planning tools</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="login-form">
+                <div class="login-header">
+                    <h2>Student Login</h2>
+                    <p>Sign in to access your career dashboard</p>
+                </div>
+
+                <form>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="your.name@uncc.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" placeholder="Your password" required>
+                            <button type="button" class="toggle-password">Show</button>
+                        </div>
+                    </div>
+
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me on this device</label>
+                    </div>
+
+                    <button type="submit" class="login-btn">Log In</button>
+
+                    <div class="login-options">
+                        <a href="#">Forgot password?</a>
+                        <a href="#">Need help?</a>
+                    </div>
+
+                    <div class="divider">OR</div>
+
+                    <div class="sso-options">
+                        <button type="button" class="sso-btn">
+                            <span>UNCC SSO</span>
+                        </button>
+                    </div>
+
+                    <div class="create-account">
+                        <p>Don't have an account? <a href="#">Create Account</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
+                <div class="logo-img">UNCC</div>
+                <h1>Career Guide</h1>
+            </div>
+            <p>© 2025 University of North Carolina at Charlotte. All rights reserved.</p>
+            <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
+        </div>
+    </footer>
+</body>
+
+</html>
