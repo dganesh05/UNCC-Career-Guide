@@ -73,6 +73,8 @@
             max-width: 1200px;
             margin: 0 auto;
             list-style: none;
+            overflow-x: auto;
+            /* For responsive tabs */
         }
 
         .nav-tabs li {
@@ -81,6 +83,8 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            /* Prevent tab text wrapping */
         }
 
         .nav-tabs li.active {
@@ -247,11 +251,34 @@
             border-radius: 8px;
             padding: 1.5rem;
             text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .widget h4 {
             color: var(--uncc-green);
             margin-bottom: 1rem;
+        }
+
+        .widget p {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .widget-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--uncc-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 0.5rem;
         }
 
         footer {
@@ -270,6 +297,107 @@
             margin-top: 1rem;
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Search Results Styling */
+        .search-results {
+            background-color: white;
+            border: 1px solid var(--med-gray);
+            border-radius: 8px;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-results h3 {
+            color: var(--uncc-green);
+            margin-bottom: 1rem;
+        }
+
+        .search-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .search-result-type {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background-color: var(--uncc-green);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-result-title {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-result-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .search-result-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: var(--uncc-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .job-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .widgets {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-bar input {
+                border-radius: 4px;
+                margin-bottom: 0.5rem;
+            }
+
+            .search-bar button {
+                border-radius: 4px;
+                width: 100%;
+                padding: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -292,11 +420,14 @@
     <nav>
         <ul class="nav-tabs">
             <li class="active">Dashboard</li>
-            <li>Job Board</li>
-            <li>Networking Hub</li>
-            <li>Career Events</li>
-            <li>Resources</li>
-            <li>Mentorship Hub</li>
+            <li><a href="{% url 'job_board' %}" style="text-decoration: none; color: inherit;">Job Board</a></li>
+            <li><a href="{% url 'networking_hub' %}" style="text-decoration: none; color: inherit;">Networking Hub</a>
+            </li>
+            <li><a href="{% url 'career_events' %}" style="text-decoration: none; color: inherit;">Career Events</a>
+            </li>
+            <li><a href="{% url 'resources' %}" style="text-decoration: none; color: inherit;">Resources</a></li>
+            <li><a href="{% url 'mentorship_hub' %}" style="text-decoration: none; color: inherit;">Mentorship Hub</a>
+            </li>
         </ul>
     </nav>
 
@@ -306,18 +437,69 @@
             <p>Access job opportunities, skill development tools, mentorship connections, and resources to jumpstart
                 your career journey at UNC Charlotte. This all-in-one platform helps you plan, track, and achieve your
                 career goals.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search jobs, companies, or keywords...">
-                <button>Search</button>
-            </div>
+            <form action="{% url 'dashboard' %}" method="GET" class="search-form">
+                <div class="search-bar">
+                    <input type="text" name="search" placeholder="Search jobs, companies, or keywords..."
+                        value="{{ search_query }}">
+                    <button type="submit">Search</button>
+                </div>
+            </form>
         </section>
+
+        {% if search_query %}
+        <section class="search-results">
+            <h3>Search Results for "{{ search_query }}"</h3>
+            {% if search_results %}
+            <div class="search-results-list">
+                {% for result in search_results %}
+                <div class="search-result-item">
+                    <span class="search-result-type">{{ result.type|title }}</span>
+                    <div class="search-result-title">{{ result.title }}</div>
+                    {% if result.type == 'job' %}
+                    <div class="search-result-details">{{ result.company }}</div>
+                    {% elif result.type == 'event' %}
+                    <div class="search-result-details">{{ result.date }}</div>
+                    {% endif %}
+                    <a href="{{ result.link }}" class="search-result-link">View Details →</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <p>No results found for "{{ search_query }}". Try different keywords or browse through our featured
+                    opportunities below.</p>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
 
         <section>
             <div class="section-title">
                 <h3>Featured Opportunities</h3>
-                <a href="#" class="view-all">View All →</a>
+                <a href="{% url 'job_board' %}" class="view-all">View All →</a>
             </div>
             <div class="job-cards">
+                {% for opportunity in featured_opportunities %}
+                <div class="job-card">
+                    <div class="job-company">
+                        <div class="company-logo">{{ opportunity.logo }}</div>
+                        <div>
+                            <strong>{{ opportunity.company }}</strong>
+                            <div style="font-size: 0.8rem; color: #666;">{{ opportunity.location }}</div>
+                        </div>
+                    </div>
+                    <div class="job-details">
+                        <h4>{{ opportunity.title }}</h4>
+                        <p>{{ opportunity.description }}</p>
+                        <p><strong>{{ opportunity.salary }}</strong> • Posted {{ opportunity.posted_days_ago }} day{{
+                            opportunity.posted_days_ago|pluralize }} ago</p>
+                        <div class="job-tags">
+                            <span class="job-tag">{{ opportunity.job_type }}</span>
+                            <span class="job-tag">{{ opportunity.field }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
                 <div class="job-card">
                     <div class="job-company">
                         <div class="company-logo">DB</div>
@@ -348,7 +530,7 @@
                     <div class="job-details">
                         <h4>Data Analyst</h4>
                         <p>Analyze customer data to provide insights and recommendations for product improvement.</p>
-                        <p><strong>$65,000-75,000/year</strong> • Posted 1 week ago</p>
+                        <p><strong>$65,000-75,000/year</strong> • Posted 7 days ago</p>
                         <div class="job-tags">
                             <span class="job-tag">Full-time</span>
                             <span class="job-tag">Data Science</span>
@@ -375,15 +557,26 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </section>
 
         <section class="featured-section">
             <div class="section-title">
                 <h3>Upcoming Career Events</h3>
-                <a href="#" class="view-all">View Calendar →</a>
+                <a href="{% url 'career_events' %}" class="view-all">View Calendar →</a>
             </div>
             <div class="job-cards">
+                {% for event in upcoming_events %}
+                <div class="job-card">
+                    <div class="job-details">
+                        <h4>{{ event.title }}</h4>
+                        <p>{{ event.description }}</p>
+                        <p><strong>{{ event.date }}</strong> • {{ event.time }}</p>
+                        <p>{{ event.location }}</p>
+                    </div>
+                </div>
+                {% empty %}
                 <div class="job-card">
                     <div class="job-details">
                         <h4>Spring Career Fair 2025</h4>
@@ -402,6 +595,7 @@
                         <p>Atkins Library, Room 125</p>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -410,25 +604,37 @@
                 <h3>Career Resources</h3>
             </div>
             <div class="widgets">
+                {% for resource in career_resources %}
+                <div class="widget">
+                    <h4>{{ resource.title }}</h4>
+                    <p>{{ resource.description }}</p>
+                    <a href="{{ resource.link }}" class="widget-link">Access Resource</a>
+                </div>
+                {% empty %}
                 <div class="widget">
                     <h4>Resume and Cover Letter Builder</h4>
                     <p>Create professional documents with our easy-to-use templates.</p>
+                    <a href="/resources#resume-builder" class="widget-link">Access Resource</a>
                 </div>
 
                 <div class="widget">
                     <h4>AI-Powered Career Coach</h4>
                     <p>Get personalized career advice and interview preparation.</p>
+                    <a href="/resources#ai-coach" class="widget-link">Access Resource</a>
                 </div>
 
                 <div class="widget">
                     <h4>Skill Development Roadmap</h4>
                     <p>Track your progress and plan your professional development journey.</p>
+                    <a href="/resources#skill-development" class="widget-link">Access Resource</a>
                 </div>
 
                 <div class="widget">
                     <h4>Personalized Career Planning</h4>
                     <p>Build confidence with customized career path recommendations.</p>
+                    <a href="/resources#career-planning" class="widget-link">Access Resource</a>
                 </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -437,25 +643,37 @@
                 <h3>Additional Resources</h3>
             </div>
             <div class="widgets">
+                {% for resource in additional_resources %}
+                <div class="widget">
+                    <h4>{{ resource.title }}</h4>
+                    <p>{{ resource.description }}</p>
+                    <a href="{{ resource.link }}" class="widget-link">Learn More</a>
+                </div>
+                {% empty %}
                 <div class="widget">
                     <h4>Resource & Opportunity Dashboard</h4>
                     <p>Access all career resources and opportunities in one place.</p>
+                    <a href="/resources#dashboard" class="widget-link">Learn More</a>
                 </div>
 
                 <div class="widget">
                     <h4>Testimonials and Case Studies</h4>
                     <p>Learn from success stories of UNCC graduates and alumni.</p>
+                    <a href="/resources#testimonials" class="widget-link">Learn More</a>
                 </div>
 
                 <div class="widget">
                     <h4>Job Opportunity Aggregation</h4>
                     <p>Find all relevant job postings customized to your profile.</p>
+                    <a href="/job-board" class="widget-link">Learn More</a>
                 </div>
 
                 <div class="widget">
                     <h4>Login / My Account</h4>
                     <p>Access your personalized dashboard and saved opportunities.</p>
+                    <a href="/login" class="widget-link">Learn More</a>
                 </div>
+                {% endfor %}
             </div>
         </section>
     </main>
@@ -466,7 +684,7 @@
                 <div class="logo-img">UNCC</div>
                 <h1>Career Guide</h1>
             </div>
-            <p>© 2025 University of North Carolina at Charlotte. All rights reserved.</p>
+            <p>© {{ current_year }} University of North Carolina at Charlotte. All rights reserved.</p>
             <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
         </div>
     </footer>
