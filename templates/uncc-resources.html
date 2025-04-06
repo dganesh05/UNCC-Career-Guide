@@ -74,6 +74,12 @@
             list-style: none;
         }
         
+        .nav-tabs a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit the color from the parent element */
+            display: block; /* Make the link fill the entire list item */
+        }
+
         .nav-tabs li {
             padding: 1rem 1.5rem;
             font-weight: 500;
@@ -81,12 +87,12 @@
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
         }
-        
+
         .nav-tabs li.active {
             border-bottom: 3px solid var(--uncc-gold);
             color: var(--uncc-green);
         }
-        
+
         .nav-tabs li:hover {
             background-color: var(--light-gray);
         }
@@ -594,12 +600,24 @@
     
     <nav>
         <ul class="nav-tabs">
-            <li>Home</li>
-            <li>Job Board</li>
-            <li>Networking Hub</li>
-            <li>Career Events</li>
-            <li class="active">Resources</li>
-            <li>Mentorship Hub</li>
+            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}">
+                <a href="{% url 'job-board' %}">Job Board</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}">
+                <a href="{% url 'networking-hub' %}">Networking Hub</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}">
+                <a href="{% url 'career-events' %}">Career Events</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}">
+                <a href="{% url 'resources' %}">Resources</a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}">
+                <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
+            </li>
         </ul>
     </nav>
     
@@ -621,7 +639,7 @@
                     <div class="category-icon">📝</div>
                     <h3>Resume & Cover Letter</h3>
                     <p>Create professional documents that stand out to employers with our templates, guides, and builder tools.</p>
-                    <a href="#" class="category-btn">Explore Resources</a>
+                    <a href="{% url 'generate_resume' %}" class="category-btn">Explore Resources</a>
                 </div>
                 
                 <div class="category-card">
@@ -885,8 +903,17 @@
                 </div>
                 
                 <a href="#" class="ai-coach-btn">Chat with AI Coach</a>
-            </div>-img">
+            </div>
+            <div class="ai-coach-img">
                 AI Coach
             </div>
-            
-            <div class="ai-coach
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 UNCC Career Guide. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
