@@ -467,21 +467,21 @@
         <li class="active">Dashboard</li>
         <li>
           <a
-            href="{% url 'job_board' %}"
+            href="{% url 'job-board' %}"
             style="text-decoration: none; color: inherit"
             >Job Board</a
           >
         </li>
         <li>
           <a
-            href="{% url 'networking_hub' %}"
+            href="{% url 'networking-hub' %}"
             style="text-decoration: none; color: inherit"
             >Networking Hub</a
           >
         </li>
         <li>
           <a
-            href="{% url 'career_events' %}"
+            href="{% url 'career-events' %}"
             style="text-decoration: none; color: inherit"
             >Career Events</a
           >
@@ -495,7 +495,7 @@
         </li>
         <li>
           <a
-            href="{% url 'mentorship_hub' %}"
+            href="{% url 'mentorship-hub' %}"
             style="text-decoration: none; color: inherit"
             >Mentorship Hub</a
           >
@@ -559,7 +559,7 @@
       <section>
         <div class="section-title">
           <h3>Featured Opportunities</h3>
-          <a href="{% url 'job_board' %}" class="view-all">View All →</a>
+          <a href="{% url 'job-board' %}" class="view-all">View All →</a>
         </div>
         <div class="job-cards">
           {% for opportunity in featured_opportunities %}
@@ -660,7 +660,7 @@
       <section class="featured-section">
         <div class="section-title">
           <h3>Upcoming Career Events</h3>
-          <a href="{% url 'career_events' %}" class="view-all"
+          <a href="{% url 'career-events' %}" class="view-all"
             >View Calendar →</a
           >
         </div>
