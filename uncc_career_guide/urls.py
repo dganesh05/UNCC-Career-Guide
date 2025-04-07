@@ -39,15 +39,5 @@ def uncc_resources(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', uncc_dashboard, name='home'),
-    path('career-events/', uncc_career_events, name='career-events'),
-    path('dashboard/', uncc_dashboard, name='dashboard'),
-    path('job-board/', uncc_job_board, name='job-board'),
-    path('login/', uncc_login_page, name='login'),
-    path('mentorship-hub/', uncc_mentorship_hub, name='mentorship-hub'),
-    path('networking-hub/', uncc_networking_hub, name='networking-hub'),
-    path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding-quiz'),
-    path('resources/', uncc_resources, name='resources'),
-    path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
+    path ('', home)
 ]
-

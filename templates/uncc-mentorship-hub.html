@@ -1,1379 +1,1525 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UNCC Career Guide - Mentorship Hub</title>
     <style>
-        :root {
-            --uncc-green: #005035;
-            --uncc-gold: #b3a369;
-            --light-gray: #f5f5f5;
-            --med-gray: #e0e0e0;
-            --dark-gray: #333;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #fff;
-            color: #333;
-        }
-        
-        header {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .logo h1 {
-            font-size: 1.8rem;
-        }
-        
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            background-color: var(--uncc-gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--uncc-green);
-        }
-        
-        nav {
-            background-color: white;
-            border-bottom: 1px solid var(--med-gray);
-        }
-        
-        .nav-tabs {
-            display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
-            list-style: none;
-            padding: 0;
-            background-color: white;
-            border-bottom: 1px solid var(--med-gray);
-        }
-        
-        .nav-tabs li {
-            padding: 1rem 1.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tabs li a {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        
-        .nav-tabs li.active {
-            border-bottom: 3px solid var(--uncc-gold);
-            color: var(--uncc-green);
-        }
-        
-        .nav-tabs li:hover {
-            background-color: var(--light-gray);
-        }
-        
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        
-        .page-title {
-            margin-bottom: 1.5rem;
-            color: var(--uncc-green);
-        }
-        
-        /* Hero Section */
-        .hero {
-            background-color: var(--light-gray);
-            padding: 3rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .hero h2 {
-            color: var(--uncc-green);
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
-        }
-        
-        .hero p {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .search-bar {
-            display: flex;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .search-bar input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 2px solid var(--med-gray);
-            border-radius: 4px 0 0 4px;
-            font-size: 1rem;
-        }
-        
-        .search-bar button {
-            background-color: var(--uncc-green);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        /* Mentorship Benefits */
-        .benefits-section {
-            margin-bottom: 3rem;
-        }
-        
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .benefit-card {
-            background-color: white;
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .benefit-icon {
-            width: 70px;
-            height: 70px;
-            background-color: var(--light-gray);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.8rem;
-            color: var(--uncc-green);
-        }
-        
-        .benefit-card h3 {
-            color: var(--uncc-green);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-        
-        .benefit-card p {
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        /* How It Works */
-        .how-it-works {
-            margin-bottom: 3rem;
-            background-color: #f9f7e8;
-            border-radius: 8px;
-            padding: 2rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            color: var(--uncc-green);
-            font-size: 1.5rem;
-        }
-        
-        .view-all {
-            color: var(--uncc-green);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
+      :root {
+        --uncc-green: #005035;
+        --uncc-gold: #b3a369;
+        --light-gray: #f5f5f5;
+        --med-gray: #e0e0e0;
+        --dark-gray: #333;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #fff;
+        color: #333;
+      }
+
+      header {
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logo h1 {
+        font-size: 1.8rem;
+      }
+
+      .logo-img {
+        width: 50px;
+        height: 50px;
+        background-color: var(--uncc-gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--uncc-green);
+      }
+
+      nav {
+        background-color: white;
+        border-bottom: 1px solid var(--med-gray);
+      }
+
+      .nav-tabs {
+        display: flex;
+        max-width: 1200px;
+        margin: 0 auto;
+        list-style: none;
+        padding: 0;
+        background-color: white;
+        border-bottom: 1px solid var(--med-gray);
+      }
+
+      .nav-tabs li {
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .nav-tabs li a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .nav-tabs li.active {
+        border-bottom: 3px solid var(--uncc-gold);
+        color: var(--uncc-green);
+      }
+
+      .nav-tabs li:hover {
+        background-color: var(--light-gray);
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
+
+      .page-title {
+        margin-bottom: 1.5rem;
+        color: var(--uncc-green);
+      }
+
+      /* Hero Section */
+      .hero {
+        background-color: var(--light-gray);
+        padding: 3rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .hero h2 {
+        color: var(--uncc-green);
+        margin-bottom: 1rem;
+        font-size: 2.2rem;
+      }
+
+      .hero p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .search-bar {
+        display: flex;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .search-bar input {
+        flex: 1;
+        padding: 0.8rem;
+        border: 2px solid var(--med-gray);
+        border-radius: 4px 0 0 4px;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        background-color: var(--uncc-green);
+        color: white;
+        border: none;
+        padding: 0 1.5rem;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      /* Mentorship Benefits */
+      .benefits-section {
+        margin-bottom: 3rem;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .benefit-card {
+        background-color: white;
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .benefit-icon {
+        width: 70px;
+        height: 70px;
+        background-color: var(--light-gray);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.8rem;
+        color: var(--uncc-green);
+      }
+
+      .benefit-card h3 {
+        color: var(--uncc-green);
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+      }
+
+      .benefit-card p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      /* How It Works */
+      .how-it-works {
+        margin-bottom: 3rem;
+        background-color: #f9f7e8;
+        border-radius: 8px;
+        padding: 2rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-title {
+        color: var(--uncc-green);
+        font-size: 1.5rem;
+      }
+
+      .view-all {
+        color: var(--uncc-green);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 2rem 0;
+      }
+
+      .steps::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        left: 50px;
+        right: 50px;
+        height: 3px;
+        background-color: var(--uncc-gold);
+        z-index: 1;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 20%;
+        z-index: 2;
+        position: relative;
+      }
+
+      .step-number {
+        width: 60px;
+        height: 60px;
+        background-color: var(--uncc-green);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .step h3 {
+        color: var(--uncc-green);
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .step p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      /* Find a Mentor */
+      .find-mentor-section {
+        margin-bottom: 3rem;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background-color: var(--light-gray);
+        border-radius: 8px;
+      }
+
+      .filter-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .filter-group select {
+        width: 100%;
+        padding: 0.7rem;
+        border: 1px solid var(--med-gray);
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .mentors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .mentor-card {
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .mentor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .mentor-header {
+        padding: 1.5rem;
+        text-align: center;
+        background-color: var(--light-gray);
+      }
+
+      .mentor-photo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background-color: var(--med-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--dark-gray);
+      }
+
+      .mentor-name {
+        color: var(--uncc-green);
+        margin-bottom: 0.3rem;
+        font-size: 1.2rem;
+      }
+
+      .mentor-title {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .mentor-company {
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .mentor-body {
+        padding: 1.5rem;
+      }
+
+      .mentor-bio {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .mentor-expertise {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .expertise-tag {
+        background-color: var(--light-gray);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .mentor-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .mentor-connect {
+        display: block;
+        width: 100%;
+        background-color: var(--uncc-green);
+        color: white;
+        border: none;
+        padding: 0.7rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      /* Mentee Success */
+      .success-stories {
+        margin-bottom: 3rem;
+      }
+
+      .story-card {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        padding: 2rem;
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .story-photo {
+        width: 100%;
+        height: 200px;
+        background-color: var(--light-gray);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--dark-gray);
+      }
+
+      .story-content h3 {
+        color: var(--uncc-green);
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+      }
+
+      .story-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .story-quote {
+        font-style: italic;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .story-outcomes {
+        margin-bottom: 1.5rem;
+      }
+
+      .outcome-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .check-icon {
+        color: var(--uncc-green);
+        font-weight: bold;
+      }
+
+      .story-cta {
+        display: inline-block;
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      /* Become a Mentor */
+      .become-mentor {
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background-color: #f9f7e8;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .become-mentor h2 {
+        color: var(--uncc-green);
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+      }
+
+      .become-mentor p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mentor-benefits {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .mentor-benefit {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .become-btn {
+        display: inline-block;
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1.1rem;
+      }
+
+      /* Peer Mentoring */
+      .peer-mentoring {
+        margin-bottom: 3rem;
+      }
+
+      .peer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .peer-card {
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .peer-header {
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .peer-header h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .peer-header p {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .peer-body {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .peer-features {
+        margin-bottom: 1.5rem;
+        flex: 1;
+      }
+
+      .peer-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .peer-cta {
+        display: block;
+        width: 100%;
+        background-color: var(--uncc-green);
+        color: white;
+        border: none;
+        padding: 0.7rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        margin-top: auto;
+      }
+
+      /* Mentorship Resources */
+      .resources-section {
+        margin-bottom: 3rem;
+      }
+
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .resource-card {
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .resource-banner {
+        height: 120px;
+        background-color: var(--uncc-green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .resource-content {
+        padding: 1.5rem;
+      }
+
+      .resource-type {
+        display: inline-block;
+        background-color: var(--light-gray);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .resource-title {
+        color: var(--uncc-green);
+        margin-bottom: 0.8rem;
+        font-size: 1.2rem;
+      }
+
+      .resource-description {
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .resource-action {
+        display: block;
+        width: 100%;
+        background-color: var(--uncc-green);
+        color: white;
+        border: none;
+        padding: 0.7rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      /* FAQ Section */
+      .faq-section {
+        margin-bottom: 3rem;
+      }
+
+      .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .faq-item {
+        background-color: white;
+        border: 1px solid var(--med-gray);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .faq-question {
+        padding: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--uncc-green);
+      }
+
+      .faq-answer {
+        padding: 0 1.2rem 1.2rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: #666;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+        gap: 0.5rem;
+      }
+
+      .pagination-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--med-gray);
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .pagination-item.active {
+        background-color: var(--uncc-green);
+        color: white;
+        border-color: var(--uncc-green);
+      }
+
+      .pagination-item:hover:not(.active) {
+        background-color: var(--light-gray);
+      }
+
+      footer {
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 3rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-content p {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
         .steps {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin: 2rem 0;
+          flex-direction: column;
+          align-items: center;
+          gap: 2rem;
         }
-        
+
         .steps::before {
-            content: "";
-            position: absolute;
-            top: 30px;
-            left: 50px;
-            right: 50px;
-            height: 3px;
-            background-color: var(--uncc-gold);
-            z-index: 1;
+          display: none;
         }
-        
+
         .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 20%;
-            z-index: 2;
-            position: relative;
+          width: 100%;
+          max-width: 250px;
         }
-        
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background-color: var(--uncc-green);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .step h3 {
-            color: var(--uncc-green);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-        
-        .step p {
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        /* Find a Mentor */
-        .find-mentor-section {
-            margin-bottom: 3rem;
-        }
-        
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background-color: var(--light-gray);
-            border-radius: 8px;
-        }
-        
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .filter-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .filter-group select {
-            width: 100%;
-            padding: 0.7rem;
-            border: 1px solid var(--med-gray);
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .mentors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .mentor-card {
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .mentor-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .mentor-header {
-            padding: 1.5rem;
-            text-align: center;
-            background-color: var(--light-gray);
-        }
-        
-        .mentor-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            background-color: var(--med-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--dark-gray);
-        }
-        
-        .mentor-name {
-            color: var(--uncc-green);
-            margin-bottom: 0.3rem;
-            font-size: 1.2rem;
-        }
-        
-        .mentor-title {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .mentor-company {
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .mentor-body {
-            padding: 1.5rem;
-        }
-        
-        .mentor-bio {
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        .mentor-expertise {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .expertise-tag {
-            background-color: var(--light-gray);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .mentor-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        .mentor-connect {
-            display: block;
-            width: 100%;
-            background-color: var(--uncc-green);
-            color: white;
-            border: none;
-            padding: 0.7rem;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        /* Mentee Success */
-        .success-stories {
-            margin-bottom: 3rem;
-        }
-        
+
         .story-card {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2rem;
-            padding: 2rem;
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          grid-template-columns: 1fr;
         }
-        
+
         .story-photo {
-            width: 100%;
-            height: 200px;
-            background-color: var(--light-gray);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--dark-gray);
+          height: 150px;
+          margin-bottom: 1rem;
         }
-        
-        .story-content h3 {
-            color: var(--uncc-green);
-            margin-bottom: 0.5rem;
-            font-size: 1.3rem;
-        }
-        
-        .story-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .story-quote {
-            font-style: italic;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-        
-        .story-outcomes {
-            margin-bottom: 1.5rem;
-        }
-        
-        .outcome-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .check-icon {
-            color: var(--uncc-green);
-            font-weight: bold;
-        }
-        
-        .story-cta {
-            display: inline-block;
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        /* Become a Mentor */
-        .become-mentor {
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background-color: #f9f7e8;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .become-mentor h2 {
-            color: var(--uncc-green);
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
-        }
-        
-        .become-mentor p {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .mentor-benefits {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .mentor-benefit {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-        }
-        
-        .become-btn {
-            display: inline-block;
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 0.8rem 2rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        
-        /* Peer Mentoring */
-        .peer-mentoring {
-            margin-bottom: 3rem;
-        }
-        
-        .peer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .peer-card {
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .peer-header {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        
-        .peer-header h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .peer-header p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .peer-body {
-            padding: 1.5rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .peer-features {
-            margin-bottom: 1.5rem;
-            flex: 1;
-        }
-        
-        .peer-feature {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .peer-cta {
-            display: block;
-            width: 100%;
-            background-color: var(--uncc-green);
-            color: white;
-            border: none;
-            padding: 0.7rem;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-            margin-top: auto;
-        }
-        
-        /* Mentorship Resources */
-        .resources-section {
-            margin-bottom: 3rem;
-        }
-        
-        .resources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .resource-card {
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .resource-banner {
-            height: 120px;
-            background-color: var(--uncc-green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .resource-content {
-            padding: 1.5rem;
-        }
-        
-        .resource-type {
-            display: inline-block;
-            background-color: var(--light-gray);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-        
-        .resource-title {
-            color: var(--uncc-green);
-            margin-bottom: 0.8rem;
-            font-size: 1.2rem;
-        }
-        
-        .resource-description {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        .resource-action {
-            display: block;
-            width: 100%;
-            background-color: var(--uncc-green);
-            color: white;
-            border: none;
-            padding: 0.7rem;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        /* FAQ Section */
-        .faq-section {
-            margin-bottom: 3rem;
-        }
-        
-        .faq-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .faq-item {
-            background-color: white;
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .faq-question {
-            padding: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--uncc-green);
-        }
-        
-        .faq-answer {
-            padding: 0 1.2rem 1.2rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #666;
-        }
-        
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-            gap: 0.5rem;
-        }
-        
-        .pagination-item {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--med-gray);
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .pagination-item.active {
-            background-color: var(--uncc-green);
-            color: white;
-            border-color: var(--uncc-green);
-        }
-        
-        .pagination-item:hover:not(.active) {
-            background-color: var(--light-gray);
-        }
-        
-        footer {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-content p {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .steps {
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-            }
-            
-            .steps::before {
-                display: none;
-            }
-            
-            .step {
-                width: 100%;
-                max-width: 250px;
-            }
-            
-            .story-card {
-                grid-template-columns: 1fr;
-            }
-            
-            .story-photo {
-                height: 150px;
-                margin-bottom: 1rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-img">UNCC</div>
-                <h1>Career Guide</h1>
-            </div>
-            <div>
-                <button style="background: var(--uncc-gold); color: var(--uncc-green); border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Student Login</button>
-            </div>
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-img">UNCC</div>
+          <h1>Career Guide</h1>
         </div>
+        <div>
+          <button
+            style="
+              background: var(--uncc-gold);
+              color: var(--uncc-green);
+              border: none;
+              padding: 0.5rem 1rem;
+              border-radius: 4px;
+              font-weight: bold;
+              cursor: pointer;
+            "
+          >
+            Student Login
+          </button>
+        </div>
+      </div>
     </header>
-    
+
     <nav>
-        <ul class="nav-tabs">
-            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-                <a href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}">
-                <a href="{% url 'job-board' %}">Job Board</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}">
-                <a href="{% url 'networking-hub' %}">Networking Hub</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}">
-                <a href="{% url 'career-events' %}">Career Events</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}">
-                <a href="{% url 'resources' %}">Resources</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}">
-                <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
-            </li>
-        </ul>
+      <ul class="nav-tabs">
+        <li
+          class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+        >
+          <a href="{% url 'home' %}">Dashboard</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}"
+        >
+          <a href="{% url 'job-board' %}">Job Board</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}"
+        >
+          <a href="{% url 'networking-hub' %}">Networking Hub</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}"
+        >
+          <a href="{% url 'career-events' %}">Career Events</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"
+        >
+          <a href="{% url 'resources' %}">Resources</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}"
+        >
+          <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
+        </li>
+      </ul>
     </nav>
-    
+
     <main>
-        <h1 class="page-title">Mentorship Hub</h1>
-        
-        <section class="hero">
-            <h2>Connect with Experienced Mentors</h2>
-            <p>Gain valuable guidance, insights, and support from professionals who can help you navigate your career journey and achieve your goals.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for mentors by name, industry, or expertise...">
-                <button>Search</button>
-            </div>
-        </section>
-        
-        <section class="benefits-section">
-            <div class="section-header">
-                <h2 class="section-title">Benefits of Mentorship</h2>
-            </div>
-            
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">🔍</div>
-                    <h3>Career Guidance</h3>
-                    <p>Receive personalized advice on career paths, industry trends, and job opportunities from experienced professionals.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">💼</div>
-                    <h3>Professional Development</h3>
-                    <p>Build essential skills and competencies with guidance from mentors who understand what it takes to succeed.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">🤝</div>
-                    <h3>Networking Opportunities</h3>
-                    <p>Access your mentor's professional network and make valuable connections within your industry.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">🎯</div>
-                    <h3>Goal Setting & Achievement</h3>
-                    <p>Set meaningful career goals and develop actionable plans to achieve them with your mentor's support.</p>
-                </div>
-            </div>
-        </section>
-        
-        <section class="how-it-works">
-            <div class="section-header">
-                <h2 class="section-title">How It Works</h2>
-            </div>
-            
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Create Profile</h3>
-                    <p>Complete your mentee profile with your background, interests, and goals.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Find Matches</h3>
-                    <p>Browse mentor profiles or receive AI-recommended matches.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Send Request</h3>
-                    <p>Send a personalized mentorship request to your chosen mentor.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3>Connect</h3>
-                    <p>Schedule meetings and communicate through our platform.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <h3>Grow Together</h3>
-                    <p>Build a relationship and work toward your career goals.</p>
-                </div>
-            </div>
-        </section>
-        
-        <section class="find-mentor-section">
-            <div class="section-header">
-                <h2 class="section-title">Find a Mentor</h2>
-                <a href="#" class="view-all">View All Mentors →</a>
-            </div>
-            
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="industry">Industry</label>
-                    <select id="industry">
-                        <option value="">All Industries</option>
-                        <option value="technology">Technology</option>
-                        <option value="finance">Finance & Banking</option>
-                        <option value="healthcare">Healthcare</option>
-                        <option value="engineering">Engineering</option>
-                        <option value="business">Business</option>
-                        <option value="education">Education</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="expertise">Expertise</label>
-                    <select id="expertise">
-                        <option value="">All Areas</option>
-                        <option value="leadership">Leadership</option>
-                        <option value="entrepreneurship">Entrepreneurship</option>
-                        <option value="career-change">Career Transition</option>
-                        <option value="technical">Technical Skills</option>
-                        <option value="job-search">Job Search</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="availability">Availability</label>
-                    <select id="availability">
-                        <option value="">Any Availability</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="bi-weekly">Bi-weekly</option>
-                        <option value="monthly">Monthly</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="format">Format</label>
-                    <select id="format">
-                        <option value="">Any Format</option>
-                        <option value="in-person">In-person</option>
-                        <option value="virtual">Virtual</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="mentors-grid">
-                <div class="mentor-card">
-                    <div class="mentor-header">
-                        <div class="mentor-photo">RB</div>
-                        <h3 class="mentor-name">Robert Brown</h3>
-                        <p class="mentor-title">Senior Software Engineer</p>
-                        <p class="mentor-company">Tech Innovations Inc.</p>
-                    </div>
-                    <div class="mentor-body">
-                        <p class="mentor-bio">With 15+ years of experience in software development and a background in UNCC's Computer Science program, I'm passionate about helping students navigate the tech industry.</p>
-                        <div class="mentor-expertise">
-                            <span class="expertise-tag">Software Development</span>
-                            <span class="expertise-tag">Career Transitions</span>
-                            <span class="expertise-tag">Leadership</span>
-                        </div>
-                        <div class="mentor-meta">
-                            <span class="meta-item">👥 10 mentees</span>
-                            <span class="meta-item">⭐ 4.9 rating</span>
-                        </div>
-                        <button class="mentor-connect">Request Mentorship</button>
-                    </div>
-                </div>
-                
-                <div class="mentor-card">
-                    <div class="mentor-header">
-                        <div class="mentor-photo">JD</div>
-                        <h3 class="mentor-name">Jennifer Davis</h3>
-                        <p class="mentor-title">Marketing Director</p>
-                        <p class="mentor-company">Global Brands</p>
-                    </div>
-                    <div class="mentor-body">
-                        <p class="mentor-bio">UNCC alumna with over 10 years in digital marketing and brand strategy. I enjoy helping students and young professionals develop their marketing careers.</p>
-                        <div class="mentor-expertise">
-                            <span class="expertise-tag">Digital Marketing</span>
-                            <span class="expertise-tag">Brand Strategy</span>
-                            <span class="expertise-tag">Content Creation</span>
-                        </div>
-                        <div class="mentor-meta">
-                            <span class="meta-item">👥 8 mentees</span>
-                            <span class="meta-item">⭐ 4.7 rating</span>
-                        </div>
-                        <button class="mentor-connect">Request Mentorship</button>
-                    </div>
-                </div>
-                
-                <div class="mentor-card">
-                    <div class="mentor-header">
-                        <div class="mentor-photo">MP</div>
-                        <h3 class="mentor-name">Michael Patel</h3>
-                        <p class="mentor-title">Senior Financial Analyst</p>
-                        <p class="mentor-company">Investment Partners</p>
-                    </div>
-                    <div class="mentor-body">
-                        <p class="mentor-bio">Specializing in financial planning and analysis with a background in consulting. Happy to share insights about the finance industry with students.</p>
-                        <div class="mentor-expertise">
-                            <span class="expertise-tag">Financial Analysis</span>
-                            <span class="expertise-tag">Investment</span>
-                            <span class="expertise-tag">Banking</span>
-                        </div>
-                        <div class="mentor-meta">
-                            <span class="meta-item">👥 6 mentees</span>
-                            <span class="meta-item">⭐ 4.8 rating</span>
-                        </div>
-                        <button class="mentor-connect">Request Mentorship</button>
-                    </div>
-                </div>
-                
-                <div class="mentor-card">
-                    <div class="mentor-header">
-                        <div class="mentor-photo">AT</div>
-                        <h3 class="mentor-name">Alicia Torres</h3>
-                        <p class="mentor-title">Healthcare Administrator</p>
-                        <p class="mentor-company">Charlotte Medical Center</p>
-                    </div>
-                    <div class="mentor-body">
-                        <p class="mentor-bio">With experience in healthcare administration and policy, I guide students interested in healthcare careers and help them navigate this dynamic field.</p>
-                        <div class="mentor-expertise">
-                            <span class="expertise-tag">Healthcare</span>
-                            <span class="expertise-tag">Administration</span>
-                            <span class="expertise-tag">Leadership</span>
-                        </div>
-                        <div class="mentor-meta">
-                            <span class="meta-item">👥 7 mentees</span>
-                            <span class="meta-item">⭐ 4.9 rating</span>
-                        </div>
-                        <button class="mentor-connect">Request Mentorship</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="pagination">
-                <div class="pagination-item">«</div>
-                <div class="pagination-item active">1</div>
-                <div class="pagination-item">2</div>
-                <div class="pagination-item">3</div>
-                <div class="pagination-item">4</div>
-                <div class="pagination-item">»</div>
-            </div>
-        </section>
-        
-        <section class="success-stories">
-            <div class="section-header">
-                <h2 class="section-title">Mentee Success Stories</h2>
-                <a href="#" class="view-all">View All Stories →</a>
-            </div>
-            
-            <div class="story-card">
-                <div class="story-photo">DW</div>
-                <div class="story-content">
-                    <h3>David Wilson, Computer Science '23</h3>
-                    <div class="story-meta">
-                        <span>Mentor: Dr. James Chen, Tech Lead at DataTech</span>
-                        <span>6-month mentorship program</span>
-                    </div>
-                    <p class="story-quote">"Working with Dr. Chen completely transformed my career trajectory. His guidance helped me refine my technical skills, prepare for interviews, and land a software engineering role at a leading tech company."</p>
-                    <div class="story-outcomes">
-                        <h4>Outcomes:</h4>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Secured a full-time position at a Fortune 500 tech company</span>
-                        </div>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Developed specialized skills in cloud computing and machine learning</span>
-                        </div>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Built a professional network of industry connections</span>
-                        </div>
-                    </div>
-                    <a href="#" class="story-cta">Read Full Story</a>
-                </div>
-            </div>
-            
-            <div class="story-card">
-                <div class="story-photo">SR</div>
-                <div class="story-content">
-                    <h3>Sophia Rodriguez, Business Administration '24</h3>
-                    <div class="story-meta">
-                        <span>Mentor: Lisa Johnson, Marketing Executive at Global Brands</span>
-                        <span>12-month mentorship program</span>
-                    </div>
-                    <p class="story-quote">"Lisa's mentorship gave me the confidence and direction I needed to pursue my marketing career. Her advice on building a personal brand and navigating corporate culture was invaluable."</p>
-                    <div class="story-outcomes">
-                        <h4>Outcomes:</h4>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Landed a competitive marketing internship that led to a job offer</span>
-                        </div>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Created a professional portfolio that showcased her skills</span>
-                        </div>
-                        <div class="outcome-item">
-                            <span class="check-icon">✓</span>
-                            <span>Developed leadership skills that led to student organization leadership roles</span>
-                        </div>
-                    </div>
-                    <a href="#" class="story-cta">Read Full Story</a>
-                </div>
-            </div>
-        </section>
-        
-        <section class="become-mentor">
-            <h2>Become a Mentor</h2>
-            <p>Share your knowledge and experience with the next generation of professionals. Join our community of mentors and make a meaningful impact on students' careers.</p>
-            
-            <div class="mentor-benefits">
-                <div class="mentor-benefit">
-                    <span class="check-icon">✓</span>
-                    <span>Give back to the UNCC community</span>
-                </div>
-                <div class="mentor-benefit">
-                    <span class="check-icon">✓</span>
-                    <span>Develop leadership skills</span>
-                </div>
-                <div class="mentor-benefit">
-                    <span class="check-icon">✓</span>
-                    <span>Expand your professional network</span>
-                </div>
-                <div class="mentor-benefit">
-                    <span class="check-icon">✓</span>
-                    <span>Gain fresh perspectives</span>
-                </div>
-            </div>
-            
-            <a href="#" class="become-btn">Apply to Be a Mentor</a>
-        </section>
-        
-        <section class="peer-mentoring">
-            <div class="section-header">
-                <h2 class="section-title">Peer Mentorship Programs</h2>
-            </div>
-            
-            <div class="peer-grid">
-                <div class="peer-card">
-                    <div class="peer-header">
-                        <h3>First-Year Success</h3>
-                        <p>For freshmen and sophomores</p>
-                    </div>
-                    <div class="peer-body">
-                        <div class="peer-features">
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Academic success strategies</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Campus involvement guidance</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Major exploration support</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Weekly one-on-one meetings</span>
-                            </div>
-                        </div>
-                        <button class="peer-cta">Join Program</button>
-                    </div>
-                </div>
-                
-                <div class="peer-card">
-                    <div class="peer-header">
-                        <h3>Career Readiness</h3>
-                        <p>For juniors and seniors</p>
-                    </div>
-                    <div class="peer-body">
-                        <div class="peer-features">
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Resume and portfolio development</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Interview preparation</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Job search strategies</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Bi-weekly one-on-one meetings</span>
-                            </div>
-                        </div>
-                        <button class="peer-cta">Join Program</button>
-                    </div>
-                </div>
-                
-                <div class="peer-card">
-                    <div class="peer-header">
-                        <h3>International Students</h3>
-                        <p>For all international students</p>
-                    </div>
-                    <div class="peer-body">
-                        <div class="peer-features">
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Cultural adaptation support</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>U.S. job market navigation</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Visa and work authorization guidance</span>
-                            </div>
-                            <div class="peer-feature">
-                                <span class="check-icon">✓</span>
-                                <span>Monthly one-on-one meetings</span>
-                            </div>
-                        </div>
-                        <button class="peer-cta">Join Program</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="resources-section">
-            <div class="section-header">
-                <h2 class="section-title">Mentorship Resources</h2>
-                <a href="#" class="view-all">View All Resources →</a>
-            </div>
-            
-            <div class="resources-grid">
-                <div class="resource-card">
-                    <div class="resource-banner">Mentee Guide</div>
-                    <div class="resource-content">
-                        <span class="resource-type">Guide</span>
-                        <h3 class="resource-title">Maximizing Your Mentorship Experience</h3>
-                        <p class="resource-description">Learn how to prepare for mentorship meetings, ask effective questions, and implement feedback to get the most from your mentoring relationship.</p>
-                        <button class="resource-action">Download Guide</button>
-                    </div>
-                </div>
-                
-                <div class="resource-card">
-                    <div class="resource-banner">Mentor Training</div>
-                    <div class="resource-content">
-                        <span class="resource-type">Course</span>
-                        <h3 class="resource-title">Effective Mentoring Strategies</h3>
-                        <p class="resource-description">A comprehensive course for mentors on communication techniques, setting expectations, and providing constructive feedback to mentees.</p>
-                        <button class="resource-action">Access Course</button>
-                    </div>
-                </div>
-                
-                <div class="resource-card">
-                    <div class="resource-banner">Webinar</div>
-                    <div class="resource-content">
-                        <span class="resource-type">Video</span>
-                        <h3 class="resource-title">Building Strong Mentoring Relationships</h3>
-                        <p class="resource-description">Watch this webinar featuring successful mentor-mentee pairs sharing their experiences and advice for developing productive relationships.</p>
-                        <button class="resource-action">Watch Webinar</button>
-                    </div>
-                </div>
-                
-                <div class="resource-card">
-                    <div class="resource-banner">Goal Setting</div>
-                    <div class="resource-content">
-                        <span class="resource-type">Tool</span>
-                        <h3 class="resource-title">Mentorship Goal Setting Framework</h3>
-                        <p class="resource-description">Use this interactive tool to establish clear, achievable goals for your mentorship experience and track your progress over time.</p>
-                        <button class="resource-action">Use Tool</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="faq-section">
-            <div class="section-header">
-                <h2 class="section-title">Frequently Asked Questions</h2>
-            </div>
-            
-            <div class="faq-list">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How much time commitment is expected for mentorship?</span>
-                        <span>+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>The time commitment varies depending on the mentorship program and individual arrangements between mentors and mentees. Typically, mentors and mentees meet for 1-2 hours per month, with additional communication as needed. Most mentorship relationships last for 3-6 months, but some continue for longer periods based on mutual agreement.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>Can I have more than one mentor?</span>
-                        <span>+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes, you can have multiple mentors, especially if you're seeking guidance in different areas or industries. We recommend starting with one mentor to establish a strong relationship, then expanding to additional mentors if needed. Our platform allows you to connect with up to three active mentors at once to ensure you can manage these relationships effectively.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What if my mentorship match isn't working out?</span>
-                        <span>+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>We understand that not all mentorship pairings will be perfect matches. If you feel your mentorship isn't working out, first try discussing your concerns directly with your mentor/mentee. If issues persist, you can contact our Mentorship Coordinator who can provide guidance or help facilitate a new match. There's no penalty for ending a mentorship that isn't meeting your needs.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>How are mentors vetted?</span>
-                        <span>+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>All mentors in our program go through a comprehensive vetting process. This includes verification of their professional background and experience, reference checks, completion of mentor training, and a commitment to our mentorship code of conduct. We also collect ongoing feedback from mentees to ensure mentors are providing valuable guidance and maintaining professional relationships.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="footer-content">
-            <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
-                <div class="logo-img">UNCC</div>
-                <h1>Career Guide</h1>
-            </div>
-            <p>© 2025 University of North Carolina at Charlotte. All rights reserved.</p>
-            <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
+      <h1 class="page-title">Mentorship Hub</h1>
+
+      <section class="hero">
+        <h2>Connect with Experienced Mentors</h2>
+        <p>
+          Gain valuable guidance, insights, and support from professionals who
+          can help you navigate your career journey and achieve your goals.
+        </p>
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search for mentors by name, industry, or expertise..."
+          />
+          <button>Search</button>
         </div>
+      </section>
+
+      <section class="benefits-section">
+        <div class="section-header">
+          <h2 class="section-title">Benefits of Mentorship</h2>
+        </div>
+
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">🔍</div>
+            <h3>Career Guidance</h3>
+            <p>
+              Receive personalized advice on career paths, industry trends, and
+              job opportunities from experienced professionals.
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">💼</div>
+            <h3>Professional Development</h3>
+            <p>
+              Build essential skills and competencies with guidance from mentors
+              who understand what it takes to succeed.
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🤝</div>
+            <h3>Networking Opportunities</h3>
+            <p>
+              Access your mentor's professional network and make valuable
+              connections within your industry.
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🎯</div>
+            <h3>Goal Setting & Achievement</h3>
+            <p>
+              Set meaningful career goals and develop actionable plans to
+              achieve them with your mentor's support.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-it-works">
+        <div class="section-header">
+          <h2 class="section-title">How It Works</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Create Profile</h3>
+            <p>
+              Complete your mentee profile with your background, interests, and
+              goals.
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Find Matches</h3>
+            <p>Browse mentor profiles or receive AI-recommended matches.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Send Request</h3>
+            <p>Send a personalized mentorship request to your chosen mentor.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Connect</h3>
+            <p>Schedule meetings and communicate through our platform.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">5</div>
+            <h3>Grow Together</h3>
+            <p>Build a relationship and work toward your career goals.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="find-mentor-section">
+        <div class="section-header">
+          <h2 class="section-title">Find a Mentor</h2>
+          <a href="#" class="view-all">View All Mentors →</a>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <label for="industry">Industry</label>
+            <select id="industry">
+              <option value="">All Industries</option>
+              <option value="technology">Technology</option>
+              <option value="finance">Finance & Banking</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="engineering">Engineering</option>
+              <option value="business">Business</option>
+              <option value="education">Education</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="expertise">Expertise</label>
+            <select id="expertise">
+              <option value="">All Areas</option>
+              <option value="leadership">Leadership</option>
+              <option value="entrepreneurship">Entrepreneurship</option>
+              <option value="career-change">Career Transition</option>
+              <option value="technical">Technical Skills</option>
+              <option value="job-search">Job Search</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="availability">Availability</label>
+            <select id="availability">
+              <option value="">Any Availability</option>
+              <option value="weekly">Weekly</option>
+              <option value="bi-weekly">Bi-weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="format">Format</label>
+            <select id="format">
+              <option value="">Any Format</option>
+              <option value="in-person">In-person</option>
+              <option value="virtual">Virtual</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mentors-grid">
+          <div class="mentor-card">
+            <div class="mentor-header">
+              <div class="mentor-photo">RB</div>
+              <h3 class="mentor-name">Robert Brown</h3>
+              <p class="mentor-title">Senior Software Engineer</p>
+              <p class="mentor-company">Tech Innovations Inc.</p>
+            </div>
+            <div class="mentor-body">
+              <p class="mentor-bio">
+                With 15+ years of experience in software development and a
+                background in UNCC's Computer Science program, I'm passionate
+                about helping students navigate the tech industry.
+              </p>
+              <div class="mentor-expertise">
+                <span class="expertise-tag">Software Development</span>
+                <span class="expertise-tag">Career Transitions</span>
+                <span class="expertise-tag">Leadership</span>
+              </div>
+              <div class="mentor-meta">
+                <span class="meta-item">👥 10 mentees</span>
+                <span class="meta-item">⭐ 4.9 rating</span>
+              </div>
+              <button class="mentor-connect">Request Mentorship</button>
+            </div>
+          </div>
+
+          <div class="mentor-card">
+            <div class="mentor-header">
+              <div class="mentor-photo">JD</div>
+              <h3 class="mentor-name">Jennifer Davis</h3>
+              <p class="mentor-title">Marketing Director</p>
+              <p class="mentor-company">Global Brands</p>
+            </div>
+            <div class="mentor-body">
+              <p class="mentor-bio">
+                UNCC alumna with over 10 years in digital marketing and brand
+                strategy. I enjoy helping students and young professionals
+                develop their marketing careers.
+              </p>
+              <div class="mentor-expertise">
+                <span class="expertise-tag">Digital Marketing</span>
+                <span class="expertise-tag">Brand Strategy</span>
+                <span class="expertise-tag">Content Creation</span>
+              </div>
+              <div class="mentor-meta">
+                <span class="meta-item">👥 8 mentees</span>
+                <span class="meta-item">⭐ 4.7 rating</span>
+              </div>
+              <button class="mentor-connect">Request Mentorship</button>
+            </div>
+          </div>
+
+          <div class="mentor-card">
+            <div class="mentor-header">
+              <div class="mentor-photo">MP</div>
+              <h3 class="mentor-name">Michael Patel</h3>
+              <p class="mentor-title">Senior Financial Analyst</p>
+              <p class="mentor-company">Investment Partners</p>
+            </div>
+            <div class="mentor-body">
+              <p class="mentor-bio">
+                Specializing in financial planning and analysis with a
+                background in consulting. Happy to share insights about the
+                finance industry with students.
+              </p>
+              <div class="mentor-expertise">
+                <span class="expertise-tag">Financial Analysis</span>
+                <span class="expertise-tag">Investment</span>
+                <span class="expertise-tag">Banking</span>
+              </div>
+              <div class="mentor-meta">
+                <span class="meta-item">👥 6 mentees</span>
+                <span class="meta-item">⭐ 4.8 rating</span>
+              </div>
+              <button class="mentor-connect">Request Mentorship</button>
+            </div>
+          </div>
+
+          <div class="mentor-card">
+            <div class="mentor-header">
+              <div class="mentor-photo">AT</div>
+              <h3 class="mentor-name">Alicia Torres</h3>
+              <p class="mentor-title">Healthcare Administrator</p>
+              <p class="mentor-company">Charlotte Medical Center</p>
+            </div>
+            <div class="mentor-body">
+              <p class="mentor-bio">
+                With experience in healthcare administration and policy, I guide
+                students interested in healthcare careers and help them navigate
+                this dynamic field.
+              </p>
+              <div class="mentor-expertise">
+                <span class="expertise-tag">Healthcare</span>
+                <span class="expertise-tag">Administration</span>
+                <span class="expertise-tag">Leadership</span>
+              </div>
+              <div class="mentor-meta">
+                <span class="meta-item">👥 7 mentees</span>
+                <span class="meta-item">⭐ 4.9 rating</span>
+              </div>
+              <button class="mentor-connect">Request Mentorship</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-item">«</div>
+          <div class="pagination-item active">1</div>
+          <div class="pagination-item">2</div>
+          <div class="pagination-item">3</div>
+          <div class="pagination-item">4</div>
+          <div class="pagination-item">»</div>
+        </div>
+      </section>
+
+      <section class="success-stories">
+        <div class="section-header">
+          <h2 class="section-title">Mentee Success Stories</h2>
+          <a href="#" class="view-all">View All Stories →</a>
+        </div>
+
+        <div class="story-card">
+          <div class="story-photo">DW</div>
+          <div class="story-content">
+            <h3>David Wilson, Computer Science '23</h3>
+            <div class="story-meta">
+              <span>Mentor: Dr. James Chen, Tech Lead at DataTech</span>
+              <span>6-month mentorship program</span>
+            </div>
+            <p class="story-quote">
+              "Working with Dr. Chen completely transformed my career
+              trajectory. His guidance helped me refine my technical skills,
+              prepare for interviews, and land a software engineering role at a
+              leading tech company."
+            </p>
+            <div class="story-outcomes">
+              <h4>Outcomes:</h4>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Secured a full-time position at a Fortune 500 tech
+                  company</span
+                >
+              </div>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Developed specialized skills in cloud computing and machine
+                  learning</span
+                >
+              </div>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Built a professional network of industry connections</span
+                >
+              </div>
+            </div>
+            <a href="#" class="story-cta">Read Full Story</a>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-photo">SR</div>
+          <div class="story-content">
+            <h3>Sophia Rodriguez, Business Administration '24</h3>
+            <div class="story-meta">
+              <span
+                >Mentor: Lisa Johnson, Marketing Executive at Global
+                Brands</span
+              >
+              <span>12-month mentorship program</span>
+            </div>
+            <p class="story-quote">
+              "Lisa's mentorship gave me the confidence and direction I needed
+              to pursue my marketing career. Her advice on building a personal
+              brand and navigating corporate culture was invaluable."
+            </p>
+            <div class="story-outcomes">
+              <h4>Outcomes:</h4>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Landed a competitive marketing internship that led to a job
+                  offer</span
+                >
+              </div>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Created a professional portfolio that showcased her
+                  skills</span
+                >
+              </div>
+              <div class="outcome-item">
+                <span class="check-icon">✓</span>
+                <span
+                  >Developed leadership skills that led to student organization
+                  leadership roles</span
+                >
+              </div>
+            </div>
+            <a href="#" class="story-cta">Read Full Story</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="become-mentor">
+        <h2>Become a Mentor</h2>
+        <p>
+          Share your knowledge and experience with the next generation of
+          professionals. Join our community of mentors and make a meaningful
+          impact on students' careers.
+        </p>
+
+        <div class="mentor-benefits">
+          <div class="mentor-benefit">
+            <span class="check-icon">✓</span>
+            <span>Give back to the UNCC community</span>
+          </div>
+          <div class="mentor-benefit">
+            <span class="check-icon">✓</span>
+            <span>Develop leadership skills</span>
+          </div>
+          <div class="mentor-benefit">
+            <span class="check-icon">✓</span>
+            <span>Expand your professional network</span>
+          </div>
+          <div class="mentor-benefit">
+            <span class="check-icon">✓</span>
+            <span>Gain fresh perspectives</span>
+          </div>
+        </div>
+
+        <a href="#" class="become-btn">Apply to Be a Mentor</a>
+      </section>
+
+      <section class="peer-mentoring">
+        <div class="section-header">
+          <h2 class="section-title">Peer Mentorship Programs</h2>
+        </div>
+
+        <div class="peer-grid">
+          <div class="peer-card">
+            <div class="peer-header">
+              <h3>First-Year Success</h3>
+              <p>For freshmen and sophomores</p>
+            </div>
+            <div class="peer-body">
+              <div class="peer-features">
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Academic success strategies</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Campus involvement guidance</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Major exploration support</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Weekly one-on-one meetings</span>
+                </div>
+              </div>
+              <button class="peer-cta">Join Program</button>
+            </div>
+          </div>
+
+          <div class="peer-card">
+            <div class="peer-header">
+              <h3>Career Readiness</h3>
+              <p>For juniors and seniors</p>
+            </div>
+            <div class="peer-body">
+              <div class="peer-features">
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Resume and portfolio development</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Interview preparation</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Job search strategies</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Bi-weekly one-on-one meetings</span>
+                </div>
+              </div>
+              <button class="peer-cta">Join Program</button>
+            </div>
+          </div>
+
+          <div class="peer-card">
+            <div class="peer-header">
+              <h3>International Students</h3>
+              <p>For all international students</p>
+            </div>
+            <div class="peer-body">
+              <div class="peer-features">
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Cultural adaptation support</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>U.S. job market navigation</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Visa and work authorization guidance</span>
+                </div>
+                <div class="peer-feature">
+                  <span class="check-icon">✓</span>
+                  <span>Monthly one-on-one meetings</span>
+                </div>
+              </div>
+              <button class="peer-cta">Join Program</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="resources-section">
+        <div class="section-header">
+          <h2 class="section-title">Mentorship Resources</h2>
+          <a href="#" class="view-all">View All Resources →</a>
+        </div>
+
+        <div class="resources-grid">
+          <div class="resource-card">
+            <div class="resource-banner">Mentee Guide</div>
+            <div class="resource-content">
+              <span class="resource-type">Guide</span>
+              <h3 class="resource-title">
+                Maximizing Your Mentorship Experience
+              </h3>
+              <p class="resource-description">
+                Learn how to prepare for mentorship meetings, ask effective
+                questions, and implement feedback to get the most from your
+                mentoring relationship.
+              </p>
+              <button class="resource-action">Download Guide</button>
+            </div>
+          </div>
+
+          <div class="resource-card">
+            <div class="resource-banner">Mentor Training</div>
+            <div class="resource-content">
+              <span class="resource-type">Course</span>
+              <h3 class="resource-title">Effective Mentoring Strategies</h3>
+              <p class="resource-description">
+                A comprehensive course for mentors on communication techniques,
+                setting expectations, and providing constructive feedback to
+                mentees.
+              </p>
+              <button class="resource-action">Access Course</button>
+            </div>
+          </div>
+
+          <div class="resource-card">
+            <div class="resource-banner">Webinar</div>
+            <div class="resource-content">
+              <span class="resource-type">Video</span>
+              <h3 class="resource-title">
+                Building Strong Mentoring Relationships
+              </h3>
+              <p class="resource-description">
+                Watch this webinar featuring successful mentor-mentee pairs
+                sharing their experiences and advice for developing productive
+                relationships.
+              </p>
+              <button class="resource-action">Watch Webinar</button>
+            </div>
+          </div>
+
+          <div class="resource-card">
+            <div class="resource-banner">Goal Setting</div>
+            <div class="resource-content">
+              <span class="resource-type">Tool</span>
+              <h3 class="resource-title">Mentorship Goal Setting Framework</h3>
+              <p class="resource-description">
+                Use this interactive tool to establish clear, achievable goals
+                for your mentorship experience and track your progress over
+                time.
+              </p>
+              <button class="resource-action">Use Tool</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-section">
+        <div class="section-header">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>How much time commitment is expected for mentorship?</span>
+              <span>+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                The time commitment varies depending on the mentorship program
+                and individual arrangements between mentors and mentees.
+                Typically, mentors and mentees meet for 1-2 hours per month,
+                with additional communication as needed. Most mentorship
+                relationships last for 3-6 months, but some continue for longer
+                periods based on mutual agreement.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Can I have more than one mentor?</span>
+              <span>+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Yes, you can have multiple mentors, especially if you're seeking
+                guidance in different areas or industries. We recommend starting
+                with one mentor to establish a strong relationship, then
+                expanding to additional mentors if needed. Our platform allows
+                you to connect with up to three active mentors at once to ensure
+                you can manage these relationships effectively.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>What if my mentorship match isn't working out?</span>
+              <span>+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                We understand that not all mentorship pairings will be perfect
+                matches. If you feel your mentorship isn't working out, first
+                try discussing your concerns directly with your mentor/mentee.
+                If issues persist, you can contact our Mentorship Coordinator
+                who can provide guidance or help facilitate a new match. There's
+                no penalty for ending a mentorship that isn't meeting your
+                needs.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>How are mentors vetted?</span>
+              <span>+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                All mentors in our program go through a comprehensive vetting
+                process. This includes verification of their professional
+                background and experience, reference checks, completion of
+                mentor training, and a commitment to our mentorship code of
+                conduct. We also collect ongoing feedback from mentees to ensure
+                mentors are providing valuable guidance and maintaining
+                professional relationships.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="logo" style="justify-content: center; margin-bottom: 1rem">
+          <div class="logo-img">UNCC</div>
+          <h1>Career Guide</h1>
+        </div>
+        <p>
+          © 2025 University of North Carolina at Charlotte. All rights reserved.
+        </p>
+        <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

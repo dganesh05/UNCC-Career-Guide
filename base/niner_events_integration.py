@@ -1,9 +1,12 @@
-# File: base/niner_events_integration.py
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import re
 import logging
+import os
+import time
+import json
+import traceback
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -27,38 +30,76 @@ class NinerCareerEventsIntegration:
             List of upcoming events
         """
         try:
+            logger.info("=" * 50)
+            logger.info("Starting event fetch from Hire-A-Niner")
+            
+            # Create a debug directory if it doesn't exist
+            debug_dir = os.path.join(os.getcwd(), 'debug_logs')
+            os.makedirs(debug_dir, exist_ok=True)
+            
             # Construct the URL (add event type filter if provided)
             url = self.base_url
             if event_type:
                 url += f"?type={event_type}"
+            
+            logger.info(f"Fetching events from URL: {url}")
             
             # Set up headers for the request
             headers = {
                 "User-Agent": self.user_agent,
                 "Accept": "text/html,application/xhtml+xml,application/xml",
                 "Accept-Language": "en-US,en;q=0.9",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "Cache-Control": "max-age=0",
             }
             
-            # Make the request to the events page
-            logger.info(f"Fetching events from {url}")
-            response = requests.get(url, headers=headers, timeout=10)
+            logger.info("Making HTTP request...")
+            start_time = time.time()
+            
+            # Make the request to the events page with increased timeout
+            response = requests.get(url, headers=headers, timeout=45)
+            
+            end_time = time.time()
+            logger.info(f"Request completed in {end_time-start_time:.2f} seconds")
+            logger.info(f"Response status code: {response.status_code}")
+            logger.info(f"Response size: {len(response.text)} bytes")
+            
+            # Save response to debug file
+            debug_file = os.path.join(debug_dir, 'hireaniner_response.html')
+            with open(debug_file, 'w', encoding='utf-8') as f:
+                f.write(response.text)
+            logger.info(f"Saved response HTML to {debug_file}")
             
             # Check if the request was successful
             if response.status_code == 200:
-                logger.info("Successfully retrieved events page")
-                
                 # Parse the events from the HTML
+                logger.info("Parsing events from HTML...")
                 events = self._parse_events_html(response.text, count)
                 
                 if events:
                     logger.info(f"Successfully parsed {len(events)} events")
+                    # Log event details
+                    for i, event in enumerate(events):
+                        logger.info(f"Event {i+1}: {event.get('title')} on {event.get('date')}")
+                    
+                    # Save events to debug file
+                    debug_file = os.path.join(debug_dir, 'parsed_events.json')
+                    with open(debug_file, 'w', encoding='utf-8') as f:
+                        json.dump(events, f, indent=4)
+                    logger.info(f"Saved parsed events to {debug_file}")
+                    
                     return events
                 else:
-                    logger.warning("No events found on the page")
+                    logger.warning("No events found in the HTML")
             else:
                 logger.error(f"Failed to fetch events: Status code {response.status_code}")
+                logger.error(f"Response content snippet: {response.text[:500]}...")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request error fetching events: {str(e)}")
         except Exception as e:
-            logger.error(f"Error fetching events: {str(e)}")
+            logger.error(f"Unexpected error fetching events: {str(e)}")
+            logger.error(traceback.format_exc())
         
         # Fall back to placeholder data
         logger.info("Using placeholder event data")
@@ -66,97 +107,164 @@ class NinerCareerEventsIntegration:
     
     def _parse_events_html(self, html, count):
         """Parse events from the Hire-A-Niner HTML"""
+        logger.info("Starting HTML parsing")
         soup = BeautifulSoup(html, 'html.parser')
         events = []
         
-        # Look for event listings on the page
-        # We'll try multiple selector patterns that might match event containers
-        event_elements = []
-        
-        # Try various selectors based on common patterns for event listings
-        selectors = [
-            'div.event-card', 'div.event-box', 'div.event-container', 
-            'div.job-card', 'article.event', 'div.card', 
-            'tr.event-row', 'div[id*="event"]', 'div[class*="event"]'
+        # Try multiple selector patterns to find event panels
+        selector_patterns = [
+            'div.event.list.event-panel',
+            'div.event-panel',
+            'div[class*="event-panel"]',
+            'div[class*="event list"]',
+            'div.event',
+            '.event-card',
+            '.events-list > div',
+            '.event-container',
+            '.event-item'
         ]
         
-        for selector in selectors:
-            elements = soup.select(selector)
-            if elements:
-                logger.info(f"Found {len(elements)} events with selector: {selector}")
-                event_elements.extend(elements)
-                if len(event_elements) >= count:
-                    break
+        found_panels = []
+        for pattern in selector_patterns:
+            panels = soup.select(pattern)
+            logger.info(f"Selector '{pattern}' found {len(panels)} elements")
+            if panels:
+                found_panels.extend(panels)
         
-        # If no elements found with specific selectors, try a more generic approach
-        if not event_elements:
-            logger.info("No events found with specific selectors, trying generic approach")
-            
-            # Look for any div containing dates or event-like text
-            for div in soup.find_all('div'):
-                text = div.get_text().lower()
-                if (any(keyword in text for keyword in ['event', 'workshop', 'fair', 'session']) and 
-                    (re.search(r'\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b', text) or 
-                     re.search(r'\d{1,2}/\d{1,2}', text))):
-                    event_elements.append(div)
-            
-            logger.info(f"Found {len(event_elements)} events with generic approach")
+        # Remove duplicates (in case different selectors matched the same elements)
+        unique_panels = []
+        for panel in found_panels:
+            if panel not in unique_panels:
+                unique_panels.append(panel)
         
-        # Process found elements
-        for element in event_elements[:count]:
+        logger.info(f"Found {len(unique_panels)} unique event panels")
+        
+        # If no panels found with our selectors, try a more general approach
+        if not unique_panels:
+            logger.info("No event panels found with specific selectors, trying general approach")
+            
+            # Look for h3 elements with links - these are likely event titles
+            title_elements = soup.select('h3 a')
+            logger.info(f"Found {len(title_elements)} h3 elements with links")
+            
+            # For each title element, try to find the parent container
+            for title_element in title_elements[:count]:
+                parent = title_element
+                for _ in range(5):  # Go up to 5 levels up to find container
+                    parent = parent.parent
+                    if parent is None:
+                        break
+                    if parent.name == 'div':
+                        unique_panels.append(parent)
+                        break
+        
+        # Process the found panels to extract event details
+        for panel in unique_panels[:count]:
             try:
-                # Extract event details using various strategies
-                
-                # Strategy 1: Look for structured elements with specific classes
-                title = self._extract_text(element, ['h1', 'h2', 'h3', 'h4', '.event-title', '.title', 'a[href*="events"]', 'a strong', 'b', 'strong'])
-                date_text = self._extract_text(element, ['.date', '.event-date', 'time', '.datetime', 'span[class*="date"]'])
-                location = self._extract_text(element, ['.location', '.event-location', '.venue', 'span[class*="location"]'])
-                description = self._extract_text(element, ['p', '.description', '.details', 'div[class*="desc"]'])
-                
-                # Strategy 2: If specific elements not found, look at the full text
-                if not title or not date_text:
-                    full_text = element.get_text(strip=True)
-                    
-                    # If no title found, try to extract from full text
-                    if not title:
-                        # Look for patterns that might be event titles - usually capitalized text not preceded by a date
-                        title_match = re.search(r'([A-Z][a-zA-Z0-9\s:&\'-]+?)(?:\s*\(|\s*-|\s*\||\s*•|\s*on\s)', full_text)
-                        if title_match:
-                            title = title_match.group(1).strip()
-                        else:
-                            # Fall back to the first line of text
-                            lines = full_text.split('\n')
-                            if lines:
-                                title = lines[0].strip()
-                    
-                    # If no date found, try to extract from full text
-                    if not date_text:
-                        # Look for date patterns
-                        date_match = re.search(r'(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},?\s+\d{4}', full_text, re.IGNORECASE)
-                        if date_match:
-                            date_text = date_match.group(0)
-                        else:
-                            # Try numeric date format (MM/DD/YYYY)
-                            date_match = re.search(r'\d{1,2}/\d{1,2}/\d{2,4}', full_text)
-                            if date_match:
-                                date_text = date_match.group(0)
-                
-                # Clean and limit description length
-                if description:
-                    # Remove extra whitespace
-                    description = re.sub(r'\s+', ' ', description).strip()
-                    # Limit length
-                    description = description[:150] + "..." if len(description) > 150 else description
+                # First look for title as h3 > a
+                title_element = panel.select_one('h3 a')
+                if title_element:
+                    title = title_element.get_text(strip=True)
                 else:
-                    description = "No description available"
+                    # Try any h3
+                    title_element = panel.select_one('h3')
+                    if title_element:
+                        title = title_element.get_text(strip=True)
+                    else:
+                        # Try looking for any prominent text that might be a title
+                        for tag in panel.find_all(['strong', 'b', 'h4', 'h5', 'h6']):
+                            if tag.get_text(strip=True):
+                                title = tag.get_text(strip=True)
+                                break
+                        else:
+                            # If we still can't find a title, use the first text block
+                            texts = [t.strip() for t in panel.stripped_strings]
+                            title = texts[0] if texts else "Unnamed Event"
                 
-                # Extract and format date and time
-                date, time = self._extract_date_time(date_text, element.get_text())
+                logger.info(f"Found event title: {title}")
                 
-                # If we couldn't extract a title, skip this event
-                if not title:
-                    logger.warning("Skipping event with no title")
-                    continue
+                # Extract date/time information
+                date_text = ""
+                
+                # First try to find date by using the clock icon
+                clock_icon = panel.select_one('i.far.fa-clock, i[class*="clock"]')
+                if clock_icon:
+                    # Try to get text after the icon
+                    for sibling in clock_icon.next_siblings:
+                        if isinstance(sibling, str) and sibling.strip():
+                            date_text = sibling.strip()
+                            break
+                
+                # If no date from clock icon, try matching date patterns in the entire text
+                if not date_text:
+                    all_text = panel.get_text()
+                    # Try various date formats
+                    date_patterns = [
+                        # Thursday, April 3, 2025
+                        r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}',
+                        # April 3, 2025
+                        r'(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}',
+                        # 04/03/2025
+                        r'\d{1,2}/\d{1,2}/\d{4}',
+                        # Any time pattern like 10:00 AM
+                        r'\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)'
+                    ]
+                    
+                    for pattern in date_patterns:
+                        matches = re.findall(pattern, all_text)
+                        if matches:
+                            if isinstance(matches[0], tuple):
+                                # If regex captured groups, join them
+                                date_text = ' '.join(matches[0])
+                            else:
+                                date_text = matches[0]
+                            break
+                
+                logger.info(f"Found date text: {date_text}")
+                
+                # Extract location information
+                location = ""
+                
+                # Try to find location by using the map marker icon
+                location_icon = panel.select_one('i.fas.fa-map-marker-alt, i[class*="map-marker"]')
+                if location_icon:
+                    # Try to get text after the icon
+                    for sibling in location_icon.next_siblings:
+                        if isinstance(sibling, str) and sibling.strip():
+                            location = sibling.strip()
+                            break
+                
+                # If no location from marker icon, try looking for location patterns
+                if not location:
+                    all_text = panel.get_text()
+                    location_patterns = [
+                        r'at\s+([A-Za-z\s]+Building)',
+                        r'in\s+([A-Za-z\s]+Room)',
+                        r'Location:\s+([^\n]+)',
+                        r'Venue:\s+([^\n]+)'
+                    ]
+                    
+                    for pattern in location_patterns:
+                        match = re.search(pattern, all_text)
+                        if match:
+                            location = match.group(1).strip()
+                            break
+                
+                logger.info(f"Found location: {location}")
+                
+                # Extract a description (if available)
+                description = "See event details for more information."
+                desc_element = panel.select_one('p, div[class*="desc"], div[class*="content"]')
+                if desc_element and desc_element.get_text(strip=True):
+                    # Make sure we're not getting the title or date again
+                    desc_text = desc_element.get_text(strip=True)
+                    if desc_text != title and not re.search(r'\d{1,2}:\d{2}', desc_text):
+                        description = desc_text
+                        if len(description) > 150:
+                            description = description[:147] + "..."
+                
+                # Parse date and time
+                date, time = self._extract_date_time(date_text, panel.get_text())
                 
                 # Create event object
                 event = {
@@ -168,108 +276,104 @@ class NinerCareerEventsIntegration:
                 }
                 
                 events.append(event)
-                logger.info(f"Added event: {title}")
+                logger.info(f"Successfully added event: {title}")
             except Exception as e:
                 logger.error(f"Error parsing event: {str(e)}")
+                logger.error(traceback.format_exc())
                 continue
+        
+        logger.info(f"Finished parsing, found {len(events)} events")
+        
+        # If no events could be parsed, use placeholder data
+        if not events:
+            logger.warning("No events could be parsed, will use placeholder data")
+            return self._get_placeholder_data(count)
         
         return events
     
-    def _extract_text(self, element, selectors):
-        """Extract text from an element using multiple possible selectors"""
-        for selector in selectors:
-            try:
-                selected = element.select(selector)
-                if selected:
-                    return selected[0].get_text(strip=True)
-                
-                # Try direct find if select doesn't work
-                if '.' in selector:  # It's a class
-                    class_name = selector[1:]  # Remove the leading dot
-                    found = element.find(class_=class_name)
-                    if found:
-                        return found.get_text(strip=True)
-            except Exception:
-                pass
-        
-        return ""
-    
     def _extract_date_time(self, date_text, full_text):
         """Extract and format date and time from text"""
+        logger.info(f"Extracting date/time from: '{date_text}'")
+        
         # Default values
         date = "TBD" 
         time = "TBD"
         
-        # Try to extract date from date_text
-        if date_text:
-            # Try to find month/day/year pattern
-            date_match = re.search(r'(\d{1,2})/(\d{1,2})/(\d{2,4})', date_text)
-            if date_match:
-                month, day, year = date_match.groups()
-                if len(year) == 2:
-                    year = f"20{year}"  # Assume 20xx for 2-digit years
-                try:
-                    date_obj = datetime(int(year), int(month), int(day))
-                    date = date_obj.strftime("%B %d, %Y")
-                except ValueError:
-                    pass
-            
-            # Try to find month name pattern
-            if date == "TBD":
-                date_match = re.search(r'(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})', date_text, re.IGNORECASE)
-                if date_match:
-                    month, day, year = date_match.groups()
-                    date = f"{month} {day}, {year}"
+        # Try to extract date from date_text or full_text
+        text_to_check = date_text if date_text else full_text
         
-        # If date is still TBD, try with full text
-        if date == "TBD" and full_text:
-            # Try month/day/year pattern
-            date_match = re.search(r'(\d{1,2})/(\d{1,2})/(\d{2,4})', full_text)
-            if date_match:
-                month, day, year = date_match.groups()
-                if len(year) == 2:
-                    year = f"20{year}"
-                try:
-                    date_obj = datetime(int(year), int(month), int(day))
-                    date = date_obj.strftime("%B %d, %Y")
-                except ValueError:
-                    pass
+        # Try various date patterns
+        date_patterns = [
+            # Thursday, April 3, 2025
+            (r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(\d{4})',
+             lambda m: f"{m.group(2)} {m.group(3)}, {m.group(4)}"),
             
-            # Try month name pattern
-            if date == "TBD":
-                date_match = re.search(r'(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})', full_text, re.IGNORECASE)
-                if date_match:
-                    month, day, year = date_match.groups()
-                    date = f"{month} {day}, {year}"
+            # April 3, 2025
+            (r'(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(\d{4})',
+             lambda m: f"{m.group(1)} {m.group(2)}, {m.group(3)}"),
+            
+            # 04/03/2025
+            (r'(\d{1,2})/(\d{1,2})/(\d{4})',
+             lambda m: self._format_numeric_date(m.group(1), m.group(2), m.group(3)))
+        ]
+        
+        for pattern, formatter in date_patterns:
+            match = re.search(pattern, text_to_check)
+            if match:
+                date = formatter(match)
+                break
         
         # Try to extract time
-        time_match = re.search(r'(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*(?:-|to)\s*(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?', full_text)
-        if time_match:
-            start_time, start_ampm, end_time, end_ampm = time_match.groups()
+        time_patterns = [
+            # 10:00 AM - 2:00 PM
+            (r'(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*(?:-|to)\s*(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?',
+             lambda m: self._format_time_range(m.group(1), m.group(2), m.group(3), m.group(4))),
             
-            # Handle missing AM/PM
-            if start_ampm is None and end_ampm is not None:
-                start_ampm = end_ampm
-            elif end_ampm is None and start_ampm is not None:
-                end_ampm = start_ampm
+            # 10:00 AM
+            (r'(\d{1,2}:\d{2})\s*(AM|PM|am|pm)',
+             lambda m: f"{m.group(1)} {m.group(2).upper() if m.group(2) else ''}"),
             
-            if start_ampm:
-                start_ampm = start_ampm.upper()
-            if end_ampm:
-                end_ampm = end_ampm.upper()
-            
-            time = f"{start_time} {start_ampm or ''} - {end_time} {end_ampm or ''}".strip()
-        elif not time_match:
-            # Try other time formats (e.g., "5 PM - 8 PM")
-            time_match = re.search(r'(\d{1,2})\s*(AM|PM|am|pm)\s*(?:-|to)\s*(\d{1,2})\s*(AM|PM|am|pm)', full_text)
-            if time_match:
-                start_hour, start_ampm, end_hour, end_ampm = time_match.groups()
-                time = f"{start_hour} {start_ampm.upper()} - {end_hour} {end_ampm.upper()}"
+            # 10 AM - 2 PM
+            (r'(\d{1,2})\s*(AM|PM|am|pm)\s*(?:-|to)\s*(\d{1,2})\s*(AM|PM|am|pm)',
+             lambda m: f"{m.group(1)} {m.group(2).upper()} - {m.group(3)} {m.group(4).upper()}")
+        ]
         
+        for pattern, formatter in time_patterns:
+            match = re.search(pattern, text_to_check)
+            if match:
+                time = formatter(match)
+                break
+        
+        logger.info(f"Extracted date: '{date}', time: '{time}'")
         return date, time
+    
+    def _format_numeric_date(self, month, day, year):
+        """Format numeric date (MM/DD/YYYY) as Month DD, YYYY"""
+        try:
+            date_obj = datetime(int(year), int(month), int(day))
+            return date_obj.strftime("%B %d, %Y")
+        except ValueError:
+            return f"{month}/{day}/{year}"
+    
+    def _format_time_range(self, start_time, start_ampm, end_time, end_ampm):
+        """Format time range in a consistent way"""
+        # Handle missing AM/PM indicators
+        if start_ampm is None and end_ampm is not None:
+            start_ampm = end_ampm
+        elif end_ampm is None and start_ampm is not None:
+            end_ampm = start_ampm
+        
+        # Ensure AM/PM is uppercase
+        if start_ampm:
+            start_ampm = start_ampm.upper()
+        if end_ampm:
+            end_ampm = end_ampm.upper()
+        
+        return f"{start_time} {start_ampm or ''} - {end_time} {end_ampm or ''}".strip()
     
     def _get_placeholder_data(self, count):
         """Generate placeholder event data when all else fails"""
+        logger.info("Generating placeholder event data")
         events = [
             {
                 "title": "Spring Career Fair 2025",

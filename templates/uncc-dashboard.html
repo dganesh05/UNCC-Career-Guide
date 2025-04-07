@@ -464,42 +464,6 @@
         >
           <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
         </li>
-        <li class="active">Dashboard</li>
-        <li>
-          <a
-            href="{% url 'job-board' %}"
-            style="text-decoration: none; color: inherit"
-            >Job Board</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'networking-hub' %}"
-            style="text-decoration: none; color: inherit"
-            >Networking Hub</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'career-events' %}"
-            style="text-decoration: none; color: inherit"
-            >Career Events</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'resources' %}"
-            style="text-decoration: none; color: inherit"
-            >Resources</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'mentorship-hub' %}"
-            style="text-decoration: none; color: inherit"
-            >Mentorship Hub</a
-          >
-        </li>
       </ul>
     </nav>
 
@@ -657,10 +621,11 @@
         </div>
       </section>
 
+      <!-- Events Section for uncc-dashboard.html -->
       <section class="featured-section">
         <div class="section-title">
           <h3>Upcoming Career Events</h3>
-          <a href="{% url 'career-events' %}" class="view-all"
+          <a href="{% url 'career_events' %}" class="view-all"
             >View Calendar →</a
           >
         </div>
@@ -670,11 +635,15 @@
             <div class="job-details">
               <h4>{{ event.title }}</h4>
               <p>{{ event.description }}</p>
-              <p><strong>{{ event.date }}</strong> • {{ event.time }}</p>
+              <p>
+                <strong>{{ event.date }}</strong>{% if event.time and event.time
+                != "TBD" %} • {{ event.time }} {% endif %}
+              </p>
               <p>{{ event.location }}</p>
             </div>
           </div>
           {% empty %}
+          <!-- This should only display if there are no events at all -->
           <div class="job-card">
             <div class="job-details">
               <h4>Spring Career Fair 2025</h4>
@@ -686,7 +655,6 @@
               <p>Student Union, Multipurpose Room</p>
             </div>
           </div>
-
           <div class="job-card">
             <div class="job-details">
               <h4>Resume Workshop</h4>
