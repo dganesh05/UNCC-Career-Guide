@@ -1,5 +1,5 @@
 .env
-# Python bytecode files
-__pycache__/
-*.py[cod]
-*$py.class
+__pycache__
+base/resume_generator/__pycache__/
+base/migrations/__pycache__/
+base/__pycache__/
