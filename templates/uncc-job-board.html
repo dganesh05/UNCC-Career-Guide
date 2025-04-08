@@ -1,3 +1,7 @@
+{% comment %}
+Modified version of templates/uncc-job-board.html to display dynamically fetched jobs
+{% endcomment %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNCC Career Guide - Job Board</title>
     <style>
+        /* Original CSS styles preserved from uncc-job-board.html */
         :root {
             --uncc-green: #005035;
             --uncc-gold: #b3a369;
@@ -459,93 +464,88 @@
     
     <nav>
         <ul class="nav-tabs">
-            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-                <a href="{% url 'home' %}">Dashboard</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}">
-                <a href="{% url 'job-board' %}">Job Board</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}">
-                <a href="{% url 'networking-hub' %}">Networking Hub</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}">
-                <a href="{% url 'career-events' %}">Career Events</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}">
-                <a href="{% url 'resources' %}">Resources</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}">
-                <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
-            </li>
+            <li><a href="{% url 'dashboard' %}" style="text-decoration: none; color: inherit;">Dashboard</a></li>
+            <li class="active">Job Board</li>
+            <li><a href="{% url 'networking_hub' %}" style="text-decoration: none; color: inherit;">Networking Hub</a></li>
+            <li><a href="{% url 'career_events' %}" style="text-decoration: none; color: inherit;">Career Events</a></li>
+            <li><a href="{% url 'resources' %}" style="text-decoration: none; color: inherit;">Resources</a></li>
+            <li><a href="{% url 'mentorship_hub' %}" style="text-decoration: none; color: inherit;">Mentorship Hub</a></li>
         </ul>
     </nav>
     
     <main>
         <h1 class="page-title">Job Board</h1>
         
-        <div class="job-filters">
-            <div class="filter-group">
-                <label for="job-type">Job Type</label>
-                <select id="job-type">
-                    <option value="">All Types</option>
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                    <option value="internship">Internship</option>
-                    <option value="co-op">Co-op</option>
-                    <option value="contract">Contract</option>
-                </select>
+        <form action="{% url 'job_board' %}" method="GET" id="job-filter-form">
+            <div class="job-filters">
+                <div class="filter-group">
+                    <label for="job-type">Job Type</label>
+                    <select id="job-type" name="job_type">
+                        <option value="">All Types</option>
+                        <option value="full-time" {% if job_type == 'full-time' %}selected{% endif %}>Full-time</option>
+                        <option value="part-time" {% if job_type == 'part-time' %}selected{% endif %}>Part-time</option>
+                        <option value="internship" {% if job_type == 'internship' %}selected{% endif %}>Internship</option>
+                        <option value="co-op" {% if job_type == 'co-op' %}selected{% endif %}>Co-op</option>
+                        <option value="contract" {% if job_type == 'contract' %}selected{% endif %}>Contract</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="job-location">Location</label>
+                    <select id="job-location" name="location">
+                        <option value="">All Locations</option>
+                        <option value="charlotte" {% if location == 'charlotte' %}selected{% endif %}>Charlotte, NC</option>
+                        <option value="remote" {% if location == 'remote' %}selected{% endif %}>Remote</option>
+                        <option value="hybrid" {% if location == 'hybrid' %}selected{% endif %}>Hybrid</option>
+                        <option value="north-carolina" {% if location == 'north-carolina' %}selected{% endif %}>North Carolina</option>
+                        <option value="southeast" {% if location == 'southeast' %}selected{% endif %}>Southeast US</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="job-industry">Industry</label>
+                    <select id="job-industry" name="industry">
+                        <option value="">All Industries</option>
+                        <option value="technology" {% if industry == 'technology' %}selected{% endif %}>Technology</option>
+                        <option value="finance" {% if industry == 'finance' %}selected{% endif %}>Finance & Banking</option>
+                        <option value="healthcare" {% if industry == 'healthcare' %}selected{% endif %}>Healthcare</option>
+                        <option value="education" {% if industry == 'education' %}selected{% endif %}>Education</option>
+                        <option value="engineering" {% if industry == 'engineering' %}selected{% endif %}>Engineering</option>
+                        <option value="retail" {% if industry == 'retail' %}selected{% endif %}>Retail & Consumer Goods</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="experience-level">Experience Level</label>
+                    <select id="experience-level" name="experience">
+                        <option value="">All Levels</option>
+                        <option value="entry" {% if experience == 'entry' %}selected{% endif %}>Entry Level</option>
+                        <option value="mid" {% if experience == 'mid' %}selected{% endif %}>Mid Level</option>
+                        <option value="senior" {% if experience == 'senior' %}selected{% endif %}>Senior Level</option>
+                        <option value="executive" {% if experience == 'executive' %}selected{% endif %}>Executive</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="filter-group">
-                <label for="job-location">Location</label>
-                <select id="job-location">
-                    <option value="">All Locations</option>
-                    <option value="charlotte">Charlotte, NC</option>
-                    <option value="remote">Remote</option>
-                    <option value="hybrid">Hybrid</option>
-                    <option value="north-carolina">North Carolina</option>
-                    <option value="southeast">Southeast US</option>
-                </select>
+            <div class="search-bar">
+                <input type="text" name="search" placeholder="Search job titles, skills, companies..." value="{{ search_query }}">
+                <button type="submit">Search</button>
             </div>
-            
-            <div class="filter-group">
-                <label for="job-industry">Industry</label>
-                <select id="job-industry">
-                    <option value="">All Industries</option>
-                    <option value="technology">Technology</option>
-                    <option value="finance">Finance & Banking</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="education">Education</option>
-                    <option value="engineering">Engineering</option>
-                    <option value="retail">Retail & Consumer Goods</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="experience-level">Experience Level</label>
-                <select id="experience-level">
-                    <option value="">All Levels</option>
-                    <option value="entry">Entry Level</option>
-                    <option value="mid">Mid Level</option>
-                    <option value="senior">Senior Level</option>
-                    <option value="executive">Executive</option>
-                </select>
-            </div>
-        </div>
+        </form>
         
-        <div class="search-bar">
-            <input type="text" placeholder="Search job titles, skills, companies...">
-            <button>Search</button>
-        </div>
+        {% comment %}
+        This is the section of uncc-job-board.html that displays job listings.
+        Replace the job list section in your existing template with this code.
+        {% endcomment %}
         
         <div class="job-list-header">
             <div class="job-count">
-                <strong>245 jobs</strong> matching your criteria
+                <strong>{{ job_count }} jobs</strong> matching your criteria
             </div>
             
             <div class="sort-options">
                 <label for="sort-by">Sort by:</label>
-                <select id="sort-by">
+                <select id="sort-by" name="sort">
                     <option value="relevance">Relevance</option>
                     <option value="date">Date Posted</option>
                     <option value="salary">Salary</option>
@@ -559,203 +559,52 @@
             </div>
         </div>
         
+        {% if jobs %}
         <div class="job-list">
-            <!-- Job 1 -->
+            {% for job in jobs %}
             <div class="job-card">
+                {% if job.posted_days_ago == '0' %}
                 <div class="job-status new">NEW • Posted Today</div>
-                <div class="job-card-content">
-                    <div class="company-logo">FS</div>
-                    
-                    <div class="job-info">
-                        <h3>Software Engineer</h3>
-                        <div class="company-name">FinTech Solutions</div>
-                        
-                        <div class="job-meta">
-                            <span>Charlotte, NC (Hybrid)</span>
-                            <span>Full-time</span>
-                            <span>$80,000 - $100,000/year</span>
-                        </div>
-                        
-                        <div class="job-description">
-                            Join our innovative team to develop cutting-edge financial technology solutions. You'll work on our core banking platform using React, Node.js, and AWS cloud services.
-                        </div>
-                        
-                        <div class="job-tags">
-                            <span class="job-tag">React</span>
-                            <span class="job-tag">Node.js</span>
-                            <span class="job-tag">AWS</span>
-                            <span class="job-tag">Financial Technology</span>
-                        </div>
-                    </div>
-                    
-                    <div class="job-actions">
-                        <button class="apply-btn">Apply Now</button>
-                        <button class="save-btn">Save Job</button>
-                        
-                        <div class="match-rate">
-                            <div class="match-label">Match</div>
-                            <div class="match-value">92%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Job 2 -->
-            <div class="job-card">
-                <div class="job-card-content">
-                    <div class="company-logo">HC</div>
-                    
-                    <div class="job-info">
-                        <h3>Registered Nurse - Emergency Department</h3>
-                        <div class="company-name">Healthcare Partners</div>
-                        
-                        <div class="job-meta">
-                            <span>Charlotte, NC</span>
-                            <span>Full-time</span>
-                            <span>$70,000 - $85,000/year</span>
-                        </div>
-                        
-                        <div class="job-description">
-                            We're seeking an experienced Registered Nurse to join our Emergency Department team. In this role, you'll provide critical care to patients in emergency situations.
-                        </div>
-                        
-                        <div class="job-tags">
-                            <span class="job-tag">Healthcare</span>
-                            <span class="job-tag">Nursing</span>
-                            <span class="job-tag">Emergency Care</span>
-                            <span class="job-tag">BSN Required</span>
-                        </div>
-                    </div>
-                    
-                    <div class="job-actions">
-                        <button class="apply-btn">Apply Now</button>
-                        <button class="save-btn">Save Job</button>
-                        
-                        <div class="match-rate">
-                            <div class="match-label">Match</div>
-                            <div class="match-value">85%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Job 3 -->
-            <div class="job-card">
+                {% elif job.posted_days_ago == '1' %}
+                <div class="job-status new">NEW • Posted Yesterday</div>
+                {% elif job.posted_days_ago == '2' or job.posted_days_ago == '3' %}
                 <div class="job-status">ACTIVELY HIRING</div>
+                {% endif %}
                 <div class="job-card-content">
-                    <div class="company-logo">TS</div>
+                    <div class="company-logo">{{ job.logo }}</div>
                     
                     <div class="job-info">
-                        <h3>Data Analyst Intern</h3>
-                        <div class="company-name">Tech Solutions Inc.</div>
+                        <h3>{{ job.title }}</h3>
+                        <div class="company-name">{{ job.company }}</div>
                         
                         <div class="job-meta">
-                            <span>Remote</span>
-                            <span>Internship</span>
-                            <span>$25 - $30/hr</span>
+                            <span>{{ job.location }}</span>
+                            <span>{{ job.job_type }}</span>
+                            <span>{{ job.salary }}</span>
                         </div>
                         
                         <div class="job-description">
-                            Looking for a talented Data Analyst Intern to help analyze customer data and provide insights for product improvements. This is an excellent opportunity for students pursuing degrees in Data Science or related fields.
+                            {{ job.description }}
                         </div>
                         
                         <div class="job-tags">
-                            <span class="job-tag">Data Analysis</span>
-                            <span class="job-tag">Python</span>
-                            <span class="job-tag">SQL</span>
-                            <span class="job-tag">Visualization</span>
+                            <span class="job-tag">{{ job.job_type }}</span>
+                            <span class="job-tag">{{ job.field }}</span>
                         </div>
                     </div>
                     
                     <div class="job-actions">
-                        <button class="apply-btn">Apply Now</button>
+                        <a href="{{ job.link }}" target="_blank" class="apply-btn">Apply Now</a>
                         <button class="save-btn">Save Job</button>
                         
                         <div class="match-rate">
                             <div class="match-label">Match</div>
-                            <div class="match-value">78%</div>
+                            <div class="match-value">{{ forloop.counter0|add:65 }}%</div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Job 4 -->
-            <div class="job-card">
-                <div class="job-card-content">
-                    <div class="company-logo">ME</div>
-                    
-                    <div class="job-info">
-                        <h3>Marketing Coordinator</h3>
-                        <div class="company-name">Market Enterprises</div>
-                        
-                        <div class="job-meta">
-                            <span>Charlotte, NC</span>
-                            <span>Full-time</span>
-                            <span>$50,000 - $65,000/year</span>
-                        </div>
-                        
-                        <div class="job-description">
-                            Join our marketing team to help coordinate campaigns, manage social media presence, and analyze marketing metrics. The ideal candidate has excellent communication skills and is familiar with digital marketing tools.
-                        </div>
-                        
-                        <div class="job-tags">
-                            <span class="job-tag">Marketing</span>
-                            <span class="job-tag">Social Media</span>
-                            <span class="job-tag">Analytics</span>
-                            <span class="job-tag">Communication</span>
-                        </div>
-                    </div>
-                    
-                    <div class="job-actions">
-                        <button class="apply-btn">Apply Now</button>
-                        <button class="save-btn">Save Job</button>
-                        
-                        <div class="match-rate">
-                            <div class="match-label">Match</div>
-                            <div class="match-value">76%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Job 5 -->
-            <div class="job-card">
-                <div class="job-card-content">
-                    <div class="company-logo">EF</div>
-                    
-                    <div class="job-info">
-                        <h3>Mechanical Engineer</h3>
-                        <div class="company-name">Engineering Futures</div>
-                        
-                        <div class="job-meta">
-                            <span>Charlotte, NC</span>
-                            <span>Full-time</span>
-                            <span>$75,000 - $90,000/year</span>
-                        </div>
-                        
-                        <div class="job-description">
-                            We're looking for a Mechanical Engineer to join our product development team. You'll be responsible for designing, developing, and testing mechanical components and systems for our clients in the automotive industry.
-                        </div>
-                        
-                        <div class="job-tags">
-                            <span class="job-tag">Mechanical Engineering</span>
-                            <span class="job-tag">CAD</span>
-                            <span class="job-tag">Product Design</span>
-                            <span class="job-tag">Automotive</span>
-                        </div>
-                    </div>
-                    
-                    <div class="job-actions">
-                        <button class="apply-btn">Apply Now</button>
-                        <button class="save-btn">Save Job</button>
-                        
-                        <div class="match-rate">
-                            <div class="match-label">Match</div>
-                            <div class="match-value">70%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
         
         <div class="pagination">
@@ -767,37 +616,32 @@
             <div class="pagination-item">5</div>
             <div class="pagination-item">»</div>
         </div>
+        {% else %}
+        <div class="no-results">
+            <h3>No jobs found matching your criteria</h3>
+            <p>Try adjusting your filters or search terms to see more job opportunities, or check back later for new listings.</p>
+            <a href="{% url 'job_board' %}" class="reset-btn">Reset Filters</a>
+        </div>
+        {% endif %}
         
         <section class="recommended-section">
             <h2 class="section-title">Recommended For You</h2>
             <div class="recommended-jobs">
+                {% for job in recommended_jobs %}
                 <div class="recommended-job-card">
-                    <h4>UX Designer</h4>
-                    <div class="recommended-company">Creative Solutions</div>
-                    <div class="recommended-location">Remote</div>
-                    <button class="apply-btn" style="width: 100%;">View Job</button>
+                    <h4>{{ job.title }}</h4>
+                    <div class="recommended-company">{{ job.company }}</div>
+                    <div class="recommended-location">{{ job.location }}</div>
+                    <a href="{{ job.link }}" target="_blank" class="apply-btn" style="width: 100%; display: block; text-align: center; text-decoration: none;">View Job</a>
                 </div>
-                
+                {% empty %}
                 <div class="recommended-job-card">
-                    <h4>Financial Analyst</h4>
-                    <div class="recommended-company">Bank of Charlotte</div>
-                    <div class="recommended-location">Charlotte, NC</div>
-                    <button class="apply-btn" style="width: 100%;">View Job</button>
+                    <h4>No recommended jobs available</h4>
+                    <div class="recommended-company">Complete your profile to get personalized recommendations</div>
+                    <div class="recommended-location">-</div>
+                    <a href="/profile" class="apply-btn" style="width: 100%; display: block; text-align: center; text-decoration: none;">Update Profile</a>
                 </div>
-                
-                <div class="recommended-job-card">
-                    <h4>Project Manager</h4>
-                    <div class="recommended-company">Construction Experts</div>
-                    <div class="recommended-location">Charlotte, NC</div>
-                    <button class="apply-btn" style="width: 100%;">View Job</button>
-                </div>
-                
-                <div class="recommended-job-card">
-                    <h4>Research Assistant</h4>
-                    <div class="recommended-company">UNCC Research Department</div>
-                    <div class="recommended-location">On Campus</div>
-                    <button class="apply-btn" style="width: 100%;">View Job</button>
-                </div>
+                {% endfor %}
             </div>
         </section>
     </main>
@@ -808,9 +652,26 @@
                 <div class="logo-img">UNCC</div>
                 <h1>Career Guide</h1>
             </div>
-            <p>© 2025 University of North Carolina at Charlotte. All rights reserved.</p>
+            <p>© {{ current_year }} University of North Carolina at Charlotte. All rights reserved.</p>
             <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
         </div>
     </footer>
+
+    <script>
+        // Add event listeners for sorting and filters
+        document.getElementById('sort-by').addEventListener('change', function() {
+            document.getElementById('job-filter-form').submit();
+        });
+        
+        // View options toggle
+        const viewOptions = document.querySelectorAll('.view-option');
+        viewOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                viewOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                // You would add logic here to change the view
+            });
+        });
+    </script>
 </body>
 </html>

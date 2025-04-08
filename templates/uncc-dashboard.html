@@ -86,12 +86,6 @@
         /* Prevent tab text wrapping */
       }
 
-      .nav-tabs li a {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-      }
-
       .nav-tabs li.active {
         border-bottom: 3px solid var(--uncc-gold);
         color: var(--uncc-green);
@@ -434,35 +428,41 @@
 
     <nav>
       <ul class="nav-tabs">
-        <li
-          class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-        >
-          <a href="{% url 'home' %}">Dashboard</a>
+        <li class="active">Dashboard</li>
+        <li>
+          <a
+            href="{% url 'job_board' %}"
+            style="text-decoration: none; color: inherit"
+            >Job Board</a
+          >
         </li>
-        <li
-          class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}"
-        >
-          <a href="{% url 'job-board' %}">Job Board</a>
+        <li>
+          <a
+            href="{% url 'networking_hub' %}"
+            style="text-decoration: none; color: inherit"
+            >Networking Hub</a
+          >
         </li>
-        <li
-          class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}"
-        >
-          <a href="{% url 'networking-hub' %}">Networking Hub</a>
+        <li>
+          <a
+            href="{% url 'career_events' %}"
+            style="text-decoration: none; color: inherit"
+            >Career Events</a
+          >
         </li>
-        <li
-          class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}"
-        >
-          <a href="{% url 'career-events' %}">Career Events</a>
+        <li>
+          <a
+            href="{% url 'resources' %}"
+            style="text-decoration: none; color: inherit"
+            >Resources</a
+          >
         </li>
-        <li
-          class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"
-        >
-          <a href="{% url 'resources' %}">Resources</a>
-        </li>
-        <li
-          class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}"
-        >
-          <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
+        <li>
+          <a
+            href="{% url 'mentorship_hub' %}"
+            style="text-decoration: none; color: inherit"
+            >Mentorship Hub</a
+          >
         </li>
       </ul>
     </nav>
@@ -518,36 +518,40 @@
         </div>
         {% endif %}
       </section>
-      {% endif %}
+      {% endif %} {% comment %} This template displays the featured
+      opportunities on the dashboard. Include this where you want to show the
+      job cards in your dashboard template. {% endcomment %}
 
       <section>
-        <div class="section-title">
-          <h3>Featured Opportunities</h3>
-          <a href="{% url 'job-board' %}" class="view-all">View All →</a>
+        <div class="section-header">
+          <h2 class="section-title">Featured Opportunities</h2>
+          <a href="{% url 'job_board' %}" class="view-all">View All →</a>
         </div>
+
         <div class="job-cards">
-          {% for opportunity in featured_opportunities %}
+          {% for job in featured_opportunities %}
           <div class="job-card">
             <div class="job-company">
-              <div class="company-logo">{{ opportunity.logo }}</div>
+              <div class="company-logo">{{ job.logo }}</div>
               <div>
-                <strong>{{ opportunity.company }}</strong>
+                <strong>{{ job.company }}</strong>
                 <div style="font-size: 0.8rem; color: #666">
-                  {{ opportunity.location }}
+                  {{ job.location }}
                 </div>
               </div>
             </div>
             <div class="job-details">
-              <h4>{{ opportunity.title }}</h4>
-              <p>{{ opportunity.description }}</p>
+              <h4>{{ job.title }}</h4>
+              <p>{{ job.description }}</p>
               <p>
-                <strong>{{ opportunity.salary }}</strong> • Posted {{
-                opportunity.posted_days_ago }} day{{
-                opportunity.posted_days_ago|pluralize }} ago
+                <strong>{{ job.salary }}</strong> • {% comment %} {% if
+                job.posted_days_ago == '0' %} Posted today {% elif
+                job.posted_days_ago == '1' %} Posted 1 day ago {% else %} Posted
+                {{ job.posted_days_ago }} days ago {% endif %} {% endcomment %}
               </p>
               <div class="job-tags">
-                <span class="job-tag">{{ opportunity.job_type }}</span>
-                <span class="job-tag">{{ opportunity.field }}</span>
+                <span class="job-tag">{{ job.job_type }}</span>
+                <span class="job-tag">{{ job.field }}</span>
               </div>
             </div>
           </div>
@@ -568,8 +572,8 @@
               </p>
               <p><strong>$25-30/hr</strong> • Posted 2 days ago</p>
               <div class="job-tags">
-                <span class="job-tag">Full-time</span>
-                <span class="job-tag">Computer Science</span>
+                <span class="job-tag">Internship</span>
+                <span class="job-tag">Technology</span>
               </div>
             </div>
           </div>
@@ -591,7 +595,7 @@
               <p><strong>$65,000-75,000/year</strong> • Posted 7 days ago</p>
               <div class="job-tags">
                 <span class="job-tag">Full-time</span>
-                <span class="job-tag">Data Science</span>
+                <span class="job-tag">Technology</span>
               </div>
             </div>
           </div>
@@ -613,7 +617,7 @@
               <p><strong>$22-24/hr</strong> • Posted 3 days ago</p>
               <div class="job-tags">
                 <span class="job-tag">Part-time</span>
-                <span class="job-tag">Nursing</span>
+                <span class="job-tag">Healthcare</span>
               </div>
             </div>
           </div>
@@ -624,7 +628,7 @@
       <section class="featured-section">
         <div class="section-title">
           <h3>Upcoming Career Events</h3>
-          <a href="{% url 'career-events' %}" class="view-all"
+          <a href="{% url 'career_events' %}" class="view-all"
             >View Calendar →</a
           >
         </div>
