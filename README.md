@@ -27,6 +27,8 @@ venv\Scripts\activate
 python3 -m venv venv
 source venv/bin/activate
 
+# Windows
+
 Install dependencies
 
 pip install -r requirements.txt
