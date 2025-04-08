@@ -707,24 +707,12 @@
     
     <nav>
         <ul class="nav-tabs">
-            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-                <a href="{% url 'home' %}">Dashboard</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'job-board' %}active{% endif %}">
-                <a href="{% url 'job-board' %}">Job Board</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'networking-hub' %}active{% endif %}">
-                <a href="{% url 'networking-hub' %}">Networking Hub</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'career-events' %}active{% endif %}">
-                <a href="{% url 'career-events' %}">Career Events</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}">
-                <a href="{% url 'resources' %}">Resources</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'mentorship-hub' %}active{% endif %}">
-                <a href="{% url 'mentorship-hub' %}">Mentorship Hub</a>
-            </li>
+            <li>Dashboard</li>
+            <li>Job Board</li>
+            <li>Networking Hub</li>
+            <li class="active">Career Events</li>
+            <li>Resources</li>
+            <li>Mentorship Hub</li>
         </ul>
     </nav>
     
