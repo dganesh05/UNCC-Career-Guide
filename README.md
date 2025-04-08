@@ -1,4 +1,4 @@
-# UNCC Career Guide
+# UNCC Career Guide (protoype)
 
 A comprehensive career guidance and resources platform for UNC Charlotte students and alumni.
 
