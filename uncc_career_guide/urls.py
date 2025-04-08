@@ -46,7 +46,7 @@ urlpatterns = [
     path('career-events/', career_events, name='career_events'),
     path('resources/', resources, name='resources'),
     path('mentorship-hub/', mentorship_hub, name='mentorship_hub'),
-    path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding-quiz'),
+    path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding_quiz'),
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
     path('login/', login, name='login'),
 ]
