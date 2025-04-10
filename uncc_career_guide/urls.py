@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from base import views
 from base.views import (
     dashboard, 
     job_board, 
@@ -12,6 +13,7 @@ from base.views import (
 )
 from django.shortcuts import render
 from resume_generator import views as resume_views
+from base.views import mentor_list
 
 def uncc_dashboard(request):
     return render(request, 'uncc-dashboard.html')
@@ -49,4 +51,5 @@ urlpatterns = [
     path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding_quiz'),
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
     path('login/', login, name='login'),
+    path('mentors/', views.mentor_list, name='mentors'),
 ]
