@@ -530,31 +530,28 @@
 
         <div class="job-cards">
           {% for job in featured_opportunities %}
-          <div class="job-card">
-            <div class="job-company">
-              <div class="company-logo">{{ job.logo }}</div>
-              <div>
-                <strong>{{ job.company }}</strong>
-                <div style="font-size: 0.8rem; color: #666">
-                  {{ job.location }}
-                </div>
+          <a href="{{ job.link }}" target="_blank" style="display: block; text-decoration: none; color: inherit;">
+            <div class="job-card">
+              <!-- Company section -->
+              <div class="job-header">
+                <div class="company-logo">{{ job.logo }}</div>
+                <h3 class="company-name">{{ job.company }}</h3>
               </div>
-            </div>
-            <div class="job-details">
-              <h4>{{ job.title }}</h4>
-              <p>{{ job.description }}</p>
-              <p>
-                <strong>{{ job.salary }}</strong> • {% comment %} {% if
-                job.posted_days_ago == '0' %} Posted today {% elif
-                job.posted_days_ago == '1' %} Posted 1 day ago {% else %} Posted
-                {{ job.posted_days_ago }} days ago {% endif %} {% endcomment %}
-              </p>
+              
+              <!-- Job details on separate lines -->
+              <h4 class="job-title">{{ job.title }}</h4>
+              <p class="job-location">{{ job.location }}</p>
+              <p class="job-salary">{{ job.salary }}</p>
+              <p class="job-posted">Posted {{ job.posted_days_ago }} days ago</p>
+              
+              <!-- Tags in a row at bottom -->
               <div class="job-tags">
                 <span class="job-tag">{{ job.job_type }}</span>
                 <span class="job-tag">{{ job.field }}</span>
               </div>
             </div>
-          </div>
+          </a>
+          </a>
           {% empty %}
           <div class="job-card">
             <div class="job-company">
