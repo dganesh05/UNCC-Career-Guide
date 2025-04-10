@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UNCC Career Guide</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjI1IiByPSIyNSIgZmlsbD0iI2IzYTM2OSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMDA1MDM1IiBmb250LWZhbWlseT0iJ1NlZ29lIFVJJywgVGFob21hLCBHZW5ldmEsIFZlcmRhbmEsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjEwIj5VTkNDPC90ZXh0Pjwvc3ZnPg=="
+    />
     <style>
       :root {
         --uncc-green: #005035;
@@ -530,27 +534,32 @@
 
         <div class="job-cards">
           {% for job in featured_opportunities %}
-          <a href="{{ job.link }}" target="_blank" style="display: block; text-decoration: none; color: inherit;">
+          <a
+            href="{{ job.link }}"
+            target="_blank"
+            style="display: block; text-decoration: none; color: inherit"
+          >
             <div class="job-card">
               <!-- Company section -->
               <div class="job-header">
                 <div class="company-logo">{{ job.logo }}</div>
                 <h3 class="company-name">{{ job.company }}</h3>
               </div>
-              
+
               <!-- Job details on separate lines -->
               <h4 class="job-title">{{ job.title }}</h4>
               <p class="job-location">{{ job.location }}</p>
               <p class="job-salary">{{ job.salary }}</p>
-              <p class="job-posted">Posted {{ job.posted_days_ago }} days ago</p>
-              
+              <p class="job-posted">
+                Posted {{ job.posted_days_ago }} days ago
+              </p>
+
               <!-- Tags in a row at bottom -->
               <div class="job-tags">
                 <span class="job-tag">{{ job.job_type }}</span>
                 <span class="job-tag">{{ job.field }}</span>
               </div>
             </div>
-          </a>
           </a>
           {% empty %}
           <div class="job-card">
