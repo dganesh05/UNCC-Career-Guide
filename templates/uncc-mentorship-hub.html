@@ -842,12 +842,24 @@
 
     <nav>
       <ul class="nav-tabs">
-        <li>Dashboard</li>
-        <li>Job Board</li>
-        <li>Networking Hub</li>
-        <li>Career Events</li>
-        <li>Resources</li>
-        <li class="active">Mentorship Hub</li>
+        <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'job_board' %}active{% endif %}">
+          <a href="{% url 'job_board' %}">Job Board</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'networking_hub' %}active{% endif %}">
+          <a href="{% url 'networking_hub' %}">Networking Hub</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'career_events' %}active{% endif %}">
+          <a href="{% url 'career_events' %}">Career Events</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}">
+          <a href="{% url 'resources' %}">Resources</a>
+        </li>
+        <li class="{% if request.resolver_match.url_name == 'mentorship_hub' %}active{% endif %}">
+          <a href="{% url 'mentorship_hub' %}">Mentorship Hub</a>
+        </li>
       </ul>
     </nav>
 
