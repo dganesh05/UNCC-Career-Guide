@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from base import views
 from base.views import (
     dashboard, 
     job_board, 
@@ -49,5 +50,6 @@ urlpatterns = [
     path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding-quiz'),
     path('resources/', uncc_resources, name='resources'),
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
+    path('mentors/', views.mentor_list, name='mentor_list'),
 ]
 
