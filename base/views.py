@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from datetime import datetime
 import logging
+from .models import Mentor
 
 # Import our integration classes
 from .linkedin_integration import LinkedInJobsIntegration
@@ -198,3 +199,6 @@ def login(request):
 def home(request):
     """Home view, redirects to dashboard"""
     return dashboard(request)
+def mentor_list(request):
+    mentors = Mentor.objects.all()
+    return render(request, 'mentors/mentor_list.html', {'mentors': mentors})   
