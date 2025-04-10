@@ -140,6 +140,10 @@ def login(request):
 def home(request):
     """Home view, redirects to dashboard"""
     return dashboard(request)
+
+
+
+    
 def mentor_list(request):
     mentors = Mentor.objects.all()
     return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
