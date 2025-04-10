@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from base import views
 from base.views import (
-    dashboard, 
+    dashboard,  # Import the dashboard function directly 
     job_board, 
     networking_hub, 
     career_events, 
@@ -15,9 +15,11 @@ from django.shortcuts import render
 from resume_generator import views as resume_views
 from base.views import mentor_list
 
-def uncc_dashboard(request):
-    return render(request, 'uncc-dashboard.html')
+# Remove or comment out this function since we want to use the one from views.py
+# def uncc_dashboard(request):
+#     return render(request, 'uncc-dashboard.html')
 
+# Other view functions can remain if they're still needed
 def uncc_career_events(request):
     return render(request, 'uncc-career-events.html')
 
@@ -42,7 +44,8 @@ def uncc_resources(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('dashboard/', uncc_dashboard, name='dashboard'),
+    # Use the dashboard function from base/views.py instead of uncc_dashboard
+    path('dashboard/', dashboard, name='dashboard'),  # Changed from uncc_dashboard to dashboard
     path('job-board/', uncc_job_board, name='job_board'),
     path('networking-hub/', uncc_networking_hub, name='networking_hub'),
     path('career-events/', uncc_career_events, name='career_events'),
