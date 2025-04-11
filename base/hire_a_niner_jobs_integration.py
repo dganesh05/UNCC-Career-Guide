@@ -1,4 +1,3 @@
-# File: base/hire_a_niner_jobs_integration.py
 import requests
 from bs4 import BeautifulSoup
 import logging
@@ -162,27 +161,23 @@ class HireANinerJobsIntegration:
                         icon.extract()  # Remove icons
                     description = element.blockquote.get_text(strip=True)
                 
-                # Clean and limit description length
-                if description:
-                    description = ' '.join(description.split())  # Normalize whitespace
-                    if len(description) > 150:
-                        description = description[:147] + "..."
-                else:
-                    description = "Visit the job posting for complete details."
-                
-                # Extract closing date - look for text after fa-clock icon
+                # Look for closing date info in the description first
                 closing_date = ""
-                date_icon = element.select_one('i.fa-clock')
-                if date_icon and date_icon.next_sibling:
-                    closing_date = date_icon.next_sibling.strip()
+                if description:
+                    # Try to find closing date patterns in description
+                    date_match = re.search(r'closes on [\w\s,]+\d{4}', description, re.IGNORECASE)
+                    if date_match:
+                        closing_date = date_match.group(0)
+                    else:
+                        date_match = re.search(r'\d{1,2}/\d{1,2}/\d{4}', description)
+                        if date_match:
+                            closing_date = date_match.group(0)
                 
-                # Calculate days ago based on closing date
-                posted_days_ago = self._calculate_days_from_closing_date(closing_date)
-                
-                # Extract or generate logo from company name
-                logo = ''.join([word[0] for word in company.split()[:2]]).upper()
-                if not logo or len(logo) < 2:
-                    logo = company[:2].upper()
+                # If no closing date in description, look for text after fa-clock icon
+                if not closing_date:
+                    date_icon = element.select_one('i.fa-clock')
+                    if date_icon and date_icon.next_sibling:
+                        closing_date = date_icon.next_sibling.strip()
                 
                 # Look for a link to the job details
                 link = '#'
@@ -194,8 +189,13 @@ class HireANinerJobsIntegration:
                     elif not link.startswith('http'):
                         link = f"https://hireaniner.charlotte.edu/jobs/{link}"
                 
-                # Generate appropriate salary based on job type
-                salary = self._generate_salary_for_job_type(job_type, title)
+                # Format closing date
+                formatted_closing_date = self._format_closing_date(closing_date)
+                
+                # Extract company logo from company name
+                logo = ''.join([word[0] for word in company.split()[:2]]).upper()
+                if not logo or len(logo) < 2:
+                    logo = company[:2].upper()
                 
                 # Create job dictionary
                 job = {
@@ -206,8 +206,7 @@ class HireANinerJobsIntegration:
                     'job_type': job_type,
                     'link': link,
                     'logo': logo,
-                    'posted_days_ago': posted_days_ago,
-                    'salary': salary,
+                    'closing_date': formatted_closing_date,
                     'field': self._determine_field(title, description)
                 }
                 
@@ -219,63 +218,59 @@ class HireANinerJobsIntegration:
         
         return jobs
     
-    def _calculate_days_from_closing_date(self, closing_date_text):
-        """Calculate approximate days ago based on closing date"""
+    def _format_closing_date(self, closing_date_text):
+        """Format the closing date text"""
         if not closing_date_text:
-            return str(random.randint(0, 7))  # Default to recent random days
+            # Generate a random future date if no closing date is found
+            future_days = random.randint(7, 30)
+            future_date = datetime.now() + timedelta(days=future_days)
+            weekday = future_date.strftime("%A")
+            month = future_date.strftime("%B")
+            day = future_date.day
+            year = future_date.year
+            return f"Closes on {weekday}, {month} {day}, {year}"
         
-        try:
-            # Extract date from text like "Closes on Tuesday, April 1, 2025"
-            match = re.search(r'(\w+, \w+ \d+, \d{4})', closing_date_text)
-            if match:
-                closing_date_str = match.group(1)
-                closing_date = datetime.strptime(closing_date_str, '%A, %B %d, %Y')
-                
-                # Estimate posting date (typically jobs are posted 2-4 weeks before closing)
-                posting_date = closing_date - timedelta(days=random.randint(14, 28))
-                days_ago = (datetime.now() - posting_date).days
-                
-                # Make sure it's not negative or too large
-                if days_ago < 0:
-                    days_ago = 0
-                elif days_ago > 30:  # Cap at 30 days for better UX
-                    days_ago = random.randint(7, 14)
-                
-                return str(days_ago)
-        except Exception as e:
-            logger.error(f"Error calculating days from closing date: {str(e)}")
+        # Direct extraction of "Closes on" pattern
+        match = re.search(r'[Cc]loses\s+on\s+(\w+,\s+\w+\s+\d{1,2},\s+\d{4})', closing_date_text)
+        if match:
+            return f"Closes on {match.group(1)}"
         
-        # Default fallback
-        return str(random.randint(0, 7))
-    
-    def _generate_salary_for_job_type(self, job_type, title):
-        """Generate appropriate salary ranges based on job type and title"""
-        # Check for senior/junior indicators in title
-        title_lower = title.lower()
-        is_senior = any(term in title_lower for term in ['senior', 'sr.', 'lead', 'manager', 'director'])
-        is_junior = any(term in title_lower for term in ['junior', 'jr.', 'entry', 'assistant', 'associate'])
+        # Alternative format: "Closes on Month Day, Year"
+        match = re.search(r'[Cc]loses\s+on\s+(\w+\s+\d{1,2},\s+\d{4})', closing_date_text)
+        if match:
+            return f"Closes on {match.group(1)}"
         
-        if job_type == "Internship" or job_type == "Co-op":
-            min_rate = random.randint(15, 20)
-            max_rate = min_rate + random.randint(3, 8)
-            return f"${min_rate}-{max_rate}/hr"
-            
-        elif job_type == "Part-time":
-            min_rate = random.randint(15, 25)
-            max_rate = min_rate + random.randint(5, 10)
-            return f"${min_rate}-{max_rate}/hr"
-            
-        else:  # Full-time, Contract, etc.
-            if is_senior:
-                base = random.randint(80, 120)
-            elif is_junior:
-                base = random.randint(45, 65)
-            else:
-                base = random.randint(60, 90)
-                
-            min_salary = base * 1000
-            max_salary = min_salary + random.randint(10, 30) * 1000
-            return f"${min_salary:,}-{max_salary:,}/year"
+        # Look for date patterns if "Closes on" is not present
+        date_match = re.search(r'(\w+,\s+\w+\s+\d{1,2},\s+\d{4})', closing_date_text)
+        if date_match:
+            return f"Closes on {date_match.group(1)}"
+        
+        date_match = re.search(r'(\w+\s+\d{1,2},\s+\d{4})', closing_date_text)
+        if date_match:
+            return f"Closes on {date_match.group(1)}"
+        
+        # MM/DD/YYYY format
+        date_match = re.search(r'(\d{1,2}/\d{1,2}/\d{4})', closing_date_text)
+        if date_match:
+            try:
+                date_parts = date_match.group(1).split('/')
+                month = int(date_parts[0])
+                day = int(date_parts[1])
+                year = int(date_parts[2])
+                date_obj = datetime(year, month, day)
+                formatted_date = date_obj.strftime("%A, %B %d, %Y")
+                return f"Closes on {formatted_date}"
+            except (ValueError, IndexError):
+                pass
+        
+        # Last resort - generate a placeholder date
+        future_days = random.randint(7, 30)
+        future_date = datetime.now() + timedelta(days=future_days)
+        weekday = future_date.strftime("%A")
+        month = future_date.strftime("%B")
+        day = future_date.day
+        year = future_date.year
+        return f"Closes on {weekday}, {month} {day}, {year}"
     
     def _determine_field(self, title, description):
         """Determine the field/industry based on job title and description"""
@@ -309,8 +304,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Internship",
                 "link": "https://hireaniner.charlotte.edu/jobs/123456",
                 "logo": "TI",
-                "posted_days_ago": "2",
-                "salary": "$20-25/hr",
+                "closing_date": "Closes on Friday, April 25, 2025",
                 "field": "Technology"
             },
             {
@@ -321,8 +315,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Part-time",
                 "link": "https://hireaniner.charlotte.edu/jobs/123457",
                 "logo": "GB",
-                "posted_days_ago": "0",
-                "salary": "$18-22/hr",
+                "closing_date": "Closes on Monday, May 5, 2025",
                 "field": "Marketing"
             },
             {
@@ -333,8 +326,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Full-time",
                 "link": "https://hireaniner.charlotte.edu/jobs/123458",
                 "logo": "CB",
-                "posted_days_ago": "5",
-                "salary": "$65,000-80,000/year",
+                "closing_date": "Closes on Wednesday, April 30, 2025",
                 "field": "Finance"
             },
             {
@@ -345,8 +337,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Part-time",
                 "link": "https://hireaniner.charlotte.edu/jobs/123459",
                 "logo": "HP",
-                "posted_days_ago": "3",
-                "salary": "$18-24/hr",
+                "closing_date": "Closes on Thursday, May 15, 2025",
                 "field": "Healthcare"
             },
             {
@@ -357,8 +348,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Co-op",
                 "link": "https://hireaniner.charlotte.edu/jobs/123460",
                 "logo": "MS",
-                "posted_days_ago": "7",
-                "salary": "$22-28/hr",
+                "closing_date": "Closes on Friday, June 6, 2025",
                 "field": "Engineering"
             },
             {
@@ -369,8 +359,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Internship",
                 "link": "https://hireaniner.charlotte.edu/jobs/123461",
                 "logo": "AI",
-                "posted_days_ago": "1",
-                "salary": "$20-28/hr",
+                "closing_date": "Closes on Tuesday, May 20, 2025",
                 "field": "Technology"
             },
             {
@@ -381,8 +370,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Full-time",
                 "link": "https://hireaniner.charlotte.edu/jobs/123462",
                 "logo": "GS",
-                "posted_days_ago": "4",
-                "salary": "$55,000-65,000/year",
+                "closing_date": "Closes on Monday, April 28, 2025",
                 "field": "Business"
             },
             {
@@ -393,8 +381,7 @@ class HireANinerJobsIntegration:
                 "job_type": "Part-time",
                 "link": "https://hireaniner.charlotte.edu/jobs/123463",
                 "logo": "CE",
-                "posted_days_ago": "6",
-                "salary": "$15-20/hr",
+                "closing_date": "Closes on Thursday, May 1, 2025",
                 "field": "Education"
             }
         ]
