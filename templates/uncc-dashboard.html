@@ -220,6 +220,14 @@
         font-size: 0.9rem;
       }
 
+      .job-closing-date {
+        color: #666;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
       .job-tags {
         display: flex;
         flex-wrap: wrap;
@@ -541,23 +549,23 @@
           >
             <div class="job-card">
               <!-- Company section -->
-              <div class="job-header">
+              <div class="job-company">
                 <div class="company-logo">{{ job.logo }}</div>
-                <h3 class="company-name">{{ job.company }}</h3>
+                <div>
+                  <strong>{{ job.company }}</strong>
+                  <div style="font-size: 0.8rem; color: #666">
+                    {{ job.location }}
+                  </div>
+                </div>
               </div>
 
-              <!-- Job details on separate lines -->
-              <h4 class="job-title">{{ job.title }}</h4>
-              <p class="job-location">{{ job.location }}</p>
-              <p class="job-salary">{{ job.salary }}</p>
-              <p class="job-posted">
-                Posted {{ job.posted_days_ago }} days ago
-              </p>
-
-              <!-- Tags in a row at bottom -->
-              <div class="job-tags">
-                <span class="job-tag">{{ job.job_type }}</span>
-                <span class="job-tag">{{ job.field }}</span>
+              <div class="job-details">
+                <h4>{{ job.title }}</h4>
+                <p class="job-closing-date">{{ job.closing_date }}</p>
+                <div class="job-tags">
+                  <span class="job-tag">{{ job.job_type }}</span>
+                  <span class="job-tag">{{ job.field }}</span>
+                </div>
               </div>
             </div>
           </a>
@@ -576,7 +584,7 @@
                 Develop and implement new features for Digital Bank's mobile
                 banking platform.
               </p>
-              <p><strong>$25-30/hr</strong> • Posted 2 days ago</p>
+              <p class="job-closing-date">Closes on Friday, April 25, 2025</p>
               <div class="job-tags">
                 <span class="job-tag">Internship</span>
                 <span class="job-tag">Technology</span>
@@ -598,7 +606,7 @@
                 Analyze customer data to provide insights and recommendations
                 for product improvement.
               </p>
-              <p><strong>$65,000-75,000/year</strong> • Posted 7 days ago</p>
+              <p class="job-closing-date">Closes on Friday, May 2, 2025</p>
               <div class="job-tags">
                 <span class="job-tag">Full-time</span>
                 <span class="job-tag">Technology</span>
@@ -620,7 +628,7 @@
                 Provide patient care and support to the nursing team in a
                 fast-paced hospital environment.
               </p>
-              <p><strong>$22-24/hr</strong> • Posted 3 days ago</p>
+              <p class="job-closing-date">Closes on Monday, April 28, 2025</p>
               <div class="job-tags">
                 <span class="job-tag">Part-time</span>
                 <span class="job-tag">Healthcare</span>
