@@ -15,13 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.http import HttpResponse
-
-def home(request):
-    return HttpResponse("Hello! Make sure to link your final Home Page here :)")
+from django.urls import path, include
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path ('', home)
+    path('chat/', include('career_chatbot.urls')),
+    path('events/', TemplateView.as_view(template_name='uncc-career-events.html'), name='events'),
+    path('jobs/', TemplateView.as_view(template_name='uncc-job-board.html'), name='jobs'),
+    path('networking/', TemplateView.as_view(template_name='uncc-networking-hub.html'), name='networking'),
+    path('resources/', TemplateView.as_view(template_name='uncc-resources.html'), name='resources'),
+    path('mentorship/', TemplateView.as_view(template_name='uncc-mentorship-hub.html'), name='mentorship'),
+    path('', TemplateView.as_view(template_name='uncc-dashboard.html'), name='home'),
 ]
