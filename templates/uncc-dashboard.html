@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,273 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNCC Career Guide</title>
-    <style>
-        :root {
-            --uncc-green: #005035;
-            --uncc-gold: #b3a369;
-            --light-gray: #f5f5f5;
-            --med-gray: #e0e0e0;
-            --dark-gray: #333;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #fff;
-            color: #333;
-        }
-
-        header {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
-        }
-
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            background-color: var(--uncc-gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--uncc-green);
-        }
-
-        nav {
-            background-color: white;
-            border-bottom: 1px solid var(--med-gray);
-        }
-
-        .nav-tabs {
-            display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
-            list-style: none;
-        }
-
-        .nav-tabs li {
-            padding: 1rem 1.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tabs li.active {
-            border-bottom: 3px solid var(--uncc-gold);
-            color: var(--uncc-green);
-        }
-
-        .nav-tabs li:hover {
-            background-color: var(--light-gray);
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        .hero {
-            background-color: var(--light-gray);
-            padding: 3rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .hero h2 {
-            color: var(--uncc-green);
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
-        }
-
-        .hero p {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .search-bar {
-            display: flex;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 2px solid var(--med-gray);
-            border-radius: 4px 0 0 4px;
-            font-size: 1rem;
-        }
-
-        .search-bar button {
-            background-color: var(--uncc-green);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title h3 {
-            color: var(--uncc-green);
-            font-size: 1.5rem;
-        }
-
-        .view-all {
-            color: var(--uncc-green);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .job-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .job-card {
-            border: 1px solid var(--med-gray);
-            border-radius: 8px;
-            padding: 1.5rem;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .job-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .job-company {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .company-logo {
-            width: 50px;
-            height: 50px;
-            background-color: var(--light-gray);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark-gray);
-        }
-
-        .job-details h4 {
-            color: var(--dark-gray);
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .job-details p {
-            color: #666;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .job-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .job-tag {
-            background-color: var(--light-gray);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .featured-section {
-            background-color: #f9f7e8;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .widgets {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .widget {
-            background-color: var(--light-gray);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .widget h4 {
-            color: var(--uncc-green);
-            margin-bottom: 1rem;
-        }
-
-        footer {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-content p {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-    </style>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -291,31 +26,30 @@
 
     <nav>
         <ul class="nav-tabs">
-            <li class="active">Dashboard</li>
-            <li>Job Board</li>
-            <li>Networking Hub</li>
-            <li>Career Events</li>
-            <li>Resources</li>
-            <li>Mentorship Hub</li>
+            <li class="active"><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'jobs' %}">Job Board</a></li>
+            <li><a href="{% url 'networking' %}">Networking Hub</a></li>
+            <li><a href="{% url 'events' %}">Career Events</a></li>
+            <li><a href="{% url 'resources' %}">Resources</a></li>
+            <li><a href="{% url 'mentorship' %}">Mentorship Hub</a></li>
+            <li><a href="{% url 'chat' %}">Career Assistant</a></li>
         </ul>
     </nav>
 
     <main>
         <section class="hero">
-            <h2>Your Personalized Career Dashboard</h2>
-            <p>Access job opportunities, skill development tools, mentorship connections, and resources to jumpstart
-                your career journey at UNC Charlotte. This all-in-one platform helps you plan, track, and achieve your
-                career goals.</p>
+            <h2>Welcome to Your Career Journey</h2>
+            <p>Discover opportunities, connect with professionals, and take the next step in your career.</p>
             <div class="search-bar">
-                <input type="text" placeholder="Search jobs, companies, or keywords...">
+                <input type="text" placeholder="Search for jobs, events, or resources...">
                 <button>Search</button>
             </div>
         </section>
 
-        <section>
+        <section class="featured-section">
             <div class="section-title">
                 <h3>Featured Opportunities</h3>
-                <a href="#" class="view-all">View All →</a>
+                <a href="#" class="view-all">View All</a>
             </div>
             <div class="job-cards">
                 <div class="job-card">
@@ -378,30 +112,13 @@
             </div>
         </section>
 
-        <section class="featured-section">
+        <section>
             <div class="section-title">
-                <h3>Upcoming Career Events</h3>
-                <a href="#" class="view-all">View Calendar →</a>
+                <h3>Upcoming Events</h3>
+                <a href="#" class="view-all">View All</a>
             </div>
-            <div class="job-cards">
-                <div class="job-card">
-                    <div class="job-details">
-                        <h4>Spring Career Fair 2025</h4>
-                        <p>Meet with over 100 employers looking to hire UNCC students and alumni.</p>
-                        <p><strong>March 18, 2025</strong> • 10:00 AM - 3:00 PM</p>
-                        <p>Student Union, Multipurpose Room</p>
-                    </div>
-                </div>
-
-                <div class="job-card">
-                    <div class="job-details">
-                        <h4>Resume Workshop</h4>
-                        <p>Get personalized feedback on your resume from career counselors and industry professionals.
-                        </p>
-                        <p><strong>March 25, 2025</strong> • 2:00 PM - 4:00 PM</p>
-                        <p>Atkins Library, Room 125</p>
-                    </div>
-                </div>
+            <div class="widgets">
+                <!-- Event widgets will be dynamically populated -->
             </div>
         </section>
 
