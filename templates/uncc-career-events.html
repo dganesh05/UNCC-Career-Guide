@@ -1,276 +1,56 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNCC Career Guide - Career Events</title>
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-</head>
-<body>
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-img">UNCC</div>
-                <h1>Career Guide</h1>
-            </div>
-            <div>
-                <button style="background: var(--uncc-gold); color: var(--uncc-green); border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Student Login</button>
-            </div>
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="hero">
+        <h2>Career Events</h2>
+        <p>Discover upcoming career fairs, workshops, and networking opportunities.</p>
+    </section>
+
+    <section class="events-list">
+        <div class="event-filters">
+            <select name="event_type">
+                <option value="">All Event Types</option>
+                <option value="career-fair">Career Fairs</option>
+                <option value="workshop">Workshops</option>
+                <option value="networking">Networking Events</option>
+            </select>
+            <select name="date_range">
+                <option value="">All Dates</option>
+                <option value="this-week">This Week</option>
+                <option value="this-month">This Month</option>
+                <option value="next-month">Next Month</option>
+            </select>
         </div>
-    </header>
-    
-    <nav>
-        <ul class="nav-tabs">
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'jobs' %}">Job Board</a></li>
-            <li><a href="{% url 'networking' %}">Networking Hub</a></li>
-            <li class="active"><a href="{% url 'events' %}">Career Events</a></li>
-            <li><a href="{% url 'resources' %}">Resources</a></li>
-            <li><a href="{% url 'mentorship' %}">Mentorship Hub</a></li>
-            <li><a href="{% url 'chat' %}">Career Assistant</a></li>
-        </ul>
-    </nav>
-    
-    <main>
-        <h1 class="page-title">Career Events</h1>
-        
-        <section class="hero">
-            <h2>Discover Career-Building Opportunities</h2>
-            <p>Attend career fairs, workshops, networking sessions, and employer information sessions to build your professional skills and connect with potential employers.</p>
-        </section>
-        
-        <section class="event-filters">
-            <div class="filter-group">
-                <label for="event-type">Event Type</label>
-                <select id="event-type">
-                    <option value="">All Types</option>
-                    <option value="career-fair">Career Fair</option>
-                    <option value="workshop">Workshop</option>
-                    <option value="info-session">Info Session</option>
-                    <option value="networking">Networking Event</option>
-                    <option value="panel">Panel Discussion</option>
-                </select>
+
+        <div class="event-cards">
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-date">
+                    <span class="event-month">{{ event.date|date:"M" }}</span>
+                    <span class="event-day">{{ event.date|date:"d" }}</span>
+                </div>
+                <div class="event-details">
+                    <h3>{{ event.title }}</h3>
+                    <p class="event-time">{{ event.date|date:"g:i A" }}</p>
+                    <p class="event-location">{{ event.location }}</p>
+                    <p class="event-description">{{ event.description }}</p>
+                    <div class="event-tags">
+                        <span class="event-tag">{{ event.type }}</span>
+                        {% if event.registration_required %}
+                        <span class="event-tag">Registration Required</span>
+                        {% endif %}
+                    </div>
+                    <a href="#" class="event-btn">Register Now</a>
+                </div>
             </div>
-            
-            <div class="filter-group">
-                <label for="event-date">Date Range</label>
-                <select id="event-date">
-                    <option value="">All Dates</option>
-                    <option value="today">Today</option>
-                    <option value="this-week">This Week</option>
-                    <option value="next-week">Next Week</option>
-                    <option value="this-month">This Month</option>
-                    <option value="next-month">Next Month</option>
-                </select>
+            {% empty %}
+            <div class="event-card">
+                <div class="event-details">
+                    <h3>No upcoming events</h3>
+                    <p>Check back later for new career events and opportunities.</p>
+                </div>
             </div>
-            
-            <div class="filter-group">
-                <label for="event-industry">Industry</label>
-                <select id="event-industry">
-                    <option value="">All Industries</option>
-                    <option value="technology">Technology</option>
-                    <option value="finance">Finance & Banking</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="engineering">Engineering</option>
-                    <option value="business">Business</option>
-                    <option value="education">Education</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="event-location">Location</label>
-                <select id="event-location">
-                    <option value="">All Locations</option>
-                    <option value="student-union">Student Union</option>
-                    <option value="coed">College of Education</option>
-                    <option value="cob">College of Business</option>
-                    <option value="virtual">Virtual/Online</option>
-                    <option value="off-campus">Off Campus</option>
-                </select>
-            </div>
-        </section>
-        
-        <div class="view-toggle">
-            <button class="view-btn active">Calendar View</button>
-            <button class="view-btn">List View</button>
+            {% endfor %}
         </div>
-        
-        <!-- Calendar View -->
-        <section>
-            <div class="calendar-header">
-                <div class="month-navigation">
-                    <button class="month-nav-btn">←</button>
-                    <h2 class="current-month">March 2025</h2>
-                    <button class="month-nav-btn">→</button>
-                </div>
-            </div>
-            
-            <div class="calendar-grid">
-                <!-- Days of week headers -->
-                <div class="calendar-day-header">Sun</div>
-                <div class="calendar-day-header">Mon</div>
-                <div class="calendar-day-header">Tue</div>
-                <div class="calendar-day-header">Wed</div>
-                <div class="calendar-day-header">Thu</div>
-                <div class="calendar-day-header">Fri</div>
-                <div class="calendar-day-header">Sat</div>
-                
-                <!-- Week 1 -->
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day">
-                    <div class="day-number">1</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">2</div>
-                </div>
-                
-                <!-- Week 2 -->
-                <div class="calendar-day">
-                    <div class="day-number">3</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">4</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">5</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">6</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">7</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">8</div>
-                    <div class="day-events">
-                        <div class="day-event workshop">Resume Workshop - 2PM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">9</div>
-                </div>
-                
-                <!-- Week 3 -->
-                <div class="calendar-day">
-                    <div class="day-number">10</div>
-                </div>
-                <div class="calendar-day today">
-                    <div class="day-number">11</div>
-                    <div class="day-events">
-                        <div class="day-event info-session">Google Info Session - 3PM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">12</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">13</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">14</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">15</div>
-                    <div class="day-events">
-                        <div class="day-event networking">Tech Mixer - 6PM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">16</div>
-                </div>
-                
-                <!-- Week 4 -->
-                <div class="calendar-day">
-                    <div class="day-number">17</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">18</div>
-                    <div class="day-events">
-                        <div class="day-event career-fair">Spring Career Fair - 10AM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">19</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">20</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">21</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">22</div>
-                    <div class="day-events">
-                        <div class="day-event info-session">Finance Career Fair - 10AM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">23</div>
-                </div>
-                
-                <!-- Week 5 -->
-                <div class="calendar-day">
-                    <div class="day-number">24</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">25</div>
-                    <div class="day-events">
-                        <div class="day-event workshop">Resume Workshop - 2PM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">26</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">27</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">28</div>
-                    <div class="day-events">
-                        <div class="day-event workshop">Interview Prep - 1PM</div>
-                    </div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">29</div>
-                </div>
-                <div class="calendar-day">
-                    <div class="day-number">30</div>
-                </div>
-                
-                <!-- Week 6 -->
-                <div class="calendar-day">
-                    <div class="day-number">31</div>
-                </div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-            </div>
-        </section>
-        
-        <section class="featured-events">
-            <div class="section-header">
-                <h2 class="section-title">Featured Events</h2>
-            </div>
-            
-            <div class="events-grid">
-                <div class="event-card">
-                    <div class="event-banner">Spring Career Fair</div>
-                    <div class="event-content">
-                        <span class="event-type career-fair">Career Fair</span>
-                        <h3 class="event-title">Spring Career Fair 2025</h3>
-                        <div class="event-datetime">
-                            <span>March 18, 2025 • 10:00 AM - 3:00 PM</span>
-                        </div>
-                        <div class="event-location">
-                            <span>Student Union, Multipurpose Room</span>
-                        </div>
-                        <p class="event-description">Meet with over 100 employers looking to hire UNCC students and alumni for full-time positions, internships, and co-ops. All majors welcome.</p>
-                        <div class
+    </section>
+{% endblock %}
