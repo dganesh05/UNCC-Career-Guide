@@ -1,192 +1,158 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNCC Career Guide</title>
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-</head>
+{% block content %}
+      <section class="hero">
+        <h2>Your Personalized Career Dashboard</h2>
+        <p>
+          Access job opportunities, skill development tools, mentorship
+          connections, and resources to jumpstart your career journey at UNC
+          Charlotte. This all-in-one platform helps you plan, track, and achieve
+          your career goals.
+        </p>
+        <form action="{% url 'dashboard' %}" method="GET" class="search-form">
+          <div class="search-bar">
+            <input
+              type="text"
+              name="search"
+              placeholder="Search jobs, companies, or keywords..."
+              value="{{ search_query }}"
+            />
+            <button type="submit">Search</button>
+          </div>
+        </form>
+      </section>
 
-<body>
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-img">UNCC</div>
-                <h1>Career Guide</h1>
-            </div>
-            <div>
-                <button
-                    style="background: var(--uncc-gold); color: var(--uncc-green); border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Student
-                    Login</button>
-            </div>
+      {% if search_query %}
+      <section class="search-results">
+        <h3>Search Results for "{{ search_query }}"</h3>
+        {% if search_results %}
+        <div class="search-results-list">
+          {% for result in search_results %}
+          <div class="search-result-item">
+            <span class="search-result-type">{{ result.type|title }}</span>
+            <div class="search-result-title">{{ result.title }}</div>
+            {% if result.type == 'job' %}
+            <div class="search-result-details">{{ result.company }}</div>
+            {% elif result.type == 'event' %}
+            <div class="search-result-details">{{ result.date }}</div>
+            {% endif %}
+            <a href="{{ result.link }}" class="search-result-link">View Details →</a>
+          </div>
+          {% endfor %}
         </div>
-    </header>
-
-    <nav>
-        <ul class="nav-tabs">
-            <li class="active"><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'jobs' %}">Job Board</a></li>
-            <li><a href="{% url 'networking' %}">Networking Hub</a></li>
-            <li><a href="{% url 'events' %}">Career Events</a></li>
-            <li><a href="{% url 'resources' %}">Resources</a></li>
-            <li><a href="{% url 'mentorship' %}">Mentorship Hub</a></li>
-            <li><a href="{% url 'chat' %}">Career Assistant</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <section class="hero">
-            <h2>Welcome to Your Career Journey</h2>
-            <p>Discover opportunities, connect with professionals, and take the next step in your career.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for jobs, events, or resources...">
-                <button>Search</button>
-            </div>
-        </section>
-
-        <section class="featured-section">
-            <div class="section-title">
-                <h3>Featured Opportunities</h3>
-                <a href="#" class="view-all">View All</a>
-            </div>
-            <div class="job-cards">
-                <div class="job-card">
-                    <div class="job-company">
-                        <div class="company-logo">DB</div>
-                        <div>
-                            <strong>Digital Bank</strong>
-                            <div style="font-size: 0.8rem; color: #666;">Charlotte, NC</div>
-                        </div>
-                    </div>
-                    <div class="job-details">
-                        <h4>Software Engineer Intern</h4>
-                        <p>Develop and implement new features for Digital Bank's mobile banking platform.</p>
-                        <p><strong>$25-30/hr</strong> • Posted 2 days ago</p>
-                        <div class="job-tags">
-                            <span class="job-tag">Full-time</span>
-                            <span class="job-tag">Computer Science</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="job-card">
-                    <div class="job-company">
-                        <div class="company-logo">TS</div>
-                        <div>
-                            <strong>Tech Solutions Inc.</strong>
-                            <div style="font-size: 0.8rem; color: #666;">Remote</div>
-                        </div>
-                    </div>
-                    <div class="job-details">
-                        <h4>Data Analyst</h4>
-                        <p>Analyze customer data to provide insights and recommendations for product improvement.</p>
-                        <p><strong>$65,000-75,000/year</strong> • Posted 1 week ago</p>
-                        <div class="job-tags">
-                            <span class="job-tag">Full-time</span>
-                            <span class="job-tag">Data Science</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="job-card">
-                    <div class="job-company">
-                        <div class="company-logo">HC</div>
-                        <div>
-                            <strong>Healthcare Partners</strong>
-                            <div style="font-size: 0.8rem; color: #666;">Charlotte, NC</div>
-                        </div>
-                    </div>
-                    <div class="job-details">
-                        <h4>Nursing Assistant</h4>
-                        <p>Provide patient care and support to the nursing team in a fast-paced hospital environment.
-                        </p>
-                        <p><strong>$22-24/hr</strong> • Posted 3 days ago</p>
-                        <div class="job-tags">
-                            <span class="job-tag">Part-time</span>
-                            <span class="job-tag">Nursing</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <div class="section-title">
-                <h3>Upcoming Events</h3>
-                <a href="#" class="view-all">View All</a>
-            </div>
-            <div class="widgets">
-                <!-- Event widgets will be dynamically populated -->
-            </div>
-        </section>
-
-        <section>
-            <div class="section-title">
-                <h3>Career Resources</h3>
-            </div>
-            <div class="widgets">
-                <div class="widget">
-                    <h4>Resume and Cover Letter Builder</h4>
-                    <p>Create professional documents with our easy-to-use templates.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>AI-Powered Career Coach</h4>
-                    <p>Get personalized career advice and interview preparation.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>Skill Development Roadmap</h4>
-                    <p>Track your progress and plan your professional development journey.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>Personalized Career Planning</h4>
-                    <p>Build confidence with customized career path recommendations.</p>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <div class="section-title">
-                <h3>Additional Resources</h3>
-            </div>
-            <div class="widgets">
-                <div class="widget">
-                    <h4>Resource & Opportunity Dashboard</h4>
-                    <p>Access all career resources and opportunities in one place.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>Testimonials and Case Studies</h4>
-                    <p>Learn from success stories of UNCC graduates and alumni.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>Job Opportunity Aggregation</h4>
-                    <p>Find all relevant job postings customized to your profile.</p>
-                </div>
-
-                <div class="widget">
-                    <h4>Login / My Account</h4>
-                    <p>Access your personalized dashboard and saved opportunities.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
-                <div class="logo-img">UNCC</div>
-                <h1>Career Guide</h1>
-            </div>
-            <p>© 2025 University of North Carolina at Charlotte. All rights reserved.</p>
-            <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
+        {% else %}
+        <div class="no-results">
+          <p>
+            No results found for "{{ search_query }}". Try different keywords or
+            browse through our featured opportunities below.
+          </p>
         </div>
-    </footer>
-</body>
+        {% endif %}
+      </section>
+      {% endif %}
 
-</html>
+      <section>
+        <div class="section-header">
+          <h2 class="section-title">Featured Opportunities</h2>
+          <a href="{% url 'jobs' %}" class="view-all">View All →</a>
+        </div>
+
+        <div class="job-cards">
+          {% for job in featured_opportunities %}
+          <a
+            href="{{ job.link }}"
+            target="_blank"
+            style="display: block; text-decoration: none; color: inherit"
+          >
+            <div class="job-card">
+              <!-- Company section -->
+              <div class="job-company">
+                <div class="company-logo">{{ job.logo }}</div>
+                <div>
+                  <strong>{{ job.company }}</strong>
+                  <div style="font-size: 0.8rem; color: #666">
+                    {{ job.location }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="job-details">
+                <h4>{{ job.title }}</h4>
+                <p class="job-closing-date">{{ job.closing_date }}</p>
+                <div class="job-tags">
+                  <span class="job-tag">{{ job.job_type }}</span>
+                  <span class="job-tag">{{ job.field }}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+          {% empty %}
+          <div class="job-card">
+            <div class="job-company">
+              <div class="company-logo">DB</div>
+              <div>
+                <strong>Digital Bank</strong>
+                <div style="font-size: 0.8rem; color: #666">Charlotte, NC</div>
+              </div>
+            </div>
+            <div class="job-details">
+              <h4>Software Engineer Intern</h4>
+              <p>
+                Develop and implement new features for Digital Bank's mobile
+                banking platform.
+              </p>
+              <p class="job-closing-date">Closes on Friday, April 25, 2025</p>
+              <div class="job-tags">
+                <span class="job-tag">Internship</span>
+                <span class="job-tag">Technology</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-card">
+            <div class="job-company">
+              <div class="company-logo">TS</div>
+              <div>
+                <strong>Tech Solutions Inc.</strong>
+                <div style="font-size: 0.8rem; color: #666">Remote</div>
+              </div>
+            </div>
+            <div class="job-details">
+              <h4>Data Analyst</h4>
+              <p>
+                Analyze customer data to provide insights and recommendations
+                for product improvement.
+              </p>
+              <p class="job-closing-date">Closes on Friday, May 2, 2025</p>
+              <div class="job-tags">
+                <span class="job-tag">Full-time</span>
+                <span class="job-tag">Technology</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-card">
+            <div class="job-company">
+              <div class="company-logo">HC</div>
+              <div>
+                <strong>Healthcare Partners</strong>
+                <div style="font-size: 0.8rem; color: #666">Charlotte, NC</div>
+              </div>
+            </div>
+            <div class="job-details">
+              <h4>Nursing Assistant</h4>
+              <p>
+                Provide patient care and support to the nursing team in a
+                fast-paced hospital environment.
+              </p>
+              <p class="job-closing-date">Closes on Friday, May 9, 2025</p>
+              <div class="job-tags">
+                <span class="job-tag">Part-time</span>
+                <span class="job-tag">Healthcare</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+{% endblock %}
