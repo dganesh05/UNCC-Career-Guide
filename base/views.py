@@ -1,22 +1,23 @@
 # File: base/views.py
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import ChatMessage
 from django.conf import settings
-import openai
-from decouple import config
 import json
 import logging
 from datetime import datetime
-import logging
 from .models import Mentor
 from .linkedin_integration import LinkedInJobsIntegration
 from .niner_events_integration import NinerCareerEventsIntegration
 from .hire_a_niner_jobs_integration import HireANinerJobsIntegration
 from .search_utility import SearchUtility
+from career_advisor.chatbot import CareerAdvisorChatbot
+from mistralai.client import MistralClient
+from decouple import config
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -207,88 +208,148 @@ def login(request):
 def home(request):
     """Home view, redirects to dashboard"""
     return dashboard(request)
+
 def mentor_list(request):
     mentors = Mentor.objects.all()
     return render(request, 'mentors/mentor_list.html', {'mentors': mentors})   
-logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client
+# Initialize CareerAdvisorChatbot
+logger.info("Attempting to initialize CareerAdvisorChatbot...")
 try:
-    api_key = config('OPENAI_API_KEY')
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY is not set in environment variables")
-    client = openai.OpenAI(api_key=api_key)
-    logger.info("OpenAI client initialized successfully")
+    chatbot = CareerAdvisorChatbot()
+    logger.info("CareerAdvisorChatbot initialized successfully")
 except Exception as e:
-    logger.error(f"Failed to initialize OpenAI client: {str(e)}")
-    client = None
+    logger.error(f"Failed to initialize CareerAdvisorChatbot: {str(e)}", exc_info=True)
+    chatbot = None
 
-class ChatbotView(APIView):
-    def get_career_prompt(self, chat_type):
-        prompts = {
-            'general': "You are a helpful career advisor. Provide detailed and practical career advice.",
-            'connection_request': "You are a LinkedIn expert. Help craft a personalized connection request that is professional and engaging.",
-            'cover_letter': "You are a professional cover letter writer. Help create or review cover letters that highlight relevant skills and experiences.",
-            'resume_review': "You are an expert resume reviewer. Analyze the resume and provide specific, actionable feedback for improvement."
-        }
-        return prompts.get(chat_type, prompts['general'])
+class ChatbotView(View):
+    """View for handling chatbot interactions"""
+    
+    _chatbot = None
+    
+    @classmethod
+    def get_chatbot(cls):
+        """Get or initialize the chatbot instance"""
+        if cls._chatbot is None:
+            try:
+                cls._chatbot = CareerAdvisorChatbot()
+                logger.info("Successfully initialized chatbot")
+            except Exception as e:
+                logger.error(f"Failed to initialize chatbot: {str(e)}", exc_info=True)
+                return None
+        return cls._chatbot
+    
+    def get(self, request):
+        """Handle GET requests"""
+        try:
+            chatbot = self.get_chatbot()
+            if not chatbot:
+                return JsonResponse({"error": "Failed to initialize chatbot"}, status=500)
+            
+            # Return initial context or welcome message
+            return JsonResponse({
+                "message": "Welcome to the Career Advisor Chatbot! How can I help you today?",
+                "status": "success"
+            })
+        except Exception as e:
+            logger.error(f"Error in ChatbotView GET: {str(e)}", exc_info=True)
+            return JsonResponse({"error": str(e)}, status=500)
 
     def post(self, request):
         try:
-            if not client:
-                return Response({
-                    'error': 'OpenAI client not initialized. Please check your API key.'
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            data = request.data
-            message = data.get('message', '')
+            chatbot = self.get_chatbot()
+            if not chatbot:
+                return JsonResponse({"error": "Failed to initialize chatbot"}, status=500)
+            
+            data = json.loads(request.body)
+            message = data.get('message', '').strip()
             chat_type = data.get('type', 'general')
-            session_id = data.get('session_id', '')
-
-            # Save user message
-            ChatMessage.objects.create(
-                content=message,
-                role='user',
-                session_id=session_id
-            )
-
-            # Get conversation history
-            history = ChatMessage.objects.filter(session_id=session_id).order_by('timestamp')
-            messages = [{"role": msg.role, "content": msg.content} for msg in history]
-
-            # Add system message with specific career prompt
-            messages.insert(0, {
-                "role": "system",
-                "content": self.get_career_prompt(chat_type)
-            })
-
-            # Get response from OpenAI
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=messages,
-                temperature=0.7,
-                max_tokens=800
-            )
-
-            assistant_message = response.choices[0].message.content
-
-            # Save assistant response
-            ChatMessage.objects.create(
-                content=assistant_message,
-                role='assistant',
-                session_id=session_id
-            )
-
-            return Response({
-                'message': assistant_message,
-                'session_id': session_id
-            })
-
+            
+            if not message:
+                return JsonResponse({"error": "Message cannot be empty"}, status=400)
+            
+            logger.info(f"Received message: {message} (type: {chat_type})")
+            
+            context = self._get_career_context(chat_type)
+            
+            try:
+                response = chatbot.get_response(message, context)
+                logger.info(f"Generated response: {response['raw'][:100]}...")
+                return JsonResponse({
+                    "message": response['raw'],  # Send raw text instead of the entire response object
+                    "html": response['html'],    # Also send the HTML formatted version
+                    "status": "success"
+                })
+            except Exception as e:
+                logger.error(f"Error generating response: {str(e)}", exc_info=True)
+                return JsonResponse({"error": f"Error generating response: {str(e)}"}, status=500)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
         except Exception as e:
-            logger.error(f"Error in chat API: {str(e)}")
-            return Response({
-                'error': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Error in ChatbotView POST: {str(e)}", exc_info=True)
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    def _get_career_context(self, chat_type):
+        """Get career-specific context based on chat type"""
+        try:
+            if chat_type == 'resume':
+                return "You are a career advisor helping with resume writing and optimization."
+            elif chat_type == 'interview':
+                return "You are a career advisor providing interview preparation advice."
+            elif chat_type == 'job_search':
+                return "You are a career advisor helping with job search strategies."
+            else:
+                return "You are a career advisor providing general career guidance."
+        except Exception as e:
+            logger.error(f"Error getting career context: {str(e)}", exc_info=True)
+            return "You are a career advisor providing general career guidance."
 
 def chat_view(request):
     return render(request, 'chat.html') 
+
+def test_chatbot(request):
+    """Test endpoint to verify chatbot functionality"""
+    try:
+        # Check environment and API configuration
+        from decouple import config
+        from mistralai.client import MistralClient
+        
+        api_key = config('MISTRAL_API_KEY', default=None)
+        if not api_key:
+            logger.error("MISTRAL_API_KEY not found in environment variables")
+            return HttpResponse("Error: API key not configured", status=500)
+            
+        # Safely check API configuration
+        try:
+            client = MistralClient(api_key=api_key)
+            # Test with a simple message
+            test_response = client.chat(
+                model="mistral-tiny",
+                messages=[{"role": "user", "content": "Test"}]
+            )
+            logger.info("API configuration verified successfully")
+        except Exception as api_error:
+            logger.error(f"API configuration error: {str(api_error)}", exc_info=True)
+            return HttpResponse("Error: API configuration invalid", status=500)
+        
+        # Continue with existing chatbot test
+        chatbot = ChatbotView.get_chatbot()
+        if not chatbot:
+            logger.error("Failed to initialize chatbot")
+            return HttpResponse("Error: Failed to initialize chatbot", status=500)
+        
+        test_message = "Hello, can you help me with career advice?"
+        logger.info(f"Sending test message: {test_message}")
+        
+        try:
+            response = chatbot.get_response(test_message)
+            logger.info(f"Received test response: {response[:100]}...")
+            return HttpResponse(f"Chatbot test response: {response}")
+        except Exception as e:
+            logger.error(f"Error getting chatbot response: {str(e)}", exc_info=True)
+            return HttpResponse(f"Error getting response: {str(e)}", status=500)
+            
+    except Exception as e:
+        logger.error(f"Error in test_chatbot: {str(e)}", exc_info=True)
+        return HttpResponse(f"Error: {str(e)}", status=500)

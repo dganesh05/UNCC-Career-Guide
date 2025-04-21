@@ -4,7 +4,7 @@
     <section class="hero">
         <h2>Job Board</h2>
         <p>Find your next career opportunity with our comprehensive job board.</p>
-        <form action="{% url 'jobs' %}" method="GET" id="job-filter-form">
+        <form action="{% url 'job_board' %}" method="GET" id="job-filter-form">
             <div class="search-bar">
                 <input type="text" name="search" placeholder="Search jobs..." value="{{ search_query }}">
                 <button type="submit">Search</button>
@@ -57,6 +57,6 @@
             <p>No jobs found matching your criteria.</p>
             {% endfor %}
         </div>
-        <a href="{% url 'jobs' %}" class="reset-btn">Reset Filters</a>
+        <a href="{% url 'job_board' %}" class="reset-btn">Reset Filters</a>
     </section>
 {% endblock %}

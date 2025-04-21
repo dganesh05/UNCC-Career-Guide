@@ -3,15 +3,15 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from base import views
 from base.views import (
-    dashboard,  # Import the dashboard function directly 
+    dashboard,
     job_board, 
     networking_hub, 
-    career_events,  # Changed from events to career_events
+    career_events,
     resources, 
     mentorship_hub,
     login,
     home,
-    chat_view  # Added chat_view import
+    chat_view
 )
 from django.shortcuts import render
 from resume_generator import views as resume_views
@@ -48,17 +48,16 @@ def uncc_resources(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('jobs/', job_board, name='jobs'),
     path('dashboard/', dashboard, name='dashboard'),
-    path('networking/', networking_hub, name='networking_hub'),
-    path('events/', career_events, name='events'),  # Changed from events to career_events
+    path('job-board/', job_board, name='job_board'),
+    path('networking/', networking_hub, name='networking'),
+    path('events/', career_events, name='events'),
     path('resources/', resources, name='resources'),
-    path('mentorship/', mentorship_hub, name='mentorship_hub'),  # Changed from 'mentorship' to 'mentorship_hub'
+    path('mentorship/', mentorship_hub, name='mentorship'),
     path('login/', login, name='login'),
-    path('mentors/', mentor_list, name='mentors'),  # Changed from 'mentor-list' to 'mentors'
-    path('onboarding-quiz/', uncc_onboarding_quiz, name='onboarding_quiz'),
-    path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
-    path('chat/', chat_view, name='chat'),  # Changed from include('career_chatbot.urls') to direct view
+    path('career-advisor/', include('career_advisor.urls')),
+    path('chat/', chat_view, name='chat'),
+    path('api/chat/', views.ChatbotView.as_view(), name='chat_api'),
 ]
 
 if settings.DEBUG:

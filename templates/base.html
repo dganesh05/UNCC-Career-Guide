@@ -95,12 +95,12 @@ Set up block sections for content -->
     <nav>
         <ul class="nav-tabs">
             <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><a href="{% url 'home' %}">Home</a></li>
-            <li class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><a href="{% url 'jobs' %}">Job Board</a></li>
-            <li class="{% if request.resolver_match.url_name == 'networking_hub' %}active{% endif %}"><a href="{% url 'networking_hub' %}">Networking Hub</a></li>
+            <li class="{% if request.resolver_match.url_name == 'job_board' %}active{% endif %}"><a href="{% url 'job_board' %}">Job Board</a></li>
+            <li class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><a href="{% url 'networking' %}">Networking Hub</a></li>
             <li class="{% if request.resolver_match.url_name == 'events' %}active{% endif %}"><a href="{% url 'events' %}">Career Events</a></li>
             <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"><a href="{% url 'resources' %}">Resources</a></li>
-            <li class="{% if request.resolver_match.url_name == 'mentorship_hub' %}active{% endif %}"><a href="{% url 'mentorship_hub' %}">Mentorship Hub</a></li>
-            <li class="{% if request.resolver_match.url_name == 'chat' %}active{% endif %}"><a href="{% url 'chat' %}">Career Assistant</a></li>
+            <li class="{% if request.resolver_match.url_name == 'mentorship' %}active{% endif %}"><a href="{% url 'mentorship' %}">Mentorship Hub</a></li>
+            <li class="{% if request.resolver_match.url_name == 'career_advisor:chat' %}active{% endif %}"><a href="{% url 'career_advisor:chat' %}">Career Assistant</a></li>
         </ul>
     </nav>
 
