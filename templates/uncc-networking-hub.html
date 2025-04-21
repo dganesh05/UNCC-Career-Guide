@@ -10,7 +10,7 @@
         <div class="feature-card">
             <h3>Mentor Connections</h3>
             <p>Find and connect with experienced mentors in your field.</p>
-            <a href="{% url 'mentors' %}" class="feature-btn">Explore Mentors</a>
+            <a href="{% url 'mentorship' %}" class="feature-btn">Explore Mentors</a>
         </div>
         
         <div class="feature-card">
@@ -39,7 +39,7 @@
                         <span class="mentor-tag">{{ mentor.expertise }}</span>
                     </div>
                 </div>
-                <a href="{% url 'mentors' %}" class="view-all">View Profile →</a>
+                <a href="{% url 'mentorship' %}" class="view-all">View Profile →</a>
             </div>
             {% empty %}
             <div class="mentor-card">
@@ -50,7 +50,7 @@
             </div>
             {% endfor %}
         </div>
-        <a href="{% url 'mentors' %}" class="view-all">View All Mentors →</a>
+        <a href="{% url 'mentorship' %}" class="view-all">View All Mentors →</a>
     </section>
 {% endblock %}
 ``` 

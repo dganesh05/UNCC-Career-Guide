@@ -1,6 +1,0 @@
-.env
-__pycache__
-base/resume_generator/__pycache__/
-base/migrations/__pycache__/
-base/__pycache__/
-venv
