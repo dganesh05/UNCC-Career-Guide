@@ -276,8 +276,6 @@ main {
 
 /* Chat container styles */
 .chat-container {
-    height: calc(100vh - 180px);
-    overflow-y: auto;
     padding: 1rem;
 }
 
@@ -290,13 +288,13 @@ main {
 }
 
 .user-message {
-    background-color: #1a73e8;
+    background-color: var(--uncc-gold);
     color: white;
     margin-left: auto;
 }
 
 .assistant-message {
-    background-color: #f1f3f4;
+    background-color: var(--med-gray);
     color: #202124;
 }
 

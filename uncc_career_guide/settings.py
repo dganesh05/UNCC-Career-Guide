@@ -14,7 +14,9 @@ from dotenv import load_dotenv
 from pathlib import Path
 from decouple import config
 
-load_dotenv()
+# Load environment variables from the env folder
+env_path = os.path.join(Path(__file__).resolve().parent.parent, 'env', '.env')
+load_dotenv(env_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,9 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'career_chatbot',
     'base',
-    'resume_generator',
+    'career_advisor',
 ]
 
 MIDDLEWARE = [
@@ -158,14 +159,26 @@ REST_FRAMEWORK = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'level': 'DEBUG',
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'DEBUG',
     },
     'loggers': {
         'django': {
@@ -173,10 +186,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        'career_chatbot': {
+        'career_advisor': {
             'handlers': ['console'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
         },
     },
 }

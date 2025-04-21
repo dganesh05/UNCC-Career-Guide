@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -16,6 +15,7 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -30,8 +30,7 @@ staticfiles/
 
 # Environment
 .env
-.env.local
-.venv
+env/
 venv/
 ENV/
 
@@ -40,7 +39,40 @@ ENV/
 .vscode/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Project specific
+career-advisor-chatbot/
+*.faiss
+*.pkl
+*.pdf
+*.doc
+*.docx
+*.txt
+!requirements.txt
+!env.example
+
+# Model files
+*.bin
+*.pt
+*.pth
+*.onnx
+*.h5
+
+# Temporary files
+*.bak
+*.tmp
+*.temp
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
