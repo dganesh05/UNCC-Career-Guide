@@ -54,5 +54,5 @@ def generate_resume(request):
     else:
         form = ResumeForm()
 
-    # Update the template path to match the existing structure
+   
     return render(request, 'resume_form.html', {'form': form})
