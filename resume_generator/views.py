@@ -54,5 +54,4 @@ def generate_resume(request):
     else:
         form = ResumeForm()
 
-   
     return render(request, 'resume_form.html', {'form': form})
