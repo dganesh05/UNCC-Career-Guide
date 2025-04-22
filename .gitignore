@@ -1,7 +1,11 @@
 .env
 __pycache__
-base/resume_generator/__pycache__/
-base/migrations/__pycache__/
-base/__pycache__/
+base/__pycache__
+career_advisor/__pycache__/
+career_advisor/migrations/__pycache__/
+resume_generator/__pycache__/
+resume_generator/migrations/__pycache__/
+uncc_career_guide/__pycache__/
+career_chatbot/__pycache__/
 venv
 env
