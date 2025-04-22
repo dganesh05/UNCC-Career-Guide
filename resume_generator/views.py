@@ -4,7 +4,6 @@ from django.http import HttpResponse
 from .forms import ResumeForm
 from fpdf import FPDF
 
-
 openai.api_key = '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'
 
 def generate_resume(request):
@@ -35,7 +34,7 @@ def generate_resume(request):
                 """}
             ]
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",  
+                model="gpt-3.5-turbo",
                 messages=messages
             )
             resume_content = response['choices'][0]['message']['content'].strip()
