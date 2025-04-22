@@ -131,7 +131,7 @@ def dashboard(request):
     return render(request, 'uncc-dashboard.html', context)
 
 def job_board(request):
-    """View for Job Board page"""
+    """View for Job Board page with pagination"""
     # Initialize job integration
     niner_jobs = HireANinerJobsIntegration()
     
@@ -142,26 +142,47 @@ def job_board(request):
     experience = request.GET.get('experience', '')
     search_query = request.GET.get('search', '')
     
+    # Get pagination parameters
+    page = int(request.GET.get('page', 1))
+    jobs_per_page = 21  # Display 20 jobs per page
+    
     try:
-        # Fetch jobs with filters
+        # Fetch jobs with filters - using a larger limit to get more jobs
         if job_type or location or search_query:
             logger.info(f"Fetching filtered jobs: type={job_type}, location={location}, search={search_query}")
-            jobs = niner_jobs.get_jobs(
-                limit=20, 
+            all_jobs = niner_jobs.get_jobs(
+                limit=500,  # Fetch more jobs to support pagination
                 job_type=job_type, 
                 location=location,
                 search_term=search_query
             )
         else:
             logger.info("Fetching all jobs")
-            jobs = niner_jobs.get_jobs(limit=20)
+            all_jobs = niner_jobs.get_jobs(limit=500)  # Increased from 20 to 100
         
-        job_count = len(jobs)
-        logger.info(f"Found {job_count} jobs")
+        # Calculate pagination
+        total_jobs = len(all_jobs)
+        total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+        
+        # Ensure current page is valid
+        if page < 1:
+            page = 1
+        elif page > total_pages and total_pages > 0:
+            page = total_pages
+        
+        # Get jobs for current page
+        start_index = (page - 1) * jobs_per_page
+        end_index = min(start_index + jobs_per_page, total_jobs)
+        jobs = all_jobs[start_index:end_index]
+        
+        job_count = total_jobs
+        logger.info(f"Found {total_jobs} jobs, displaying page {page} of {total_pages}")
     except Exception as e:
         logger.error(f"Error fetching jobs: {str(e)}")
         jobs = []
         job_count = 0
+        total_pages = 1
+        page = 1
     
     # Get recommended jobs (simplified - in production this would use user preferences)
     try:
@@ -180,7 +201,15 @@ def job_board(request):
         'job_type': job_type,
         'location': location,
         'industry': industry,
-        'experience': experience
+        'experience': experience,
+        # Pagination context
+        'current_page': page,
+        'total_pages': total_pages,
+        'has_previous': page > 1,
+        'has_next': page < total_pages,
+        'previous_page': page - 1,
+        'next_page': page + 1,
+        'page_range': range(max(1, page - 2), min(total_pages + 1, page + 3)),
     }
     
     return render(request, 'uncc-job-board.html', context)
