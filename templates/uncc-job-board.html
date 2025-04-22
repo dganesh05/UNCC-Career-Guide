@@ -35,6 +35,7 @@
         <h3>{{ job_count }} Jobs Found</h3>
         <div class="job-cards">
             {% for job in jobs %}
+            <a href="{{ job.link }}" target="_blank" style="text-decoration: none; color: inherit; display: block;">
             <div class="job-card">
                 <div class="job-company">
                     <div class="company-logo">{{ job.logo }}</div>
