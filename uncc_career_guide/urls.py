@@ -59,6 +59,9 @@ urlpatterns = [
     path('chat/', chat_view, name='chat'),
     path('api/chat/', views.ChatbotView.as_view(), name='chat_api'),
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('base.urls')),
+    path('signup/', views.signup, name='signup')
 ] 
 
 if settings.DEBUG:
