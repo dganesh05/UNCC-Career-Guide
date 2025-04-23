@@ -18,6 +18,7 @@ from .search_utility import SearchUtility
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
 from decouple import config
+from django.contrib.auth.forms import UserCreationForm
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -382,3 +383,12 @@ def test_chatbot(request):
     except Exception as e:
         logger.error(f"Error in test_chatbot: {str(e)}", exc_info=True)
         return HttpResponse(f"Error: {str(e)}", status=500)
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # name of the login URL
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
