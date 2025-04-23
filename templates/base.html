@@ -65,6 +65,38 @@ Set up block sections for content -->
       .footer-content p:last-child {
         margin-top: 0.5rem;
       }
+
+      .btn-primary {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--uncc-green); /* Green */
+        color: var(--uncc-gold); /* Yellow */
+      }
+
+      .btn-secondary {
+        background-color: var(--uncc-green); /* Green */
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+      }
     </style>
   </head>
   <body>
@@ -75,19 +107,21 @@ Set up block sections for content -->
           <h1>Career Guide</h1>
         </div>
         <div>
-          <button
-            style="
-              background: var(--uncc-gold);
-              color: var(--uncc-green);
-              border: none;
-              padding: 0.5rem 1rem;
-              border-radius: 4px;
-              font-weight: bold;
-              cursor: pointer;
-            "
-          >
-            Student Login
-          </button>
+          <a href="{% url 'login' %}">
+            <button
+              style="
+                background: var(--uncc-gold);
+                color: var(--uncc-green);
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                font-weight: bold;
+                cursor: pointer;
+              "
+            >
+              Student Login
+            </button>
+          </a>
         </div>
       </div>
     </header>
