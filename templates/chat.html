@@ -6,31 +6,207 @@
     <div class="chat-container">
         <div class="chat-header">
             <h2>Career Assistant</h2>
-            <select id="chatType" class="chat-type-selector">
-                <option value="general">General Career Advice</option>
-                <option value="resume">Resume Help</option>
-                <option value="interview">Interview Prep</option>
-                <option value="job_search">Job Search</option>
-            </select>
+            <form method="post" action="{% url 'career_advisor:chat' %}" id="chatTypeForm">
+                {% csrf_token %}
+                <select name="chat_type" id="chatType" class="chat-type-selector">
+                    <option value="general" {% if chat_type == 'general' %}selected{% endif %}>General</option>
+                    <option value="resume" {% if chat_type == 'resume' %}selected{% endif %}>Resume Help</option>
+                    <option value="cover_letter" {% if chat_type == 'cover_letter' %}selected{% endif %}>Cover Letters</option>
+                    <option value="linkedin" {% if chat_type == 'linkedin' %}selected{% endif %}>LinkedIn Profile</option>
+                    <option value="job_search" {% if chat_type == 'job_search' %}selected{% endif %}>Job Search Strategies</option>
+                    <option value="networking" {% if chat_type == 'networking' %}selected{% endif %}>Networking</option>
+                    <option value="interview" {% if chat_type == 'interview' %}selected{% endif %}>Interview Preparation</option>
+                    <option value="elevator_pitch" {% if chat_type == 'elevator_pitch' %}selected{% endif %}>Elevator Pitch</option>
+                    <option value="communication" {% if chat_type == 'communication' %}selected{% endif %}>Professional Communication</option>
+                </select>
+            </form>
         </div>
-        <div class="messages-container" id="chatMessages"></div>
-        <div class="typing-indicator" id="typingIndicator">
+        <div class="messages-container" id="chatMessages">
+            {% for message in messages %}
+                <div class="message {% if message.role == 'user' %}user-message{% else %}assistant-message{% endif %}">
+                    {{ message.content|safe }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
             <div class="typing-dots">
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
             </div>
         </div>
-        <div class="error-message" id="errorMessage" style="display: none;">
-            An error occurred. Please try again.
+        {% if error_message %}
+        <div class="error-message" id="errorMessage">
+            {{ error_message }}
         </div>
-        <form id="chatForm" class="input-area">
+        {% endif %}
+        <form method="post" action="{% url 'career_advisor:chat_api' %}" id="chatForm" class="input-area">
+            {% csrf_token %}
+            <input type="hidden" name="chat_type" value="{{ chat_type }}" id="currentChatType">
             <div class="input-container">
-                <input type="text" id="userInput" class="chat-input" placeholder="Type your message...">
-                <button type="submit" id="sendButton" class="send-button">Send</button>
+                <input type="text" name="message" class="chat-input" placeholder="Type your message..." required>
+                <button type="submit" class="send-button">Send</button>
             </div>
         </form>
     </div>
 </main>
 
-<script src="{% static 'js/chat.js' %}"></script>{% endblock %}
+<style>
+.typing-indicator {
+    padding: 1rem;
+    display: none;
+}
+
+.typing-indicator.active {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    animation: typingAnimation 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+.error-message {
+    color: #dc3545;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    border-radius: 4px;
+    background-color: #f8d7da;
+    display: none;
+}
+
+.error-message.active {
+    display: block;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chatForm');
+    const chatTypeForm = document.getElementById('chatTypeForm');
+    const chatType = document.getElementById('chatType');
+    const chatMessages = document.getElementById('chatMessages');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const currentChatType = document.getElementById('currentChatType');
+    
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add('active');
+        setTimeout(() => {
+            errorMessage.classList.remove('active');
+        }, 5000);
+    }
+    
+    function setLoading(isLoading) {
+        typingIndicator.style.display = isLoading ? 'flex' : 'none';
+        chatForm.querySelector('button').disabled = isLoading;
+        chatForm.querySelector('input[type="text"]').disabled = isLoading;
+    }
+    
+    function addMessage(content, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+        messageDiv.innerHTML = content;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const messageInput = this.querySelector('input[name="message"]');
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        addMessage(message, true);
+        messageInput.value = '';
+        setLoading(true);
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    message: message,
+                    type: currentChatType.value,
+                    session_id: Date.now().toString()
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'An error occurred');
+            }
+            
+            if (data.message) {
+                addMessage(data.message, false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('An error occurred. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    });
+    
+    chatType.addEventListener('change', async function() {
+        const newType = this.value;
+        currentChatType.value = newType;
+        
+        // Clear chat messages
+        chatMessages.innerHTML = '';
+        
+        // Add system message
+        addMessage(`Switched to ${this.options[this.selectedIndex].text} mode. How can I help you?`, false);
+        
+        // Update session on server
+        try {
+            await fetch('{% url "career_advisor:chat" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    chat_type: newType,
+                    reset_session: true
+                })
+            });
+        } catch (error) {
+            console.error('Error updating session:', error);
+        }
+    });
+});
+</script>
+{% endblock %}
