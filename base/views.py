@@ -11,9 +11,6 @@ import json
 import logging
 from datetime import datetime
 from .models import Mentor
-from .linkedin_integration import LinkedInJobsIntegration
-from .niner_events_integration import NinerCareerEventsIntegration
-from .hire_a_niner_jobs_integration import HireANinerJobsIntegration
 from .search_utility import SearchUtility
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
@@ -24,37 +21,12 @@ logger = logging.getLogger(__name__)
 
 def dashboard(request):
     """Main dashboard view with dynamic content"""
-    # Initialize integrations
-    linkedin = LinkedInJobsIntegration()
-    niner_events = NinerCareerEventsIntegration()
-    niner_jobs = HireANinerJobsIntegration()
+    # Initialize search utility
     search_utility = SearchUtility()
     
     # Get search query if present
     search_query = request.GET.get('search', '')
     search_results = []
-    
-    try:
-        # Fetch featured opportunities - now using Hire a Niner integration
-        featured_opportunities = niner_jobs.get_jobs(limit=3)
-        logger.info(f"Successfully fetched {len(featured_opportunities)} opportunities from Hire A Niner")
-    except Exception as e:
-        logger.error(f"Error fetching Hire A Niner jobs: {str(e)}")
-        # Fall back to LinkedIn if Hire A Niner fails
-        try:
-            featured_opportunities = linkedin.get_featured_opportunities(count=3)
-            logger.info(f"Fallback: Successfully fetched {len(featured_opportunities)} opportunities from LinkedIn")
-        except Exception as e2:
-            logger.error(f"Error fetching LinkedIn opportunities: {str(e2)}")
-            featured_opportunities = []
-    
-    try:
-        # Fetch upcoming events from Niner Career Events
-        upcoming_events = niner_events.get_upcoming_events(count=2)
-        logger.info(f"Successfully fetched {len(upcoming_events)} events from Niner Career")
-    except Exception as e:
-        logger.error(f"Error fetching Niner events: {str(e)}")
-        upcoming_events = []
     
     # Define static resource data
     career_resources = [
@@ -107,8 +79,6 @@ def dashboard(request):
     if search_query:
         # Collect all data for searching
         search_data = {
-            'opportunities': featured_opportunities,
-            'events': upcoming_events,
             'resources': career_resources,
             'additional_resources': additional_resources
         }
@@ -119,8 +89,6 @@ def dashboard(request):
     
     # Prepare context for template
     context = {
-        'featured_opportunities': featured_opportunities,
-        'upcoming_events': upcoming_events,
         'career_resources': career_resources,
         'additional_resources': additional_resources,
         'search_results': search_results,
@@ -132,9 +100,6 @@ def dashboard(request):
 
 def job_board(request):
     """View for Job Board page"""
-    # Initialize job integration
-    niner_jobs = HireANinerJobsIntegration()
-    
     # Get filter parameters from request
     job_type = request.GET.get('job_type', '')
     location = request.GET.get('location', '')
@@ -142,39 +107,8 @@ def job_board(request):
     experience = request.GET.get('experience', '')
     search_query = request.GET.get('search', '')
     
-    try:
-        # Fetch jobs with filters
-        if job_type or location or search_query:
-            logger.info(f"Fetching filtered jobs: type={job_type}, location={location}, search={search_query}")
-            jobs = niner_jobs.get_jobs(
-                limit=20, 
-                job_type=job_type, 
-                location=location,
-                search_term=search_query
-            )
-        else:
-            logger.info("Fetching all jobs")
-            jobs = niner_jobs.get_jobs(limit=20)
-        
-        job_count = len(jobs)
-        logger.info(f"Found {job_count} jobs")
-    except Exception as e:
-        logger.error(f"Error fetching jobs: {str(e)}")
-        jobs = []
-        job_count = 0
-    
-    # Get recommended jobs (simplified - in production this would use user preferences)
-    try:
-        recommended_jobs = niner_jobs.get_jobs(limit=4)
-    except Exception as e:
-        logger.error(f"Error fetching recommended jobs: {str(e)}")
-        recommended_jobs = []
-    
     # Create context for template
     context = {
-        'jobs': jobs,
-        'job_count': job_count,
-        'recommended_jobs': recommended_jobs,
         'current_year': datetime.now().year,
         'search_query': search_query,
         'job_type': job_type,
