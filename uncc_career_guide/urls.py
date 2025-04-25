@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from base import views
+from base.views import custom_logout
+
 from base.views import (
     dashboard,
     job_board, 
@@ -61,7 +63,14 @@ urlpatterns = [
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('base.urls')),
-    path('signup/', views.signup, name='signup')
+    path('signup/', views.signup, name='signup'),
+    path('mentors/', views.mentor_list, name='mentor_list'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', custom_logout, name='logout'),
+    path('mentor/<int:mentor_id>/', views.mentor_detail, name='mentor_detail'),
+    path('messages/send/', views.send_message, name='send_message'),
+    path('messages/<int:recipient_id>/', views.get_messages, name='get_messages'),
 ] 
 
 if settings.DEBUG:

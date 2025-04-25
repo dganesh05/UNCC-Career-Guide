@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block extra_css %}
+<link href="{% static 'css/mentor_detail.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="mentor-detail-container">
+    <h1>{{ mentor.full_name }}</h1>
+    <p><strong>Title:</strong> {{ mentor.title }}</p>
+    <p><strong>Company:</strong> {{ mentor.company }}</p>
+    <p><strong>Expertise:</strong> {{ mentor.expertise }}</p>
+    <p><strong>Education:</strong> {{ mentor.education }}</p>
+    <p><strong>Experience:</strong> {{ mentor.experience }}</p>
+
+    <h2>Chat with {{ mentor.full_name }}</h2>
+    <div class="chat-container">
+        <div id="chat-messages">
+            <!-- Chat messages will be dynamically loaded here -->
+        </div>
+        <form id="chat-form" method="post" action="{% url 'send_message' %}">
+            {% csrf_token %}
+            <input type="hidden" name="recipient_id" value="{{ mentor.user.id }}">
+            <textarea name="content" placeholder="Type your message here..." rows="4"></textarea>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const chatMessages = document.getElementById('chat-messages');
+
+    // Load messages
+    async function loadMessages() {
+        const response = await fetch("{% url 'get_messages' mentor.user.id %}");
+        if (response.ok) {
+            const data = await response.json();
+            chatMessages.innerHTML = ''; // Clear the chat messages container
+            data.messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message');
+                if (message.sender === "{{ request.user.username }}") {
+                    messageDiv.classList.add('sent-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                }
+                messageDiv.textContent = `${message.sender}: ${message.content}`;
+                chatMessages.appendChild(messageDiv);
+            });
+        } else {
+            console.error('Failed to load messages');
+        }
+    }
+
+    // Handle form submission
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(chatForm);
+        const response = await fetch(chatForm.action, {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            chatForm.reset();
+            loadMessages(); // Reload messages after sending
+        } else {
+            console.error('Failed to send message');
+        }
+    });
+
+    // Load messages initially and refresh every 5 seconds
+    loadMessages();
+    setInterval(loadMessages, 5000);
+</script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 class ChatMessage(models.Model):
     MESSAGE_TYPES = [
@@ -37,7 +38,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     major = models.CharField(max_length=100)
-    graduation_year = models.IntegerField()
+    graduation_year = models.IntegerField(null=True, blank=True)
     bio = models.TextField(blank=True)
     interests = models.TextField(blank=True)
 
@@ -57,3 +58,13 @@ class Alumni(models.Model):
 
     def __str__(self):
         return self.full_name
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=now)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"From {self.sender} to {self.recipient} at {self.timestamp}"

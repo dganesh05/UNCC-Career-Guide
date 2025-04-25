@@ -1,5 +1,5 @@
 # File: base/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from rest_framework.views import APIView
@@ -10,12 +10,20 @@ from django.conf import settings
 import json
 import logging
 from datetime import datetime
-from .models import Mentor
+from .models import Student, Mentor, Alumni
 from .search_utility import SearchUtility
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
 from decouple import config
 from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
+from .forms import MentorForm, StudentForm, AlumniForm
+from django.contrib.auth import logout
+from django.contrib.auth import login
+from .models import Message
+from django.db import models
+from django.db.models import Q
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -302,10 +310,105 @@ def test_chatbot(request):
         return HttpResponse(f"Error: {str(e)}", status=500)
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            profile_type = form.cleaned_data['account_type']
+
+            # Create the appropriate profile based on the selected type
+            if profile_type == 'mentor':
+                Mentor.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
+            elif profile_type == 'student':
+                graduation_year = form.cleaned_data.get('graduation_year')  # Get graduation year
+                Student.objects.create(
+                    user=user,
+                    full_name=f"{user.first_name} {user.last_name}",
+                    graduation_year=graduation_year  # Pass graduation year
+                )
+            elif profile_type == 'alumni':
+                Alumni.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
+
+            # Log the user in and redirect to the edit profile page
+            login(request, user)
+            return redirect('edit_profile')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+def mentor_list(request):
+    mentors = Mentor.objects.all()
+    return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile = None
+    form_class = None
+
+    # Determine the user's profile type
+    if hasattr(user, 'mentor'):
+        profile = user.mentor
+        form_class = MentorForm
+    elif hasattr(user, 'student'):
+        profile = user.student
+        form_class = StudentForm
+    elif hasattr(user, 'alumni'):
+        profile = user.alumni
+        form_class = AlumniForm
+    else:
+        return redirect('home')  # Redirect if no profile is found
+
+   
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('login')  # name of the login URL
+            return redirect('dashboard')  # Redirect to the dashboard after saving
     else:
-        form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+        form = form_class(instance=profile)
+
+    return render(request, 'registration/edit_profile.html', {'form': form})
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home') 
+
+def mentor_detail(request, mentor_id):
+    mentor = get_object_or_404(Mentor, id=mentor_id)
+    return render(request, 'mentors/mentor_detail.html', {'mentor': mentor})
+    
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        recipient_id = request.POST.get('recipient_id')
+        content = request.POST.get('content')
+
+        if not recipient_id or not content:
+            return JsonResponse({'error': 'Recipient and content are required.'}, status=400)
+
+        recipient = get_object_or_404(User, id=recipient_id)
+        Message.objects.create(sender=request.user, recipient=recipient, content=content)
+
+        return JsonResponse({'success': 'Message sent successfully.'})
+
+@login_required
+def get_messages(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+    messages = Message.objects.filter(
+        Q(sender=request.user, recipient=recipient) |
+        Q(sender=recipient, recipient=request.user)
+    ).order_by('timestamp')
+
+    messages_data = [
+        {
+            'sender': message.sender.username,
+            'recipient': message.recipient.username,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'is_read': message.is_read,
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({'messages': messages_data})
