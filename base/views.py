@@ -10,12 +10,13 @@ from django.conf import settings
 import json
 import logging
 from datetime import datetime
-from .models import Mentor
+from .models import Student, Mentor, Alumni
 from .search_utility import SearchUtility
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
 from decouple import config
 from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -302,10 +303,20 @@ def test_chatbot(request):
         return HttpResponse(f"Error: {str(e)}", status=500)
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')  # name of the login URL
+            user = form.save()
+            account_type = form.cleaned_data.get('account_type')
+
+            if account_type == 'student':
+                graduation_year = form.cleaned_data.get('graduation_year')
+                Student.objects.create(user=user, graduation_year=graduation_year)
+            elif account_type == 'mentor':
+                Mentor.objects.create(user=user)
+            elif account_type == 'alumni':
+                Alumni.objects.create(user=user)
+
+            return redirect('login')  # or wherever you want to send them
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
