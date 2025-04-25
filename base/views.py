@@ -15,6 +15,7 @@ from .search_utility import SearchUtility
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
 from decouple import config
+from django.contrib.auth.forms import UserCreationForm
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -99,13 +100,17 @@ def dashboard(request):
     return render(request, 'uncc-dashboard.html', context)
 
 def job_board(request):
-    """View for Job Board page"""
+    """View for Job Board page with pagination"""
     # Get filter parameters from request
     job_type = request.GET.get('job_type', '')
     location = request.GET.get('location', '')
     industry = request.GET.get('industry', '')
     experience = request.GET.get('experience', '')
     search_query = request.GET.get('search', '')
+    
+    # Get pagination parameters
+    page = int(request.GET.get('page', 1))
+    jobs_per_page = 21  # Display 20 jobs per page
     
     # Create context for template
     context = {
@@ -114,7 +119,15 @@ def job_board(request):
         'job_type': job_type,
         'location': location,
         'industry': industry,
-        'experience': experience
+        'experience': experience,
+        # Pagination context
+        'current_page': page,
+        'total_pages': total_pages,
+        'has_previous': page > 1,
+        'has_next': page < total_pages,
+        'previous_page': page - 1,
+        'next_page': page + 1,
+        'page_range': range(max(1, page - 2), min(total_pages + 1, page + 3)),
     }
     
     return render(request, 'uncc-job-board.html', context)
@@ -287,3 +300,12 @@ def test_chatbot(request):
     except Exception as e:
         logger.error(f"Error in test_chatbot: {str(e)}", exc_info=True)
         return HttpResponse(f"Error: {str(e)}", status=500)
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # name of the login URL
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
