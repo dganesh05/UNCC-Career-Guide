@@ -1,5 +1,5 @@
 # File: base/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from rest_framework.views import APIView
@@ -21,7 +21,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import MentorForm, StudentForm, AlumniForm
 from django.contrib.auth import logout
 from django.contrib.auth import login
-
+from .models import Message
+from django.db import models
+from django.db.models import Q
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -367,6 +369,46 @@ def edit_profile(request):
 
     return render(request, 'registration/edit_profile.html', {'form': form})
 
+
 def custom_logout(request):
     logout(request)
     return redirect('home') 
+
+def mentor_detail(request, mentor_id):
+    mentor = get_object_or_404(Mentor, id=mentor_id)
+    return render(request, 'mentors/mentor_detail.html', {'mentor': mentor})
+    
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        recipient_id = request.POST.get('recipient_id')
+        content = request.POST.get('content')
+
+        if not recipient_id or not content:
+            return JsonResponse({'error': 'Recipient and content are required.'}, status=400)
+
+        recipient = get_object_or_404(User, id=recipient_id)
+        Message.objects.create(sender=request.user, recipient=recipient, content=content)
+
+        return JsonResponse({'success': 'Message sent successfully.'})
+
+@login_required
+def get_messages(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+    messages = Message.objects.filter(
+        Q(sender=request.user, recipient=recipient) |
+        Q(sender=recipient, recipient=request.user)
+    ).order_by('timestamp')
+
+    messages_data = [
+        {
+            'sender': message.sender.username,
+            'recipient': message.recipient.username,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'is_read': message.is_read,
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({'messages': messages_data})

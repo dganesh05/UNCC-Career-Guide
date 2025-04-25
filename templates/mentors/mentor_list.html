@@ -18,7 +18,7 @@
             <p><strong>Expertise:</strong> {{ mentor.expertise }}</p>
             <p><strong>Education:</strong> {{ mentor.education }}</p>
             <p><strong>Experience:</strong> {{ mentor.experience }}</p>
-            <button class="mentor-connect" style="background-color: var(--uncc-green); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Connect</button>
+            <a href="{% url 'mentor_detail' mentor.id %}" class="btn btn-primary">Connect</a>
         </div>
     {% endfor %}
 </main>
