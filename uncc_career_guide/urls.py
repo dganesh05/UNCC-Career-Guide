@@ -61,7 +61,8 @@ urlpatterns = [
     path('generate-resume/', resume_views.generate_resume, name='generate_resume'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('base.urls')),
-    path('signup/', views.signup, name='signup')
+    path('signup/', views.signup, name='signup'),
+    path('mentors/', views.mentor_list, name='mentor_list'),
 ] 
 
 if settings.DEBUG:

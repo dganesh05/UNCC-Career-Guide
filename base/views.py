@@ -320,3 +320,6 @@ def signup(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+def mentor_list(request):
+    mentors = Mentor.objects.all()
+    return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
