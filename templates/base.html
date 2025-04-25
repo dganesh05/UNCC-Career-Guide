@@ -5,69 +5,101 @@ Set up block sections for content -->
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UNCC Career Guide</title>
     <link
       rel="icon"
       href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjI1IiByPSIyNSIgZmlsbD0iI2IzYTM2OSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMDA1MDM1IiBmb250LWZhbWlseT0iJ1NlZ29lIFVJJywgVGFob21hLCBHZW5ldmEsIFZlcmRhbmEsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjEwIj5VTkNDPC90ZXh0Pjwvc3ZnPg=="
     />
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     {% block extra_css %}{% endblock %}
     <style>
-        footer {
-            background-color: var(--uncc-green);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
+      footer {
+        background-color: var(--uncc-green);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 2rem;
+      }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
 
-        .footer-content .logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
+      .footer-content .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
 
-        .footer-content .logo-img {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--uncc-gold);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+      .footer-content .logo-img {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--uncc-gold);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-        .footer-content h1 {
-            color: white;
-            font-size: 1.5rem;
-            margin: 0;
-            font-weight: 500;
-        }
+      .footer-content h1 {
+        color: white;
+        font-size: 1.5rem;
+        margin: 0;
+        font-weight: 500;
+      }
 
-        .footer-content p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
+      .footer-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+      }
 
-        .footer-content p:last-child {
-            margin-top: 0.5rem;
-        }
+      .footer-content p:last-child {
+        margin-top: 0.5rem;
+      }
+
+      .btn-primary {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--uncc-green); /* Green */
+        color: var(--uncc-gold); /* Yellow */
+      }
+
+      .btn-secondary {
+        background-color: var(--uncc-green); /* Green */
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
       <div class="header-content">
         <div class="logo">
@@ -75,39 +107,66 @@ Set up block sections for content -->
           <h1>Career Guide</h1>
         </div>
         <div>
-          <button
-            style="
-              background: var(--uncc-gold);
-              color: var(--uncc-green);
-              border: none;
-              padding: 0.5rem 1rem;
-              border-radius: 4px;
-              font-weight: bold;
-              cursor: pointer;
-            "
-          >
-            Student Login
-          </button>
+          <a href="{% url 'login' %}">
+            <button
+              style="
+                background: var(--uncc-gold);
+                color: var(--uncc-green);
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                font-weight: bold;
+                cursor: pointer;
+              "
+            >
+              Student Login
+            </button>
+          </a>
         </div>
       </div>
     </header>
 
     <nav>
-        <ul class="nav-tabs">
-            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"><a href="{% url 'home' %}">Home</a></li>
-            <li class="{% if request.resolver_match.url_name == 'job_board' %}active{% endif %}"><a href="{% url 'job_board' %}">Job Board</a></li>
-            <li class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><a href="{% url 'networking' %}">Networking Hub</a></li>
-            <li class="{% if request.resolver_match.url_name == 'events' %}active{% endif %}"><a href="{% url 'events' %}">Career Events</a></li>
-            <li class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"><a href="{% url 'resources' %}">Resources</a></li>
-            <li class="{% if request.resolver_match.url_name == 'mentorship' %}active{% endif %}"><a href="{% url 'mentorship' %}">Mentorship Hub</a></li>
-            <li class="{% if request.resolver_match.url_name == 'career_advisor:chat' %}active{% endif %}"><a href="{% url 'career_advisor:chat' %}">Career Assistant</a></li>
-        </ul>
+      <ul class="nav-tabs">
+        <li
+          class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+        >
+          <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'job_board' %}active{% endif %}"
+        >
+          <a href="{% url 'job_board' %}">Job Board</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"
+        >
+          <a href="{% url 'networking' %}">Networking Hub</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'events' %}active{% endif %}"
+        >
+          <a href="{% url 'events' %}">Career Events</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"
+        >
+          <a href="{% url 'resources' %}">Resources</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'mentorship' %}active{% endif %}"
+        >
+          <a href="{% url 'mentorship' %}">Mentorship Hub</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'career_advisor:chat' %}active{% endif %}"
+        >
+          <a href="{% url 'career_advisor:chat' %}">Career Assistant</a>
+        </li>
+      </ul>
     </nav>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    <main>{% block content %} {% endblock %}</main>
 
     <footer>
       <div class="footer-content">
@@ -116,13 +175,13 @@ Set up block sections for content -->
           <h1>Career Guide</h1>
         </div>
         <p>
-          © {% now "Y" %} University of North Carolina at Charlotte. All
-          rights reserved.
+          © {% now "Y" %} University of North Carolina at Charlotte. All rights
+          reserved.
         </p>
         <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
       </div>
     </footer>
 
     {% block extra_js %}{% endblock %}
-</body>
+  </body>
 </html>
