@@ -19,6 +19,8 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from .forms import MentorForm, StudentForm, AlumniForm
+from django.contrib.auth import logout
+from django.contrib.auth import login
 
 
 # Set up logging
@@ -309,16 +311,22 @@ def signup(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            account_type = form.cleaned_data.get('account_type')
+            profile_type = form.cleaned_data['account_type']
 
-            if account_type == 'student':
-                graduation_year = form.cleaned_data.get('graduation_year')
-                Student.objects.create(user=user, graduation_year=graduation_year)
-            elif account_type == 'mentor':
-                Mentor.objects.create(user=user)
-            elif account_type == 'alumni':
-                Alumni.objects.create(user=user)
+            # Create the appropriate profile based on the selected type
+            if profile_type == 'mentor':
+                Mentor.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
+            elif profile_type == 'student':
+                graduation_year = form.cleaned_data.get('graduation_year')  # Get graduation year
+                Student.objects.create(
+                    user=user,
+                    full_name=f"{user.first_name} {user.last_name}",
+                    graduation_year=graduation_year  # Pass graduation year
+                )
+            elif profile_type == 'alumni':
+                Alumni.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
 
+            # Log the user in and redirect to the edit profile page
             login(request, user)
             return redirect('edit_profile')
     else:
@@ -348,7 +356,7 @@ def edit_profile(request):
     else:
         return redirect('home')  # Redirect if no profile is found
 
-    # Handle form submission
+   
     if request.method == 'POST':
         form = form_class(request.POST, instance=profile)
         if form.is_valid():
@@ -358,3 +366,7 @@ def edit_profile(request):
         form = form_class(instance=profile)
 
     return render(request, 'registration/edit_profile.html', {'form': form})
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home') 

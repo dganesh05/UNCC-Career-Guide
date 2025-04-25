@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from base import views
+from base.views import custom_logout
+
 from base.views import (
     dashboard,
     job_board, 
@@ -64,6 +66,8 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('mentors/', views.mentor_list, name='mentor_list'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', custom_logout, name='logout'),
 ] 
 
 if settings.DEBUG:

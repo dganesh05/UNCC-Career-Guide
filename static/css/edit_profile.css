@@ -1,0 +1,71 @@
+
+/* General container styling */
+.edit-profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--light-gray);
+    border: 1px solid var(--med-gray);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Page title styling */
+.edit-profile-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--uncc-green);
+}
+
+/* Form styling */
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.edit-profile-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.edit-profile-form label {
+    font-weight: bold;
+    color: var(--dark-gray);
+}
+
+.edit-profile-form input,
+.edit-profile-form textarea,
+.edit-profile-form select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--med-gray);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.edit-profile-form input:focus,
+.edit-profile-form textarea:focus,
+.edit-profile-form select:focus {
+    border-color: var(--uncc-green);
+    outline: none;
+}
+
+/* Button styling */
+.edit-profile-form .btn-primary {
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.edit-profile-form .btn-primary:hover {
+    background-color: var(--uncc-green);
+    color: var(--uncc-gold);
+}
