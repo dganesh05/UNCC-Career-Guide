@@ -17,6 +17,9 @@ from mistralai.client import MistralClient
 from decouple import config
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
+from .forms import MentorForm, StudentForm, AlumniForm
+
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -316,10 +319,42 @@ def signup(request):
             elif account_type == 'alumni':
                 Alumni.objects.create(user=user)
 
-            return redirect('login')  # or wherever you want to send them
+            login(request, user)
+            return redirect('edit_profile')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
 def mentor_list(request):
     mentors = Mentor.objects.all()
     return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile = None
+    form_class = None
+
+    # Determine the user's profile type
+    if hasattr(user, 'mentor'):
+        profile = user.mentor
+        form_class = MentorForm
+    elif hasattr(user, 'student'):
+        profile = user.student
+        form_class = StudentForm
+    elif hasattr(user, 'alumni'):
+        profile = user.alumni
+        form_class = AlumniForm
+    else:
+        return redirect('home')  # Redirect if no profile is found
+
+    # Handle form submission
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to the dashboard after saving
+    else:
+        form = form_class(instance=profile)
+
+    return render(request, 'registration/edit_profile.html', {'form': form})

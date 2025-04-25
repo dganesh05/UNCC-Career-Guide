@@ -63,6 +63,7 @@ urlpatterns = [
     path('', include('base.urls')),
     path('signup/', views.signup, name='signup'),
     path('mentors/', views.mentor_list, name='mentor_list'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
 ] 
 
 if settings.DEBUG:
