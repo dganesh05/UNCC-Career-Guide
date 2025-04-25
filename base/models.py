@@ -37,7 +37,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     major = models.CharField(max_length=100)
-    graduation_year = models.IntegerField()
+    graduation_year = models.IntegerField(null=True, blank=True)
     bio = models.TextField(blank=True)
     interests = models.TextField(blank=True)
 

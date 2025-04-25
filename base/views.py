@@ -17,6 +17,11 @@ from mistralai.client import MistralClient
 from decouple import config
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
+from .forms import MentorForm, StudentForm, AlumniForm
+from django.contrib.auth import logout
+from django.contrib.auth import login
+
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -306,20 +311,62 @@ def signup(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            account_type = form.cleaned_data.get('account_type')
+            profile_type = form.cleaned_data['account_type']
 
-            if account_type == 'student':
-                graduation_year = form.cleaned_data.get('graduation_year')
-                Student.objects.create(user=user, graduation_year=graduation_year)
-            elif account_type == 'mentor':
-                Mentor.objects.create(user=user)
-            elif account_type == 'alumni':
-                Alumni.objects.create(user=user)
+            # Create the appropriate profile based on the selected type
+            if profile_type == 'mentor':
+                Mentor.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
+            elif profile_type == 'student':
+                graduation_year = form.cleaned_data.get('graduation_year')  # Get graduation year
+                Student.objects.create(
+                    user=user,
+                    full_name=f"{user.first_name} {user.last_name}",
+                    graduation_year=graduation_year  # Pass graduation year
+                )
+            elif profile_type == 'alumni':
+                Alumni.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
 
-            return redirect('login')  # or wherever you want to send them
+            # Log the user in and redirect to the edit profile page
+            login(request, user)
+            return redirect('edit_profile')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
 def mentor_list(request):
     mentors = Mentor.objects.all()
     return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile = None
+    form_class = None
+
+    # Determine the user's profile type
+    if hasattr(user, 'mentor'):
+        profile = user.mentor
+        form_class = MentorForm
+    elif hasattr(user, 'student'):
+        profile = user.student
+        form_class = StudentForm
+    elif hasattr(user, 'alumni'):
+        profile = user.alumni
+        form_class = AlumniForm
+    else:
+        return redirect('home')  # Redirect if no profile is found
+
+   
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to the dashboard after saving
+    else:
+        form = form_class(instance=profile)
+
+    return render(request, 'registration/edit_profile.html', {'form': form})
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home') 
