@@ -1,4 +1,5 @@
 .env
+env/.env
 __pycache__
 base/__pycache__
 career_advisor/__pycache__/
