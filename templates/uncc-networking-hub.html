@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block extra_css %}
+<link href="{% static 'css/networking_hub.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <section class="hero">
         <h2>Networking Hub</h2>
@@ -7,50 +13,22 @@
     </section>
 
     <section class="networking-features">
-        <div class="feature-card">
-            <h3>Mentor Connections</h3>
-            <p>Find and connect with experienced mentors in your field.</p>
-            <a href="{% url 'mentor_list' %}" class="feature-btn">Explore Mentors</a>
-        </div>
-        
-        <div class="feature-card">
-            <h3>Alumni Network</h3>
-            <p>Connect with UNCC alumni who can help guide your career path.</p>
-            <a href="#" class="feature-btn">Explore Alumni</a>
-        </div>
-        
-        <div class="feature-card">
-            <h3>Industry Events</h3>
-            <p>Attend networking events and meet professionals in your industry.</p>
-            <a href="{% url 'events' %}" class="feature-btn">View Events</a>
-        </div>
-    </section>
-
-    <section class="mentor-spotlight">
-        <h3>Featured Mentors</h3>
-        <div class="mentor-cards">
-            {% for mentor in featured_mentors %}
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <h4>{{ mentor.name }}</h4>
-                    <p>{{ mentor.title }} at {{ mentor.company }}</p>
-                    <div class="mentor-tags">
-                        <span class="mentor-tag">{{ mentor.industry }}</span>
-                        <span class="mentor-tag">{{ mentor.expertise }}</span>
-                    </div>
-                </div>
-                <a href="{% url 'mentorship' %}" class="view-all">View Profile →</a>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Find Mentors</h3>
+                <p>Connect with experienced professionals who can provide guidance, advice, and support as you navigate your career path.</p>
+                <a href="{% url 'mentor_list' %}" class="feature-btn">Explore Mentors</a>
             </div>
-            {% empty %}
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <h4>No featured mentors available</h4>
-                    <p>Check back later for featured mentor profiles</p>
-                </div>
+            <div class="feature-card">
+                <h3>Networking Events</h3>
+                <p>Attend virtual and in-person events designed to help you make connections with potential employers and peers.</p>
+                <a href="{% url 'events' %}" class="feature-btn">View Calendar</a>
             </div>
-            {% endfor %}
+            <div class="feature-card">
+                <h3>Alumni Network</h3>
+                <p>Connect with UNCC graduates who have walked your path and are eager to help current students succeed.</p>
+                <a href="{% url 'alumni_list' %}" class="feature-btn">Connect with Alumni</a>
+            </div>
         </div>
-        <a href="{% url 'mentorship' %}" class="view-all">View All Mentors →</a>
     </section>
 {% endblock %}
-``` 

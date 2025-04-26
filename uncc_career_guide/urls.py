@@ -71,6 +71,9 @@ urlpatterns = [
     path('mentor/<int:mentor_id>/', views.mentor_detail, name='mentor_detail'),
     path('messages/send/', views.send_message, name='send_message'),
     path('messages/<int:recipient_id>/', views.get_messages, name='get_messages'),
+    path('alumni/', views.alumni_list, name='alumni_list'),
+    path('alumni/<int:alumni_id>/', views.alumni_detail, name='alumni_detail'),
+
 ] 
 
 if settings.DEBUG:
