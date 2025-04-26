@@ -24,6 +24,7 @@ from django.contrib.auth import login
 from .models import Message
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -385,12 +386,17 @@ def send_message(request):
         content = request.POST.get('content')
 
         if not recipient_id or not content:
+            logger.error(f"Invalid data: recipient_id={recipient_id}, content={content}")
             return JsonResponse({'error': 'Recipient and content are required.'}, status=400)
 
-        recipient = get_object_or_404(User, id=recipient_id)
-        Message.objects.create(sender=request.user, recipient=recipient, content=content)
-
-        return JsonResponse({'success': 'Message sent successfully.'})
+        try:
+            recipient = get_object_or_404(User, id=recipient_id)
+            Message.objects.create(sender=request.user, recipient=recipient, content=content)
+            logger.info(f"Message sent: sender={request.user}, recipient={recipient}, content={content}")
+            return JsonResponse({'success': 'Message sent successfully.'})
+        except Exception as e:
+            logger.error(f"Error sending message: {str(e)}")
+            return JsonResponse({'error': 'An error occurred while sending the message.'}, status=500)
 
 @login_required
 def get_messages(request, recipient_id):
@@ -412,3 +418,11 @@ def get_messages(request, recipient_id):
     ]
 
     return JsonResponse({'messages': messages_data})
+
+def alumni_list(request):
+    alumni = Alumni.objects.all()  # Fetch all alumni from the database
+    return render(request, 'alumni/alumni_list.html', {'alumni': alumni})
+
+def alumni_detail(request, alumni_id):
+    alumnus = get_object_or_404(Alumni, id=alumni_id)
+    return render(request, 'alumni/alumni_detail.html', {'alumnus': alumnus})

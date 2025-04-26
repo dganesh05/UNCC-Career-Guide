@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<link href="{% static 'css/mentor_list.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<main>
+    <h1 style="color: var(--uncc-green); text-align: center; margin-bottom: 2rem;">Career Guide Alumni</h1>
+    {% for alumnus in alumni %}
+        <div class="mentor-card">
+            <h2>{{ alumnus.full_name }}</h2>
+            <p><strong>{{ alumnus.title }}</strong> at <em>{{ alumnus.company }}</em></p>
+            <p>{{ alumnus.bio }}</p>
+            <p><strong>Expertise:</strong> {{ alumnus.expertise }}</p>
+            <p><strong>Education:</strong> {{ alumnus.education }}</p>
+            <p><strong>Experience:</strong> {{ alumnus.experience }}</p>
+            <a href="{% url 'alumni_detail' alumnus.id %}" class="btn btn-primary">Connect</a>
+        </div>
+    {% endfor %}
+</main>
+{% endblock %}
