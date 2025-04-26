@@ -20,7 +20,7 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from .forms import MentorForm, StudentForm, AlumniForm
 from django.contrib.auth import logout
-from django.contrib.auth import login
+from django.contrib.auth import login  
 from .models import Message
 from django.db import models
 from django.db.models import Q
@@ -157,7 +157,8 @@ def mentorship_hub(request):
     """View for Mentorship Hub page"""
     return render(request, 'uncc-mentorship-hub.html')
 
-def login(request):
+
+def custom_login(request):
     """View for Login page"""
     return render(request, 'uncc-login-page.html')
 
@@ -309,6 +310,7 @@ def test_chatbot(request):
     except Exception as e:
         logger.error(f"Error in test_chatbot: {str(e)}", exc_info=True)
         return HttpResponse(f"Error: {str(e)}", status=500)
+
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -316,29 +318,24 @@ def signup(request):
             user = form.save()
             profile_type = form.cleaned_data['account_type']
 
-            # Create the appropriate profile based on the selected type
             if profile_type == 'mentor':
                 Mentor.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
             elif profile_type == 'student':
-                graduation_year = form.cleaned_data.get('graduation_year')  # Get graduation year
+                graduation_year = form.cleaned_data.get('graduation_year')
                 Student.objects.create(
                     user=user,
                     full_name=f"{user.first_name} {user.last_name}",
-                    graduation_year=graduation_year  # Pass graduation year
+                    graduation_year=graduation_year
                 )
             elif profile_type == 'alumni':
                 Alumni.objects.create(user=user, full_name=f"{user.first_name} {user.last_name}")
 
-            # Log the user in and redirect to the edit profile page
+            
             login(request, user)
             return redirect('edit_profile')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
-
-def mentor_list(request):
-    mentors = Mentor.objects.all()
-    return render(request, 'mentors/mentor_list.html', {'mentors': mentors})
 
 @login_required
 def edit_profile(request):
@@ -346,7 +343,7 @@ def edit_profile(request):
     profile = None
     form_class = None
 
-    # Determine the user's profile type
+    
     if hasattr(user, 'mentor'):
         profile = user.mentor
         form_class = MentorForm
@@ -357,14 +354,14 @@ def edit_profile(request):
         profile = user.alumni
         form_class = AlumniForm
     else:
-        return redirect('home')  # Redirect if no profile is found
+        return redirect('home')  
 
    
     if request.method == 'POST':
         form = form_class(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('dashboard')  # Redirect to the dashboard after saving
+            return redirect('dashboard')  
     else:
         form = form_class(instance=profile)
 
