@@ -52,7 +52,7 @@ def generate_resume(request):
                 pdf.set_font("Arial", size=12)
                 pdf.multi_cell(0, 10, resume_content)
 
-                # Output PDF as bytes
+                # Output as bytes
                 pdf_bytes = pdf.output(dest='S').encode('latin1')
 
                 # Create HttpResponse and write PDF bytes
