@@ -1,11 +1,15 @@
-import openai
 from django.shortcuts import render
 from django.http import HttpResponse
-from .forms import ResumeForm
+from .forms import ResumeForm  
 from fpdf import FPDF
+from mistralai.client import MistralClient
+from decouple import config
 
+# Load Mistral API key
+mistral_api_key = config('MISTRAL_API_KEY')
 
-openai.api_key = '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'
+# Initialize Mistral client
+client = MistralClient(api_key=mistral_api_key)
 
 def generate_resume(request):
     if request.method == 'POST':
@@ -20,37 +24,46 @@ def generate_resume(request):
             skills = form.cleaned_data['skills']
             career_goals = form.cleaned_data['career_goals']
 
-            # Generate resume content using OpenAI ChatCompletion
-            messages = [
-                {"role": "system", "content": "You are a professional resume writer."},
-                {"role": "user", "content": f"""
-                Create a professional resume for the following details:
-                Name: {name}
-                Email: {email}
-                Phone: {phone}
-                Education: {education}
-                Experience: {experience}
-                Skills: {skills}
-                Career Goals: {career_goals}
-                """}
-            ]
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=messages
-            )
-            resume_content = response['choices'][0]['message']['content'].strip()
+            # Prepare the prompt for Mistral
+            prompt = f"""
+            Create a professional resume for the following details:
+            Name: {name}
+            Email: {email}
+            Phone: {phone}
+            Education: {education}
+            Experience: {experience}
+            Skills: {skills}
+            Career Goals: {career_goals}
+            """
 
-            # Generate a PDF
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.multi_cell(0, 10, resume_content)
+            try:
+                # Generate resume content using Mistral
+                response = client.chat(
+                    model="mistral-small",
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                resume_content = response.choices[0].message.content.strip()
 
-            # Return the PDF as a response
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="{name}_resume.pdf"'
-            pdf.output(response, 'F')
-            return response
+                # Generate a PDF
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                pdf.multi_cell(0, 10, resume_content)
+
+                # Output PDF as bytes
+                pdf_bytes = pdf.output(dest='S').encode('latin1')
+
+                # Create HttpResponse and write PDF bytes
+                response_pdf = HttpResponse(content_type='application/pdf')
+                response_pdf['Content-Disposition'] = f'attachment; filename="{name}_resume.pdf"'
+                response_pdf.write(pdf_bytes)
+                return response_pdf
+
+            except Exception as e:
+                return HttpResponse(f"Error generating resume: {str(e)}", status=500)
+
     else:
         form = ResumeForm()
 
