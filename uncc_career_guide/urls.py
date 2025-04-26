@@ -56,7 +56,7 @@ urlpatterns = [
     path('events/', career_events, name='events'),
     path('resources/', resources, name='resources'),
     path('mentorship/', mentorship_hub, name='mentorship'),
-    path('login/', login, name='login'),
+    path('login/', views.custom_login, name='login'),
     path('career-advisor/', include('career_advisor.urls')),
     path('chat/', chat_view, name='chat'),
     path('api/chat/', views.ChatbotView.as_view(), name='chat_api'),
