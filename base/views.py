@@ -122,6 +122,10 @@ def job_board(request):
     page = int(request.GET.get('page', 1))
     jobs_per_page = 21  # Display 20 jobs per page
     
+    # Calculate total pages
+    total_jobs = 100  # This should be replaced with actual job count from your database
+    total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+    
     # Create context for template
     context = {
         'current_year': datetime.now().year,
@@ -151,8 +155,23 @@ def career_events(request):
     return render(request, 'uncc-career-events.html')
 
 def resources(request):
-    """View for Resources page"""
-    return render(request, 'uncc-resources.html')
+    """View for Resources page with integrated dashboard"""
+    # Get resources from admin
+    resources = ResourceOpportunity.objects.all()
+    category_filter = request.GET.get('category')
+
+    if category_filter:
+        resources = resources.filter(category=category_filter)
+
+    categories = [choice[0] for choice in ResourceOpportunity.CATEGORY_CHOICES]
+
+    context = {
+        'resources': resources,
+        'categories': categories,
+        'selected_category': category_filter,
+        'current_year': datetime.now().year
+    }
+    return render(request, 'uncc-resources.html', context)
 
 def mentorship_hub(request):
     """View for Mentorship Hub page"""

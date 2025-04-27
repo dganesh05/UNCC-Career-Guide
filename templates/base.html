@@ -108,6 +108,16 @@
         >
           <a href="{% url 'career_advisor:chat' %}">Career Assistant</a>
         </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'career_confidence_boost' %}active{% endif %}"
+        >
+          <a href="{% url 'career_confidence_boost' %}">Confidence Boost</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'visualize_trajectory' %}active{% endif %}"
+        >
+          <a href="{% url 'visualize_trajectory' %}">Career Trajectory</a>
+        </li>
       </ul>
     </nav>
 
