@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/resume_generator.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <h2>AI-Powered Resume Generator</h2>
+        <p>
+            Fill out the form below to generate a professional resume tailored to
+            your details.
+        </p>
+    </div>
+
+    <div class="form-container">
+        <h3>Resume Details</h3>
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Generate Resume</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UNCC Career Guide</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjI1IiByPSIyNSIgZmlsbD0iI2IzYTM2OSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMDA1MDM1IiBmb250LWZhbWlseT0iJ1NlZ29lIFVJJywgVGFob21hLCBHZW5ldmEsIFZlcmRhbmEsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjEwIj5VTkNDPC90ZXh0Pjwvc3ZnPg=="
+    />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    {% block extra_css %}{% endblock %}
+    <style>
+      .btn-primary {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--uncc-green); /* Green */
+        color: var(--uncc-gold); /* Yellow */
+      }
+
+      .btn-secondary {
+        background-color: var(--uncc-green); /* Green */
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--uncc-gold); /* Yellow */
+        color: var(--uncc-green); /* Green */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-img">UNCC</div>
+          <h1>Career Guide</h1>
+        </div>
+        <div>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">Log Out</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">Student Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <nav>
+      <ul class="nav-tabs">
+        <li
+          class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+        >
+          <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'job_board' %}active{% endif %}"
+        >
+          <a href="{% url 'job_board' %}">Job Board</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"
+        >
+          <a href="{% url 'networking' %}">Networking Hub</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'events' %}active{% endif %}"
+        >
+          <a href="{% url 'events' %}">Career Events</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'resources' %}active{% endif %}"
+        >
+          <a href="{% url 'resources' %}">Resources</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'mentorship' %}active{% endif %}"
+        >
+          <a href="{% url 'mentorship' %}">Mentorship Hub</a>
+        </li>
+        <li
+          class="{% if request.resolver_match.url_name == 'career_advisor:chat' %}active{% endif %}"
+        >
+          <a href="{% url 'career_advisor:chat' %}">Career Assistant</a>
+        </li>
+      </ul>
+    </nav>
+
+    <main>{% block content %} {% endblock %}</main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="logo">
+          <div class="logo-img">UNCC</div>
+          <h1>Career Guide</h1>
+        </div>
+        <p>
+          © {% now "Y" %} University of North Carolina at Charlotte. All rights
+          reserved.
+        </p>
+        <p>9201 University City Blvd, Charlotte, NC 28223 | 704-687-8622</p>
+      </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

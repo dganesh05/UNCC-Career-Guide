@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+  </form>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const accountTypeField = document.querySelector('select[name="account_type"]');
+    const gradYearFieldWrapper = document.querySelector('input[name="graduation_year"]').closest('p');
+  
+    function toggleGradYearVisibility() {
+      const selectedType = accountTypeField.value;
+      if (selectedType === 'student') {
+        gradYearFieldWrapper.style.display = '';
+      } else {
+        gradYearFieldWrapper.style.display = 'none';
+        document.querySelector('input[name="graduation_year"]').value = ''; // clear value
+      }
+    }
+  
+    accountTypeField.addEventListener('change', toggleGradYearVisibility);
+    toggleGradYearVisibility(); // run on load
+  });
+  </script>
+{% endblock %}
