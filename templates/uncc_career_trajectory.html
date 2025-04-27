@@ -1,0 +1,21 @@
+<h2>Visualize Your Career Trajectory</h2>
+<form method="get">
+    <label for="role">Select your current role:</label>
+    <select name="role" id="role" onchange="this.form.submit()">
+        {% for r in roles %}
+            <option value="{{ r }}" {% if r == selected_role %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<hr>
+{% for step in steps %}
+    <div style="margin-bottom: 20px;">
+        <strong>{{ step.role }} → {{ step.next_role }}</strong><br>
+        Time to move: {{ step.avg_years }} years<br>
+        Salary Range: {{ step.salary_range }}<br>
+        Skills Needed: {{ step.skills_required }}
+    </div>
+{% empty %}
+    <p>No data available for this role yet.</p>
+{% endfor %}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Career Planning & Confidence Booster</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your external CSS file -->
+    <style>
+        /* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+/* Header */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px 0;
+}
+
+header h1 {
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Section Styles */
+section {
+    padding: 50px 0;
+}
+
+section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+section p {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#career-visualization {
+    display: flex;
+    justify-content: center;
+}
+
+.story-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.story-card {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.story-card h3 {
+    color: #4CAF50;
+}
+
+.story-card a {
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+footer p {
+    margin: 0;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>Personalized Career Planning & Confidence Booster</h1>
+            <nav>
+                <ul>
+                    <li><a href="/career_trajectory">Career Trajectories</a></li>
+                    <li><a href="#success-stories">Success Stories</a></li>
+                    <li><a href="#confidence-boosters">Confidence Boosters</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Career Trajectories Section -->
+    <section id="career-trajectories">
+        <div class="container">
+            <h2>Visualize Your Career Trajectory</h2>
+            <p>See how professionals with similar backgrounds have progressed in their careers. This tool helps you visualize potential career paths and get insights on the next steps in your journey.</p>
+            <a href="/career_trajectory">Career Trajectories</a>
+            <div id="career-visualization">
+                <!-- You can add an interactive graph or flowchart here -->
+                <canvas id="careerChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories Section -->
+    <section id="success-stories">
+        <div class="container">
+            <h2>Success Stories of Professionals</h2>
+            <p>Be inspired by real-life examples of professionals who have taken similar paths and achieved great success. These stories help you gain confidence in your decisions.</p>
+            <div class="story-cards">
+                <!-- Example of success stories -->
+                <div class="story-card">
+                    <h3>John Doe</h3>
+                    <p>Background: Computer Science Graduate</p>
+                    <p>Career Path: Started as a Software Developer, now a Lead Engineer at TechCorp.</p>
+                    <a href="#">Read Full Story</a>
+                </div>
+
+                <div class="story-card">
+                    <h3>Jane Smith</h3>
+                    <p>Background: Marketing Major</p>
+                    <p>Career Path: Began as a Marketing Assistant, now a Senior Brand Manager at MarketPro.</p>
+                    <a href="#">Read Full Story</a>
+                </div>
+
+                <!-- Add more story cards as needed -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Confidence Boosters Section -->
+    <section id="confidence-boosters">
+        <div class="container">
+            <h2>Boost Your Confidence</h2>
+            <p>Here are some practical tips, tools, and resources to help you stay confident throughout your career journey:</p>
+            <ul>
+                <li><strong>Self-Assessment Tools:</strong> Understand your strengths and weaknesses with personalized assessments.</li>
+                <li><strong>Career Coaching:</strong> Access career coaches and mentors who can guide you in making decisions and overcoming challenges.</li>
+                <li><strong>Workshops and Webinars:</strong> Attend events designed to boost your skills and career knowledge.</li>
+                <li><strong>Success Visualization:</strong> Use interactive tools to track and visualize your career growth.</li>
+                <li><strong>Motivational Quotes:</strong> “The only way to do great work is to love what you do.” – Steve Jobs</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Career Planning & Confidence Booster. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for career trajectory graph -->
+    <script src="scripts.js"></script> <!-- Link to your JavaScript file -->
+</body>
+
+</html>
