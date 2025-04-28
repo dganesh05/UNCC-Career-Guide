@@ -1,34 +1,50 @@
-<nav>
-    <ul style="list-style-type: none; text-align: center; padding: 0; margin: 0;">
-        <li style="display: inline; margin: 0 15px;"><a href="/">Home</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/job-board/">Job Board</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/networking/">Networking Hub</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/events/">Career Events</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/resources/">Resources</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/mentorship/">Mentorship Hub</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/career-confidence-boost/">Confidence Boost</a></li>
-        <li style="display: inline; margin: 0 15px;"><a href="/visualize-trajectory/">Career Trajectory</a></li>
-    </ul>
-</nav>
+{% extends 'base.html' %}
+{% load static %}
 
-<h2>Visualize Your Career Trajectory</h2>
-<form method="get">
-    <label for="role">Select your current role:</label>
-    <select name="role" id="role" onchange="this.form.submit()">
-        {% for r in roles %}
-            <option value="{{ r }}" {% if r == selected_role %}selected{% endif %}>{{ r }}</option>
-        {% endfor %}
-    </select>
-</form>
-
-<hr>
-{% for step in steps %}
-    <div style="margin-bottom: 20px;">
-        <strong>{{ step.role }} → {{ step.next_role }}</strong><br>
-        Time to move: {{ step.avg_years }} years<br>
-        Salary Range: {{ step.salary_range }}<br>
-        Skills Needed: {{ step.skills_required }}
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h2>Career Trajectory Visualization</h2>
+        <p>Explore potential career paths and understand the skills and experiences needed for each role.</p>
     </div>
-{% empty %}
-    <p>No data available for this role yet.</p>
-{% endfor %}
+
+    <!-- Role Selection Section -->
+    <section class="section">
+        <div class="section-title">
+            <h3>Select a Career Role</h3>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="form-group">
+                    <label for="role" class="form-label">Choose a role to visualize:</label>
+                    <select name="role" id="role" class="form-control" onchange="this.form.submit()">
+                        {% for role in roles %}
+                            <option value="{{ role }}" {% if role == selected_role %}selected{% endif %}>{{ role }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Steps Section -->
+    <section class="section">
+        <div class="section-title">
+            <h3>Career Progression for {{ selected_role }}</h3>
+        </div>
+        <div class="job-cards">
+            {% for step in steps %}
+            <div style="margin-bottom: 20px;">
+                <strong>{{ step.role }} → {{ step.next_role }}</strong><br>
+                Time to move: {{ step.avg_years }} years<br>
+                Salary Range: {{ step.salary_range }}<br>
+                Skills Needed: {{ step.skills_required }}
+            </div>
+        {% empty %}
+            <p>No data available for this role yet.</p>
+        {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

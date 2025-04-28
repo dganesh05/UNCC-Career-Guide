@@ -12,7 +12,7 @@ from base.views import (
     # Core views
     home, dashboard, custom_login, custom_logout, signup, edit_profile,
     # Resource views
-    resources, resource_dashboard, career_confidence_boost, visualize_trajectory,
+    resources, resource_dashboard, career_confidence_boost,
     # Career development views
     job_board, networking_hub, career_events, mentorship_hub,
     # Community views
@@ -40,7 +40,6 @@ urlpatterns = [
     path('resources/', resources, name='resources'),
     path('resource-dashboard/', resource_dashboard, name='resource_dashboard'),
     path('career-confidence-boost/', career_confidence_boost, name='career_confidence_boost'),
-    path('visualize-trajectory/', visualize_trajectory, name='visualize_trajectory'),
     
     # Career development pages
     path('job-board/', job_board, name='job_board'),
