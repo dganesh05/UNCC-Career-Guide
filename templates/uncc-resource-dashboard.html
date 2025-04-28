@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Opportunity Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .resource-card {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+            width: 300px;
+            border-radius: 5px;
+        }
+        .resource-card h3 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .resource-card p {
+            font-size: 1rem;
+            color: #555;
+        }
+        .resource-card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resource Opportunity Dashboard</h1>
+    <form class="filter-section">
+        <label for="category">Filter by Category:</label>
+        <select id="category" name="category"> 
+            <option value="">All</option>
+            {%for category in categories %}
+                <option value="{{category}}" {% if selected_category == category %}selected{% endif %}>{{category|title}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+    <div class="dashboard-container">
+        <!-- Example resource card, will be populated dynamically -->
+        {% if resources %}
+        {% for resource in resources %}
+            <div class="resource-card">
+                <h3>{{ resource.title }}</h3>
+                <p>{{ resource.description }}</p>
+                <a href="{{resource.link}}" target="_blank" rel="noopener noreferrer">Apply Now</a>
+            </div>
+        {% endfor %}
+        {% else %}
+            <div>no resource found</div>
+        {% endif %}
+        <!-- More resource cards will go here -->
+    </div>
+</body>
+</html>

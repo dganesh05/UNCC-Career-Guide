@@ -95,29 +95,14 @@ class CareerAdvisorChatbot:
     def _initialize_client(self):
         """Initialize the Mistral AI client with API key"""
         try:
-            api_key = config('MISTRAL_API_KEY')
-            if not api_key:
-                raise ValueError("MISTRAL_API_KEY not found in environment variables")
-            
+            api_key = config('MISTRAL_API_KEY', default='dummy-key-for-development')
             CareerAdvisorChatbot._client = MistralClient(api_key=api_key)
-            
-            from mistralai.models.chat_completion import ChatMessage
-            
-            # Test the client with a simple message using Mistral's ChatMessage
-            test_message = ChatMessage(role="user", content="Test")
-            
-            test_response = CareerAdvisorChatbot._client.chat(
-                model="mistral-tiny",
-                messages=[test_message]
-            )
-            logger.info("Test message sent successfully")
-            
             CareerAdvisorChatbot._is_initialized = True
-            logger.info("Mistral AI client initialized successfully")
-            
+            logger.info("Successfully initialized Mistral AI client")
         except Exception as e:
-            logger.error(f"Error initializing Mistral AI client: {str(e)}", exc_info=True)
-            raise
+            logger.error(f"Failed to initialize Mistral AI client: {str(e)}")
+            CareerAdvisorChatbot._client = None
+            CareerAdvisorChatbot._is_initialized = False
     
     @property
     def client(self):

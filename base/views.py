@@ -25,6 +25,7 @@ from .models import Message
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
+from .models import ResourceOpportunity, CareerStep
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -121,6 +122,10 @@ def job_board(request):
     page = int(request.GET.get('page', 1))
     jobs_per_page = 21  # Display 20 jobs per page
     
+    # Calculate total pages
+    total_jobs = 100  # This should be replaced with actual job count from your database
+    total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+    
     # Create context for template
     context = {
         'current_year': datetime.now().year,
@@ -150,8 +155,23 @@ def career_events(request):
     return render(request, 'uncc-career-events.html')
 
 def resources(request):
-    """View for Resources page"""
-    return render(request, 'uncc-resources.html')
+    """View for Resources page with integrated dashboard"""
+    # Get resources from admin
+    resources = ResourceOpportunity.objects.all()
+    category_filter = request.GET.get('category')
+
+    if category_filter:
+        resources = resources.filter(category=category_filter)
+
+    categories = [choice[0] for choice in ResourceOpportunity.CATEGORY_CHOICES]
+
+    context = {
+        'resources': resources,
+        'categories': categories,
+        'selected_category': category_filter,
+        'current_year': datetime.now().year
+    }
+    return render(request, 'uncc-resources.html', context)
 
 def mentorship_hub(request):
     """View for Mentorship Hub page"""
@@ -423,3 +443,33 @@ def alumni_list(request):
 def alumni_detail(request, alumni_id):
     alumnus = get_object_or_404(Alumni, id=alumni_id)
     return render(request, 'alumni/alumni_detail.html', {'alumnus': alumnus})
+
+def resource_dashboard(request):
+    resources = ResourceOpportunity.objects.all()  # Fetch all opportunities
+    category_filter = request.GET.get('category')
+
+    if category_filter:
+        resources = resources.filter(category=category_filter)
+
+    categories = [choice[0] for choice in ResourceOpportunity.CATEGORY_CHOICES]
+
+    context = {
+        'resources': resources,
+        'categories': categories,
+        'selected_category': category_filter
+    }
+    return render(request, 'uncc-resource-dashboard.html', context)
+
+def career_confidence_boost(request):
+    return render (request, 'uncc-career-confidence-boost.html')
+
+def visualize_trajectory(request):
+    role = request.GET.get('role', 'Software Developer')  # Default for now
+    steps = CareerStep.objects.filter(role=role)
+    roles = CareerStep.objects.values_list('role', flat=True).distinct()
+
+    return render(request, 'uncc_career_trajectory.html', {
+        'steps': steps,
+        'roles': roles,
+        'selected_role': role
+    })

@@ -1,6 +1,10 @@
 from django.urls import path
-from .views import home  # Import the home view from views.py
+from . import views
+
+app_name = 'base'
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('resource-dashboard/', views.resource_dashboard, name='resource_dashboard'),
+    path('career-confidence-boost/', views.career_confidence_boost, name='career_confidence_boost'),
+    path('visualize-trajectory/', views.visualize_trajectory, name='visualize_trajectory'),
 ]

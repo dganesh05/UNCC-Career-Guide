@@ -5,8 +5,8 @@ from fpdf import FPDF
 from mistralai.client import MistralClient
 from decouple import config
 
-# Load Mistral API key
-mistral_api_key = config('MISTRAL_API_KEY')
+# Get API key with a default value for development
+mistral_api_key = config('MISTRAL_API_KEY', default='dummy-key-for-development')
 
 # Initialize Mistral client
 client = MistralClient(api_key=mistral_api_key)
