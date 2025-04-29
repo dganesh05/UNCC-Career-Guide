@@ -1,13 +1,28 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block extra_css %}
+<link href="{% static 'css/login.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Login</h2>
-    <form method="post" class="form-group">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <a href="{% url 'signup' %}" class="btn btn-secondary">Don't have an account? Sign up</a>
+<div class="login-container">
+    <div class="welcome-message">
+        <div class="login-logo">
+            <div class="login-logo-img">UNCC</div>
+            <h1>Career Guide</h1>
+        </div>
+        <p>Please log in to access your account and continue your journey.</p>
+    </div>
+    <div class="login-form">
+        <h2>Login</h2>
+        <form method="post" class="form-group">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <a href="{% url 'signup' %}" class="btn btn-secondary">Don't have an account? Sign up</a>
+    </div>
 </div>
 {% endblock %}

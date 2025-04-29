@@ -1,29 +1,43 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block extra_css %}
+<link href="{% static 'css/signup.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
+<div class="signup-welcome-message">
+    <div class="signup-logo">
+        <div class="signup-logo-img">UNCC</div>
+        <h1>Career Guide</h1>
+    </div>
+    <p class="signup-instruction">Create your account</p>
+</div>
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Sign up</button>
-  </form>
-  
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
     const accountTypeField = document.querySelector('select[name="account_type"]');
     const gradYearFieldWrapper = document.querySelector('input[name="graduation_year"]').closest('p');
-  
+
     function toggleGradYearVisibility() {
-      const selectedType = accountTypeField.value;
-      if (selectedType === 'student') {
-        gradYearFieldWrapper.style.display = '';
-      } else {
-        gradYearFieldWrapper.style.display = 'none';
-        document.querySelector('input[name="graduation_year"]').value = ''; // clear value
-      }
+        const selectedType = accountTypeField.value;
+        if (selectedType === 'student') {
+            gradYearFieldWrapper.style.display = '';
+        } else {
+            gradYearFieldWrapper.style.display = 'none';
+            document.querySelector('input[name="graduation_year"]').value = ''; // clear value
+        }
     }
-  
+
     accountTypeField.addEventListener('change', toggleGradYearVisibility);
     toggleGradYearVisibility(); // run on load
-  });
-  </script>
+});
+</script>
 {% endblock %}
