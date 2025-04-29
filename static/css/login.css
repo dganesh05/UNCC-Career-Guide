@@ -1,0 +1,102 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 2rem;
+    background-color: var(--light-gray, #f5f5f5);
+}
+
+.welcome-message {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.welcome-message h1 {
+    font-size: 2.5rem;
+    color: var(--uncc-green, #005035);
+    margin-bottom: 0.5rem;
+}
+
+.welcome-message p {
+    font-size: 1.2rem;
+    color: var(--dark-gray, #333);
+}
+
+.login-form {
+    background-color: #fff;
+    padding: 2rem;
+    border: 1px solid var(--med-gray, #e0e0e0);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    font-size: 1.8rem;
+    color: var(--uncc-green, #005035);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.login-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.login-form .btn {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--uncc-green, #005035);
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--uncc-dark-green, #003822);
+}
+
+.btn-secondary {
+    background-color: var(--uncc-gold, #b3a369);
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #9c8a5a;
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.login-logo-img {
+    width: 60px;
+    height: 60px;
+    background-color: var(--uncc-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--uncc-green);
+    font-size: 1.2rem;
+}
