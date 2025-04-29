@@ -125,53 +125,68 @@ def dashboard(request):
     return render(request, 'uncc-dashboard.html', context)
 
 def job_board(request):
-    """View for Job Board page with pagination"""
+    """View for Job Board page with enhanced filtering and pagination"""
     # Get filter parameters from request
     job_type = request.GET.get('job_type', '')
     location = request.GET.get('location', '')
     industry = request.GET.get('industry', '')
-    experience = request.GET.get('experience', '')
     search_query = request.GET.get('search', '')
     
     # Get pagination parameters
     page = int(request.GET.get('page', 1))
-    jobs_per_page = 18  # Display 8 jobs per page
+    jobs_per_page = 18  # Display 6 jobs per page for better grid layout
     
     try:
         # Initialize and use the HireANinerJobsIntegration
         jobs_integration = HireANinerJobsIntegration()
-        all_jobs = jobs_integration.get_jobs(limit=250, job_type=job_type, location=location, search_term=search_query)
         
-        # Filter jobs based on industry if specified
+        # Pass the filter parameters to the integration
+        all_jobs = jobs_integration.get_jobs(
+            limit=250,  # Get a larger set to filter from
+            job_type=job_type,
+            location=location,
+            search_term=search_query
+        )
+        
+        # Apply additional filtering by industry
         if industry:
+            # Case-insensitive filtering by field/industry
             all_jobs = [job for job in all_jobs if industry.lower() in job.get('field', '').lower()]
         
         # Calculate total jobs and pages
         total_jobs = len(all_jobs)
-        total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+        total_pages = max(1, (total_jobs + jobs_per_page - 1) // jobs_per_page)
+        
+        # Ensure page number is valid
+        page = max(1, min(page, total_pages))
         
         # Get the jobs for the current page
         start_idx = (page - 1) * jobs_per_page
         end_idx = start_idx + jobs_per_page
         jobs = all_jobs[start_idx:end_idx]
         
-        logger.info(f"Found {total_jobs} jobs matching criteria, displaying page {page} of {total_pages}")
     except Exception as e:
-        logger.error(f"Error fetching jobs: {str(e)}", exc_info=True)
+        # In case of any error, return empty data
         jobs = []
         total_jobs = 0
         total_pages = 1
+        page = 1
+    
+    # Create dynamic page range for pagination (show only ~5 pages around current)
+    page_radius = 2  # Show 2 pages before and after current page
+    page_range = range(
+        max(1, page - page_radius),
+        min(total_pages + 1, page + page_radius + 1)
+    )
     
     # Create context for template
     context = {
-        'current_year': datetime.now().year,
+        'jobs': jobs,
+        'job_count': total_jobs,
         'search_query': search_query,
         'job_type': job_type,
         'location': location,
         'industry': industry,
-        'experience': experience,
-        'jobs': jobs,
-        'job_count': total_jobs,
         # Pagination context
         'current_page': page,
         'total_pages': total_pages,
@@ -179,7 +194,8 @@ def job_board(request):
         'has_next': page < total_pages,
         'previous_page': page - 1,
         'next_page': page + 1,
-        'page_range': range(max(1, page - 2), min(total_pages + 1, page + 3)),
+        'page_range': page_range,
+        'current_year': datetime.now().year
     }
     
     return render(request, 'uncc-job-board.html', context)

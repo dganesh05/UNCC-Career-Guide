@@ -1,158 +1,388 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block extra_css %}
+<style>
+  /* Styling for job cards */
+  .job-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
 
-{% block content %}
-      <section class="hero">
-        <h2>Your Personalized Career Dashboard</h2>
-        <p>
-          Access job opportunities, skill development tools, mentorship
-          connections, and resources to jumpstart your career journey at UNC
-          Charlotte. This all-in-one platform helps you plan, track, and achieve
-          your career goals.
-        </p>
-        <form action="{% url 'dashboard' %}" method="GET" class="search-form">
-          <div class="search-bar">
-            <input
-              type="text"
-              name="search"
-              placeholder="Search jobs, companies, or keywords..."
-              value="{{ search_query }}"
-            />
-            <button type="submit">Search</button>
-          </div>
-        </form>
-      </section>
+  .job-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
+  }
 
-      {% if search_query %}
-      <section class="search-results">
-        <h3>Search Results for "{{ search_query }}"</h3>
-        {% if search_results %}
-        <div class="search-results-list">
-          {% for result in search_results %}
-          <div class="search-result-item">
-            <span class="search-result-type">{{ result.type|title }}</span>
-            <div class="search-result-title">{{ result.title }}</div>
-            {% if result.type == 'job' %}
-            <div class="search-result-details">{{ result.company }}</div>
-            {% elif result.type == 'event' %}
-            <div class="search-result-details">{{ result.date }}</div>
-            {% endif %}
-            <a href="{{ result.link }}" class="search-result-link">View Details →</a>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="no-results">
-          <p>
-            No results found for "{{ search_query }}". Try different keywords or
-            browse through our featured opportunities below.
-          </p>
-        </div>
-        {% endif %}
-      </section>
+  .job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .company-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .company-logo {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    font-weight: bold;
+    color: var(--uncc-green);
+    font-size: 1.2rem;
+  }
+
+  .company-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .company-name {
+    font-weight: 600;
+    color: var(--dark-gray);
+    font-size: 1.1rem;
+  }
+
+  .company-location {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .job-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--uncc-green);
+    margin: 0.8rem 0;
+    line-height: 1.3;
+  }
+
+  .job-closing-date {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .job-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  .job-tag {
+    background-color: #f8f9fa;
+    color: #555;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    color: var(--uncc-green);
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .view-all {
+    color: var(--uncc-green);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .view-all:hover {
+    color: var(--uncc-gold);
+  }
+
+  /* Search Bar Styling */
+  .search-form {
+    max-width: 700px;
+    margin: 1.5rem auto;
+  }
+
+  .search-bar {
+    display: flex;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    overflow: hidden;
+  }
+
+  .search-bar input {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    border: 2px solid #e0e0e0;
+    border-right: none;
+    border-radius: 30px 0 0 30px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--uncc-gold);
+  }
+
+  .search-bar button {
+    background-color: var(--uncc-green);
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 0 30px 30px 0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-bar button:hover {
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+  }
+
+  /* Search Results Styling */
+  .search-results {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .search-results h3 {
+    color: var(--uncc-green);
+    margin-bottom: 1rem;
+  }
+
+  .search-results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1rem;
+  }
+
+  .search-result-item {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .search-result-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-result-type {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  .search-result-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--uncc-green);
+    padding-right: 4rem;
+  }
+
+  .search-result-details {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-result-link {
+    display: inline-block;
+    color: var(--uncc-green);
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+  }
+
+  .search-result-link:hover {
+    color: var(--uncc-gold);
+  }
+
+  .no-results {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .job-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .search-results-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<section class="hero">
+  <h2>Your Personalized Career Dashboard</h2>
+  <p>
+    Access job opportunities, skill development tools, mentorship connections,
+    and resources to jumpstart your career journey at UNC Charlotte. This
+    all-in-one platform helps you plan, track, and achieve your career goals.
+  </p>
+  <form action="{% url 'dashboard' %}" method="GET" class="search-form">
+    <div class="search-bar">
+      <input
+        type="text"
+        name="search"
+        placeholder="Search jobs, companies, or keywords..."
+        value="{{ search_query }}"
+      />
+      <button type="submit">Search</button>
+    </div>
+  </form>
+</section>
+
+{% if search_query %}
+<section class="search-results">
+  <h3>Search Results for "{{ search_query }}"</h3>
+  {% if search_results %}
+  <div class="search-results-list">
+    {% for result in search_results %}
+    <div class="search-result-item">
+      <span class="search-result-type">{{ result.type|title }}</span>
+      <div class="search-result-title">{{ result.title }}</div>
+      {% if result.type == 'job' %}
+      <div class="search-result-details">{{ result.company }}</div>
+      {% elif result.type == 'event' %}
+      <div class="search-result-details">{{ result.date }}</div>
       {% endif %}
+      <a href="{{ result.link }}" class="search-result-link">View Details →</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="no-results">
+    <p>
+      No results found for "{{ search_query }}". Try different keywords or
+      browse through our featured opportunities below.
+    </p>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
 
-      <section>
-        <div class="section-header">
-          <h2 class="section-title">Featured Opportunities</h2>
-          <a href="{% url 'job_board' %}" class="view-all">View All →</a>
+<section>
+  <div class="section-header">
+    <h2 class="section-title">Featured Opportunities</h2>
+    <a href="{% url 'job_board' %}" class="view-all">View All →</a>
+  </div>
+
+  <div class="job-cards">
+    {% for job in featured_opportunities %}
+    <a
+      href="{{ job.link }}"
+      target="_blank"
+      style="text-decoration: none; color: inherit; display: block"
+    >
+      <div class="job-card">
+        <div class="company-header">
+          <div class="company-logo">{{ job.logo }}</div>
+          <div class="company-info">
+            <div class="company-name">{{ job.company }}</div>
+            <div class="company-location">{{ job.location }}</div>
+          </div>
         </div>
-
-        <div class="job-cards">
-          {% for job in featured_opportunities %}
-          <a
-            href="{{ job.link }}"
-            target="_blank"
-            style="display: block; text-decoration: none; color: inherit"
-          >
-            <div class="job-card">
-              <!-- Company section -->
-              <div class="job-company">
-                <div class="company-logo">{{ job.logo }}</div>
-                <div>
-                  <strong>{{ job.company }}</strong>
-                  <div style="font-size: 0.8rem; color: #666">
-                    {{ job.location }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="job-details">
-                <h4>{{ job.title }}</h4>
-                <p class="job-closing-date">{{ job.closing_date }}</p>
-                <div class="job-tags">
-                  <span class="job-tag">{{ job.job_type }}</span>
-                  <span class="job-tag">{{ job.field }}</span>
-                </div>
-              </div>
-            </div>
-          </a>
-          {% empty %}
-          <div class="job-card">
-            <div class="job-company">
-              <div class="company-logo">DB</div>
-              <div>
-                <strong>Digital Bank</strong>
-                <div style="font-size: 0.8rem; color: #666">Charlotte, NC</div>
-              </div>
-            </div>
-            <div class="job-details">
-              <h4>Software Engineer Intern</h4>
-              <p>
-                Develop and implement new features for Digital Bank's mobile
-                banking platform.
-              </p>
-              <p class="job-closing-date">Closes on Friday, April 25, 2025</p>
-              <div class="job-tags">
-                <span class="job-tag">Internship</span>
-                <span class="job-tag">Technology</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="job-card">
-            <div class="job-company">
-              <div class="company-logo">TS</div>
-              <div>
-                <strong>Tech Solutions Inc.</strong>
-                <div style="font-size: 0.8rem; color: #666">Remote</div>
-              </div>
-            </div>
-            <div class="job-details">
-              <h4>Data Analyst</h4>
-              <p>
-                Analyze customer data to provide insights and recommendations
-                for product improvement.
-              </p>
-              <p class="job-closing-date">Closes on Friday, May 2, 2025</p>
-              <div class="job-tags">
-                <span class="job-tag">Full-time</span>
-                <span class="job-tag">Technology</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="job-card">
-            <div class="job-company">
-              <div class="company-logo">HC</div>
-              <div>
-                <strong>Healthcare Partners</strong>
-                <div style="font-size: 0.8rem; color: #666">Charlotte, NC</div>
-              </div>
-            </div>
-            <div class="job-details">
-              <h4>Nursing Assistant</h4>
-              <p>
-                Provide patient care and support to the nursing team in a
-                fast-paced hospital environment.
-              </p>
-              <p class="job-closing-date">Closes on Friday, May 9, 2025</p>
-              <div class="job-tags">
-                <span class="job-tag">Part-time</span>
-                <span class="job-tag">Healthcare</span>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
+        <h3 class="job-title">{{ job.title }}</h3>
+        <p class="job-closing-date">{{ job.closing_date }}</p>
+        <div class="job-tags">
+          <span class="job-tag">{{ job.job_type }}</span>
+          <span class="job-tag">{{ job.field }}</span>
         </div>
-      </section>
+      </div>
+    </a>
+    {% empty %}
+    <a href="#" style="text-decoration: none; color: inherit; display: block">
+      <div class="job-card">
+        <div class="company-header">
+          <div class="company-logo">DI</div>
+          <div class="company-info">
+            <div class="company-name">Dodge Industrial, Inc.</div>
+            <div class="company-location">Charlotte, NC</div>
+          </div>
+        </div>
+        <h3 class="job-title">Manufacturing Engineer Trainee</h3>
+        <p class="job-closing-date">Closes on Tuesday, April 29, 2025</p>
+        <div class="job-tags">
+          <span class="job-tag">Full-Time</span>
+          <span class="job-tag">Technology</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" style="text-decoration: none; color: inherit; display: block">
+      <div class="job-card">
+        <div class="company-header">
+          <div class="company-logo">TS</div>
+          <div class="company-info">
+            <div class="company-name">Tech Solutions Inc.</div>
+            <div class="company-location">Remote</div>
+          </div>
+        </div>
+        <h3 class="job-title">Data Analyst</h3>
+        <p class="job-closing-date">Closes on Friday, May 2, 2025</p>
+        <div class="job-tags">
+          <span class="job-tag">Full-time</span>
+          <span class="job-tag">Technology</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" style="text-decoration: none; color: inherit; display: block">
+      <div class="job-card">
+        <div class="company-header">
+          <div class="company-logo">HC</div>
+          <div class="company-info">
+            <div class="company-name">Healthcare Partners</div>
+            <div class="company-location">Charlotte, NC</div>
+          </div>
+        </div>
+        <h3 class="job-title">Nursing Assistant</h3>
+        <p class="job-closing-date">Closes on Friday, May 9, 2025</p>
+        <div class="job-tags">
+          <span class="job-tag">Part-time</span>
+          <span class="job-tag">Healthcare</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
