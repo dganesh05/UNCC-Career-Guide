@@ -16,6 +16,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 230px; /* Fixed height for more compact cards */
 }
 
 .event-card:hover {
@@ -49,54 +50,79 @@
 
 .event-details {
     flex: 1;
-    padding: 1.25rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .event-details h3 {
     color: var(--uncc-green);
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
     line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .event-time, .event-location {
     display: flex;
     align-items: center;
     color: #555;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-time:before {
     content: "⏱️";
     margin-right: 0.5rem;
+    flex-shrink: 0;
 }
 
 .event-location:before {
     content: "📍";
     margin-right: 0.5rem;
+    flex-shrink: 0;
 }
 
 .event-description {
     color: #333;
-    margin: 1rem 0;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
 }
 
 .event-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .event-tag {
     background-color: #f0f0f0;
     color: #555;
-    padding: 0.25rem 0.75rem;
+    padding: 0.15rem 0.5rem;
     border-radius: 15px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
@@ -104,12 +130,14 @@
     display: inline-block;
     background-color: var(--uncc-gold);
     color: var(--uncc-green);
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 5px;
     text-decoration: none;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: background-color 0.3s ease;
+    align-self: flex-start;
+    margin-top: auto;
 }
 
 .event-btn:hover {
@@ -138,24 +166,26 @@
     min-width: 200px;
 }
 
+.empty-events {
+    grid-column: 1 / -1;
+    height: auto;
+    text-align: center;
+    padding: 2rem;
+}
+
 @media (max-width: 768px) {
     .event-cards {
         grid-template-columns: 1fr;
     }
     
     .event-card {
-        flex-direction: column;
+        height: auto;
+        min-height: 180px;
     }
     
     .event-date {
-        width: 100%;
-        padding: 0.75rem 0;
-        flex-direction: row;
-        gap: 0.5rem;
-    }
-    
-    .event-month, .event-day {
-        font-size: 1.25rem;
+        width: 70px;
+        padding: 0.5rem 0;
     }
 }
 </style>
@@ -169,7 +199,7 @@
 
     <section class="events-list">
         <div class="event-filters">
-            <form method="get" action="{% url 'events' %}">
+            <form method="get" action="{% url 'events' %}" id="event-filter-form">
                 <select name="event_type" onchange="this.form.submit()">
                     <option value="">All Event Types</option>
                     <option value="meet-up" {% if event_type == 'meet-up' %}selected{% endif %}>Meet Ups</option>
@@ -199,10 +229,12 @@
                     {% endwith %}
                 </div>
                 <div class="event-details">
-                    <h3>{{ event.title }}</h3>
-                    <p class="event-time">{{ event.time }}</p>
-                    <p class="event-location">{{ event.location }}</p>
-                    <p class="event-description">{{ event.description }}</p>
+                    <h3 title="{{ event.title }}">{{ event.title }}</h3>
+                    <div class="event-meta">
+                        <p class="event-time" title="{{ event.time }}">{{ event.time }}</p>
+                        <p class="event-location" title="{{ event.location }}">{{ event.location }}</p>
+                    </div>
+                    <p class="event-description" title="{{ event.description }}">{{ event.description }}</p>
                     <div class="event-tags">
                         <span class="event-tag">{{ event.type }}</span>
                         {% if event.registration_required %}
@@ -210,13 +242,13 @@
                         {% endif %}
                     </div>
                     <a href="{{ event.link }}" class="event-btn" {% if event.link != '#' %}target="_blank"{% endif %}>
-                        {% if event.registration_required %}Register Now{% else %}View Details{% endif %}
+                        {% if event.registration_required %}Register{% else %}Details{% endif %}
                     </a>
                 </div>
             </div>
             {% empty %}
             <div class="event-card empty-events">
-                <div class="event-details" style="text-align: center; padding: 2rem;">
+                <div class="event-details">
                     <h3>No upcoming events</h3>
                     <p>Check back later for new career events and opportunities.</p>
                 </div>
@@ -226,22 +258,11 @@
     </section>
 
     <script>
-        // Format date display for better appearance
+        // Format date display and apply hover effects
         document.addEventListener('DOMContentLoaded', function() {
             const eventCards = document.querySelectorAll('.event-card');
             
             eventCards.forEach(card => {
-                // Add hover effect
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.15)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
-                });
-                
                 // Clean up date display
                 const monthElem = card.querySelector('.event-month');
                 const dayElem = card.querySelector('.event-day');
@@ -265,6 +286,31 @@
                     }
                 }
             });
+            
+            // Fix filter form to handle event types correctly
+            const filterForm = document.getElementById('event-filter-form');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function(e) {
+                    // Get the event type select
+                    const eventTypeSelect = this.querySelector('select[name="event_type"]');
+                    if (eventTypeSelect) {
+                        const selectedValue = eventTypeSelect.value;
+                        
+                        // Map the selected value to match the parser's event types
+                        // This ensures the filter works with the actual data
+                        if (selectedValue === 'meet-up') {
+                            // Find and update the value to match "Meet Up" format from parser
+                            eventTypeSelect.value = 'Meet Up';
+                        } else if (selectedValue === 'career-fair') {
+                            eventTypeSelect.value = 'Career Fair';
+                        } else if (selectedValue === 'networking') {
+                            eventTypeSelect.value = 'Networking Event';
+                        } else if (selectedValue === 'interview') {
+                            eventTypeSelect.value = 'Interview Prep';
+                        }
+                    }
+                });
+            }
         });
     </script>
 {% endblock %}

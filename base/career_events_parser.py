@@ -27,7 +27,7 @@ class CareerEventsParser:
         
         Args:
             limit (int): Maximum number of events to return
-            event_type (str): Filter by event type (e.g., "career-fair", "workshop")
+            event_type (str): Filter by event type (e.g., "Meet Up", "Career Fair")
             date_range (str): Filter by date range (e.g., "this-week", "this-month")
             
         Returns:
@@ -40,7 +40,8 @@ class CareerEventsParser:
         # Add query parameters if provided
         params = {}
         if event_type:
-            params['type'] = event_type
+            # Convert event_type to URL-friendly format
+            params['type'] = event_type.lower().replace(' ', '-')
         if date_range:
             params['date'] = date_range
         
@@ -64,14 +65,87 @@ class CareerEventsParser:
                     events = self._parse_events_html(response.text, limit)
                     
                     if events:
+                        # Apply additional filtering on the client side
+                        if event_type and events:
+                            # Filter by event type (case-insensitive match)
+                            events = [event for event in events if event['type'].lower() == event_type.lower()]
+                        
+                        if date_range and events:
+                            # Filter by date range
+                            events = self._filter_by_date_range(events, date_range)
+                        
                         return events
                 
-            except Exception as e:
+            except Exception:
                 # Continue to try the next URL if this one fails
                 continue
         
         # Fall back to placeholder data if all URLs fail
-        return self._get_placeholder_data(limit)
+        events = self._get_placeholder_data(limit)
+        
+        # Apply filters to placeholder data too
+        if event_type and events:
+            events = [event for event in events if event['type'].lower() == event_type.lower()]
+        
+        if date_range and events:
+            events = self._filter_by_date_range(events, date_range)
+            
+        return events[:limit]  # Ensure we don't exceed the limit
+    
+    def _filter_by_date_range(self, events: List[Dict[str, Any]], date_range: str) -> List[Dict[str, Any]]:
+        """Filter events by date range"""
+        now = datetime.now()
+        filtered_events = []
+        
+        for event in events:
+            event_date = event['date']
+            try:
+                # Try to parse the event date
+                parsed_date = None
+                date_formats = [
+                    "%B %d, %Y",      # May 20, 2025
+                    "%b %d, %Y",       # May 20, 2025
+                ]
+                
+                for fmt in date_formats:
+                    try:
+                        parsed_date = datetime.strptime(event_date, fmt)
+                        break
+                    except ValueError:
+                        continue
+                
+                if not parsed_date:
+                    # If we couldn't parse the date, include the event by default
+                    filtered_events.append(event)
+                    continue
+                
+                # Apply date range filter
+                if date_range == 'this-week':
+                    # This week is defined as today through next 7 days
+                    end_of_week = now + timedelta(days=7)
+                    if now <= parsed_date <= end_of_week:
+                        filtered_events.append(event)
+                
+                elif date_range == 'this-month':
+                    # This month means events in the current calendar month
+                    if parsed_date.month == now.month and parsed_date.year == now.year:
+                        filtered_events.append(event)
+                
+                elif date_range == 'next-month':
+                    # Next month means events in the next calendar month
+                    next_month = now.month + 1 if now.month < 12 else 1
+                    next_month_year = now.year if now.month < 12 else now.year + 1
+                    if parsed_date.month == next_month and parsed_date.year == next_month_year:
+                        filtered_events.append(event)
+                else:
+                    # Unknown date range or 'all dates', include all events
+                    filtered_events.append(event)
+                
+            except Exception:
+                # If there's any error in date parsing, include the event by default
+                filtered_events.append(event)
+        
+        return filtered_events
     
     def _parse_events_html(self, html: str, limit: int) -> List[Dict[str, Any]]:
         """Parse event listings from the Hire-a-Niner HTML based on the given structure"""
