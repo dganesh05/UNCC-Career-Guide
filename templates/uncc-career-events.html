@@ -1,37 +1,206 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+.event-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.event-card {
+    display: flex;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.event-date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    background-color: var(--uncc-green);
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.event-month {
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.event-day {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.event-details {
+    flex: 1;
+    padding: 1.25rem;
+}
+
+.event-details h3 {
+    color: var(--uncc-green);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.event-time, .event-location {
+    display: flex;
+    align-items: center;
+    color: #555;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.event-time:before {
+    content: "⏱️";
+    margin-right: 0.5rem;
+}
+
+.event-location:before {
+    content: "📍";
+    margin-right: 0.5rem;
+}
+
+.event-description {
+    color: #333;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.event-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.event-tag {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.event-btn {
+    display: inline-block;
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.event-btn:hover {
+    background-color: var(--uncc-green);
+    color: white;
+}
+
+.event-filters {
+    background-color: #f7f7f7;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.event-filters select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    background-color: white;
+    color: #333;
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    .event-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .event-card {
+        flex-direction: column;
+    }
+    
+    .event-date {
+        width: 100%;
+        padding: 0.75rem 0;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    
+    .event-month, .event-day {
+        font-size: 1.25rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
     <section class="hero">
         <h2>Career Events</h2>
-        <p>Discover upcoming career fairs, workshops, and networking opportunities.</p>
+        <p>Discover upcoming career fairs, workshops, and networking opportunities to advance your professional journey.</p>
     </section>
 
     <section class="events-list">
         <div class="event-filters">
-            <select name="event_type">
-                <option value="">All Event Types</option>
-                <option value="career-fair">Career Fairs</option>
-                <option value="workshop">Workshops</option>
-                <option value="networking">Networking Events</option>
-            </select>
-            <select name="date_range">
-                <option value="">All Dates</option>
-                <option value="this-week">This Week</option>
-                <option value="this-month">This Month</option>
-                <option value="next-month">Next Month</option>
-            </select>
+            <form method="get" action="{% url 'events' %}">
+                <select name="event_type" onchange="this.form.submit()">
+                    <option value="">All Event Types</option>
+                    <option value="meet-up" {% if event_type == 'meet-up' %}selected{% endif %}>Meet Ups</option>
+                    <option value="career-fair" {% if event_type == 'career-fair' %}selected{% endif %}>Career Fairs</option>
+                    <option value="workshop" {% if event_type == 'workshop' %}selected{% endif %}>Workshops</option>
+                    <option value="networking" {% if event_type == 'networking' %}selected{% endif %}>Networking Events</option>
+                    <option value="interview" {% if event_type == 'interview' %}selected{% endif %}>Interview Prep</option>
+                </select>
+                <select name="date_range" onchange="this.form.submit()">
+                    <option value="">All Dates</option>
+                    <option value="this-week" {% if date_range == 'this-week' %}selected{% endif %}>This Week</option>
+                    <option value="this-month" {% if date_range == 'this-month' %}selected{% endif %}>This Month</option>
+                    <option value="next-month" {% if date_range == 'next-month' %}selected{% endif %}>Next Month</option>
+                </select>
+            </form>
         </div>
 
         <div class="event-cards">
             {% for event in events %}
             <div class="event-card">
                 <div class="event-date">
-                    <span class="event-month">{{ event.date|date:"M" }}</span>
-                    <span class="event-day">{{ event.date|date:"d" }}</span>
+                    {% with event_date=event.date|safe %}
+                        {% with month_match=event_date|slice:":3" day_match=event_date|slice:"4:6"|cut:" " %}
+                            <span class="event-month">{{ month_match }}</span>
+                            <span class="event-day">{{ day_match }}</span>
+                        {% endwith %}
+                    {% endwith %}
                 </div>
                 <div class="event-details">
                     <h3>{{ event.title }}</h3>
-                    <p class="event-time">{{ event.date|date:"g:i A" }}</p>
+                    <p class="event-time">{{ event.time }}</p>
                     <p class="event-location">{{ event.location }}</p>
                     <p class="event-description">{{ event.description }}</p>
                     <div class="event-tags">
@@ -40,12 +209,14 @@
                         <span class="event-tag">Registration Required</span>
                         {% endif %}
                     </div>
-                    <a href="#" class="event-btn">Register Now</a>
+                    <a href="{{ event.link }}" class="event-btn" {% if event.link != '#' %}target="_blank"{% endif %}>
+                        {% if event.registration_required %}Register Now{% else %}View Details{% endif %}
+                    </a>
                 </div>
             </div>
             {% empty %}
-            <div class="event-card">
-                <div class="event-details">
+            <div class="event-card empty-events">
+                <div class="event-details" style="text-align: center; padding: 2rem;">
                     <h3>No upcoming events</h3>
                     <p>Check back later for new career events and opportunities.</p>
                 </div>
@@ -53,4 +224,47 @@
             {% endfor %}
         </div>
     </section>
+
+    <script>
+        // Format date display for better appearance
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventCards = document.querySelectorAll('.event-card');
+            
+            eventCards.forEach(card => {
+                // Add hover effect
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+                });
+                
+                // Clean up date display
+                const monthElem = card.querySelector('.event-month');
+                const dayElem = card.querySelector('.event-day');
+                
+                if (monthElem && dayElem) {
+                    // Get the text content
+                    const monthText = monthElem.textContent.trim();
+                    const dayText = dayElem.textContent.trim();
+                    
+                    // Ensure month is capitalized and abbreviated
+                    if (monthText) {
+                        monthElem.textContent = monthText.substring(0, 3).toUpperCase();
+                    }
+                    
+                    // Remove any non-numeric characters from day
+                    if (dayText) {
+                        const cleanDay = dayText.replace(/\D/g, '');
+                        if (cleanDay) {
+                            dayElem.textContent = cleanDay;
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

@@ -12,6 +12,8 @@ import logging
 from datetime import datetime
 from .models import Student, Mentor, Alumni
 from .search_utility import SearchUtility
+from .hire_a_niner_jobs_integration import HireANinerJobsIntegration
+from .career_events_parser import CareerEventsParser
 from career_advisor.chatbot import CareerAdvisorChatbot
 from mistralai.client import MistralClient
 from decouple import config
@@ -86,12 +88,24 @@ def dashboard(request):
         }
     ]
     
+    # Get featured job opportunities
+    try:
+        # Initialize the HireANinerJobsIntegration for featured opportunities
+        jobs_integration = HireANinerJobsIntegration()
+        featured_opportunities = jobs_integration.get_jobs(limit=3)  # Get 3 featured jobs
+        logger.info(f"Found {len(featured_opportunities)} featured job opportunities")
+    except Exception as e:
+        logger.error(f"Error fetching featured opportunities: {str(e)}", exc_info=True)
+        featured_opportunities = []  # Empty list if there's an error
+    
     # Perform search if query is present
     if search_query:
         # Collect all data for searching
         search_data = {
+            'opportunities': featured_opportunities,
             'resources': career_resources,
-            'additional_resources': additional_resources
+            'additional_resources': additional_resources,
+            'events': []  # This could be populated with events if needed
         }
         
         # Execute search
@@ -102,6 +116,7 @@ def dashboard(request):
     context = {
         'career_resources': career_resources,
         'additional_resources': additional_resources,
+        'featured_opportunities': featured_opportunities,
         'search_results': search_results,
         'search_query': search_query,
         'current_year': datetime.now().year
@@ -120,11 +135,32 @@ def job_board(request):
     
     # Get pagination parameters
     page = int(request.GET.get('page', 1))
-    jobs_per_page = 21  # Display 20 jobs per page
+    jobs_per_page = 18  # Display 8 jobs per page
     
-    # Calculate total pages
-    total_jobs = 100  # This should be replaced with actual job count from your database
-    total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+    try:
+        # Initialize and use the HireANinerJobsIntegration
+        jobs_integration = HireANinerJobsIntegration()
+        all_jobs = jobs_integration.get_jobs(limit=250, job_type=job_type, location=location, search_term=search_query)
+        
+        # Filter jobs based on industry if specified
+        if industry:
+            all_jobs = [job for job in all_jobs if industry.lower() in job.get('field', '').lower()]
+        
+        # Calculate total jobs and pages
+        total_jobs = len(all_jobs)
+        total_pages = (total_jobs + jobs_per_page - 1) // jobs_per_page
+        
+        # Get the jobs for the current page
+        start_idx = (page - 1) * jobs_per_page
+        end_idx = start_idx + jobs_per_page
+        jobs = all_jobs[start_idx:end_idx]
+        
+        logger.info(f"Found {total_jobs} jobs matching criteria, displaying page {page} of {total_pages}")
+    except Exception as e:
+        logger.error(f"Error fetching jobs: {str(e)}", exc_info=True)
+        jobs = []
+        total_jobs = 0
+        total_pages = 1
     
     # Create context for template
     context = {
@@ -134,6 +170,8 @@ def job_board(request):
         'location': location,
         'industry': industry,
         'experience': experience,
+        'jobs': jobs,
+        'job_count': total_jobs,
         # Pagination context
         'current_page': page,
         'total_pages': total_pages,
@@ -151,8 +189,31 @@ def networking_hub(request):
     return render(request, 'uncc-networking-hub.html')
 
 def career_events(request):
-    """View for Career Events page"""
-    return render(request, 'uncc-career-events.html')
+    """View for Career Events page using Hire-a-Niner data"""
+    # Get filter parameters
+    event_type = request.GET.get('event_type', '')
+    date_range = request.GET.get('date_range', '')
+    
+    try:
+        # Initialize and use the CareerEventsParser
+        events_parser = CareerEventsParser()
+        events = events_parser.get_events(
+            limit=40,
+            event_type=event_type,
+            date_range=date_range
+        )
+    except Exception as e:
+        events = []
+    
+    # Create context for template
+    context = {
+        'events': events,
+        'event_type': event_type,
+        'date_range': date_range,
+        'current_year': datetime.now().year
+    }
+    
+    return render(request, 'uncc-career-events.html', context)
 
 def resources(request):
     """View for Resources page with integrated dashboard"""

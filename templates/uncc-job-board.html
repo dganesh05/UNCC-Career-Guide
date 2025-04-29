@@ -15,6 +15,7 @@
                     <option value="full-time" {% if job_type == 'full-time' %}selected{% endif %}>Full-time</option>
                     <option value="part-time" {% if job_type == 'part-time' %}selected{% endif %}>Part-time</option>
                     <option value="internship" {% if job_type == 'internship' %}selected{% endif %}>Internship</option>
+                    <option value="co-op" {% if job_type == 'co-op' %}selected{% endif %}>Co-op</option>
                 </select>
                 <select name="location">
                     <option value="">All Locations</option>
@@ -26,13 +27,17 @@
                     <option value="technology" {% if industry == 'technology' %}selected{% endif %}>Technology</option>
                     <option value="healthcare" {% if industry == 'healthcare' %}selected{% endif %}>Healthcare</option>
                     <option value="finance" {% if industry == 'finance' %}selected{% endif %}>Finance</option>
+                    <option value="engineering" {% if industry == 'engineering' %}selected{% endif %}>Engineering</option>
+                    <option value="business" {% if industry == 'business' %}selected{% endif %}>Business</option>
+                    <option value="marketing" {% if industry == 'marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="education" {% if industry == 'education' %}selected{% endif %}>Education</option>
                 </select>
             </div>
         </form>
     </section>
 
     <section class="job-listings">
-        <h3>{{ job_count }} Jobs Found</h3>
+        <h3>{{ job_count|default:"0" }} Jobs Found</h3>
         <div class="job-cards">
             {% for job in jobs %}
             <a href="{{ job.link }}" target="_blank" style="text-decoration: none; color: inherit; display: block;">
@@ -46,7 +51,7 @@
                 </div>
                 <div class="job-details">
                     <h4>{{ job.title }}</h4>
-                    <p>{{ job.description }}</p>
+                    <p>{{ job.description|truncatechars:150 }}</p>
                     <p class="job-closing-date">{{ job.closing_date }}</p>
                     <div class="job-tags">
                         <span class="job-tag">{{ job.job_type }}</span>
@@ -54,8 +59,12 @@
                     </div>
                 </div>
             </div>
+            </a>
             {% empty %}
-            <p>No jobs found matching your criteria.</p>
+            <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                <p>No jobs found matching your criteria. Try adjusting your filters or search terms.</p>
+                <p style="margin-top: 1rem;">Looking for something specific? Try our <a href="{% url 'career_advisor:chat' %}" style="color: var(--uncc-green); font-weight: bold;">Career Assistant</a> for personalized job search advice.</p>
+            </div>
             {% endfor %}
         </div>
 
@@ -112,7 +121,8 @@
             });
         });
         
-        const resetBtn = document.querySelector('a[href="/job-board/"]');
+        // Fixed line - removed escaped quotes
+        const resetBtn = document.querySelector('a[href="' + "{% url 'job_board' %}" + '"]');
         if (resetBtn) {
             resetBtn.addEventListener('mouseover', function() {
                 this.style.transform = 'translateY(-2px)';
