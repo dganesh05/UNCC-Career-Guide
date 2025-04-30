@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
             gradYearFieldWrapper.style.display = '';
         } else {
             gradYearFieldWrapper.style.display = 'none';
-            document.querySelector('input[name="graduation_year"]').value = ''; // clear value
+            document.querySelector('input[name="graduation_year"]').value = ''; 
         }
     }
 
     accountTypeField.addEventListener('change', toggleGradYearVisibility);
-    toggleGradYearVisibility(); // run on load
+    toggleGradYearVisibility(); 
 });
 </script>
 {% endblock %}
