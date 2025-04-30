@@ -220,13 +220,9 @@
         <div class="event-cards">
             {% for event in events %}
             <div class="event-card">
-                <div class="event-date">
-                    {% with event_date=event.date|safe %}
-                        {% with month_match=event_date|slice:":3" day_match=event_date|slice:"4:6"|cut:" " %}
-                            <span class="event-month">{{ month_match }}</span>
-                            <span class="event-day">{{ day_match }}</span>
-                        {% endwith %}
-                    {% endwith %}
+                <div class="event-date" data-full-date="{{ event.date }}">
+                    <span class="event-month"></span>
+                    <span class="event-day"></span>
                 </div>
                 <div class="event-details">
                     <h3 title="{{ event.title }}">{{ event.title }}</h3>
@@ -258,32 +254,32 @@
     </section>
 
     <script>
-        // Format date display and apply hover effects
+        // Format date display and fix the date extraction issue
         document.addEventListener('DOMContentLoaded', function() {
-            const eventCards = document.querySelectorAll('.event-card');
+            // Process all event date containers
+            const dateContainers = document.querySelectorAll('.event-date[data-full-date]');
             
-            eventCards.forEach(card => {
-                // Clean up date display
-                const monthElem = card.querySelector('.event-month');
-                const dayElem = card.querySelector('.event-day');
+            dateContainers.forEach(container => {
+                // Get the full date text from the data attribute
+                const fullDateText = container.getAttribute('data-full-date');
+                if (!fullDateText) return;
                 
-                if (monthElem && dayElem) {
-                    // Get the text content
-                    const monthText = monthElem.textContent.trim();
-                    const dayText = dayElem.textContent.trim();
-                    
-                    // Ensure month is capitalized and abbreviated
-                    if (monthText) {
-                        monthElem.textContent = monthText.substring(0, 3).toUpperCase();
-                    }
-                    
-                    // Remove any non-numeric characters from day
-                    if (dayText) {
-                        const cleanDay = dayText.replace(/\D/g, '');
-                        if (cleanDay) {
-                            dayElem.textContent = cleanDay;
-                        }
-                    }
+                // Extract month and day parts using regex
+                // This is more reliable than string slicing
+                const monthMatch = fullDateText.match(/([A-Za-z]+)/);
+                const dayMatch = fullDateText.match(/([A-Za-z]+)\s+(\d{1,2})/);
+                
+                const monthElem = container.querySelector('.event-month');
+                const dayElem = container.querySelector('.event-day');
+                
+                if (monthMatch && monthMatch[1] && monthElem) {
+                    // Set month (first 3 letters, uppercase)
+                    monthElem.textContent = monthMatch[1].substring(0, 3).toUpperCase();
+                }
+                
+                if (dayMatch && dayMatch[2] && dayElem) {
+                    // Set day (just the number)
+                    dayElem.textContent = dayMatch[2];
                 }
             });
             
