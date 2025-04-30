@@ -17,6 +17,7 @@
 
     <div class="form-container">
         <h3>Resume Details</h3>
+        <p class="form-instruction">Note: Please avoid using special characters in the form fields.</p>
         <form method="post" class="styled-form">
             {% csrf_token %}
             {{ form.as_p }}
