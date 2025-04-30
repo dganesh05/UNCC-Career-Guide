@@ -1,50 +1,188 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_css %}
+<style>
+/* Career Trajectory Styling */
+.career-trajectory-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Role Selection Styling */
+.role-selection {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.role-selection label {
+    font-weight: 600;
+    color: var(--uncc-green);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.role-selection select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+}
+
+.role-selection select:focus {
+    border-color: var(--uncc-gold);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.2);
+}
+
+/* Career Steps Styling */
+.career-steps {
+    margin-top: 2rem;
+}
+
+.career-step {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    border-left: 5px solid var(--uncc-green);
+    transition: all 0.3s ease;
+}
+
+.career-step:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: var(--uncc-green);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.step-header:after {
+    content: "→";
+    margin: 0 0.5rem;
+    font-size: 1.4rem;
+}
+
+.step-detail {
+    display: flex;
+    margin-bottom: 0.75rem;
+    align-items: center;
+}
+
+.step-label {
+    font-weight: 600;
+    min-width: 120px;
+    color: var(--dark-gray);
+}
+
+.step-value {
+    color: #555;
+}
+
+.step-skills {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+.skills-header {
+    font-weight: 600;
+    color: var(--uncc-green);
+    margin-bottom: 0.5rem;
+}
+
+.skills-list {
+    color: #555;
+    line-height: 1.5;
+}
+
+.no-steps {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    border: 1px dashed #ddd;
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .role-selection select {
+        max-width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="career-trajectory-container">
     <!-- Hero Section -->
-    <div class="hero">
+    <section class="hero">
         <h2>Career Trajectory Visualization</h2>
         <p>Explore potential career paths and understand the skills and experiences needed for each role.</p>
-    </div>
+    </section>
 
     <!-- Role Selection Section -->
-    <section class="section">
-        <div class="section-title">
-            <h3>Select a Career Role</h3>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <form method="get" class="form-group">
-                    <label for="role" class="form-label">Choose a role to visualize:</label>
-                    <select name="role" id="role" class="form-control" onchange="this.form.submit()">
-                        {% for role in roles %}
-                            <option value="{{ role }}" {% if role == selected_role %}selected{% endif %}>{{ role }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
-            </div>
-        </div>
+    <section class="role-selection">
+        <form method="get" id="role-filter-form">
+            <label for="role">Choose a role to visualize your career path:</label>
+            <select name="role" id="role" onchange="this.form.submit()">
+                {% for role in roles %}
+                    <option value="{{ role }}" {% if role == selected_role %}selected{% endif %}>{{ role }}</option>
+                {% endfor %}
+            </select>
+        </form>
     </section>
 
     <!-- Career Steps Section -->
-    <section class="section">
-        <div class="section-title">
-            <h3>Career Progression for {{ selected_role }}</h3>
-        </div>
-        <div class="job-cards">
+    <section class="career-steps">
+        <h3 class="section-title">Career Progression for {{ selected_role }}</h3>
+        
+        {% if steps %}
             {% for step in steps %}
-            <div style="margin-bottom: 20px;">
-                <strong>{{ step.role }} → {{ step.next_role }}</strong><br>
-                Time to move: {{ step.avg_years }} years<br>
-                Salary Range: {{ step.salary_range }}<br>
-                Skills Needed: {{ step.skills_required }}
+            <div class="career-step">
+                <div class="step-header">
+                    <span class="current-role">{{ step.role }}</span>
+                    <span class="next-role">{{ step.next_role }}</span>
+                </div>
+                
+                <div class="step-detail">
+                    <div class="step-label">Time to Next Role: </div>
+                    <div class="step-value"> {{ step.avg_years }} years</div>
+                </div>
+                
+                <div class="step-detail">
+                    <div class="step-label">Salary Range:</div>
+                    <div class="step-value">{{ step.salary_range }}</div>
+                </div>
+                
+                <div class="step-skills">
+                    <div class="skills-header">Skills Required:</div>
+                    <div class="skills-list">{{ step.skills_required }}</div>
+                </div>
             </div>
-        {% empty %}
-            <p>No data available for this role yet.</p>
-        {% endfor %}
-        </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-steps">
+                <p>No career progression data available for this role yet.</p>
+                <p>Please select a different role or check back later as we continue to expand our database.</p>
+            </div>
+        {% endif %}
     </section>
 </div>
 {% endblock %}
