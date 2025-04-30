@@ -1,118 +1,518 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<style>
+  /* Root variables if not already defined */
+  :root {
+    --uncc-green: #005035;
+    --uncc-gold: #b3a369;
+    --light-gray: #f5f5f5;
+    --med-gray: #e0e0e0;
+    --dark-gray: #333;
+  }
 
-{% block content %}
-<div class="container">
-    <!-- Hero Section -->
-    <div class="hero">
-        <h2>Career Confidence Boost</h2>
-        <p>Build your confidence and take control of your career journey with our personalized tools and resources.</p>
+  /* Career Confidence Boost Page Styling */
+  .confidence-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Hero Section Styling */
+  .hero {
+    background: linear-gradient(
+      to right,
+      rgba(0, 80, 53, 0.05),
+      rgba(179, 163, 105, 0.05)
+    );
+    border-radius: 10px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .hero h2 {
+    color: var(--uncc-green);
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero p {
+    color: #555;
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Section Styling */
+  .confidence-section {
+    margin-bottom: 3rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  .section-header {
+    background-color: var(--uncc-green);
+    color: white;
+    padding: 1.2rem 1.5rem;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .section-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .section-content {
+    background-color: white;
+    border: 1px solid #eee;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 25px;
+  }
+
+  /* Tools Card Styling */
+  .tools-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .tools-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .tools-card p {
+    color: #555;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .tools-card a {
+    display: inline-block;
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .tools-card a:hover {
+    background-color: var(--uncc-green);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Success Stories Grid */
+  .success-stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+  }
+
+  /* Success Story Card Styling */
+  .success-story-card {
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .success-story-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .story-header {
+    background-color: #f8f9fa;
+    padding: 1.2rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* Fixed Circle Logo Styling */
+  .person-avatar {
+    width: 60px !important; /* Fixed width */
+    height: 60px !important; /* Equal height to ensure circle */
+    min-width: 60px; /* Prevent flex shrinking */
+    min-height: 60px; /* Prevent flex shrinking */
+    background-color: var(--uncc-green);
+    color: white;
+    border-radius: 50% !important; /* Perfect circle */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--uncc-gold);
+    padding: 0; /* Remove padding that might affect size */
+    margin: 0; /* Remove margin that might affect size */
+    flex-shrink: 0; /* Prevent logo from shrinking */
+    position: relative; /* Ensure proper stacking */
+    overflow: visible; /* Show border fully */
+    text-align: center; /* Center text */
+  }
+
+  .person-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .person-details {
+    flex: 1;
+    min-width: 0; /* Allow text to wrap properly */
+  }
+
+  .person-details h4 {
+    margin: 0 0 0.3rem 0;
+    color: var(--uncc-green);
+    font-size: 1.2rem;
+  }
+
+  .person-details p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .story-content {
+    padding: 1.2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .story-content p {
+    color: #555;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    flex-grow: 1;
+  }
+
+  .read-full-story {
+    display: inline-block;
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    margin-top: auto;
+    font-size: 0.9rem;
+  }
+
+  .read-full-story:hover {
+    background-color: var(--uncc-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Confidence Boosters Styling */
+  .boosters-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .booster-item {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .booster-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .booster-item strong {
+    color: var(--uncc-green);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .booster-item p {
+    color: #555;
+    margin: 0.5rem 0;
+    line-height: 1.5;
+  }
+
+  .booster-item a {
+    display: inline-block;
+    background-color: var(--uncc-gold);
+    color: var(--uncc-green);
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+
+  .booster-item a:hover {
+    background-color: var(--uncc-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Fix for existing job cards if needed */
+  .job-card .company-logo {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px;
+    min-height: 60px;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--uncc-green);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--uncc-gold);
+    flex-shrink: 0;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .success-stories-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero h2 {
+      font-size: 1.8rem;
+    }
+
+    .hero p {
+      font-size: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="confidence-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Career Confidence Boost</h2>
+    <p>
+      Build your confidence and take control of your career journey with our
+      personalized tools and resources.
+    </p>
+  </section>
+
+  <!-- Career Trajectories Section -->
+  <section class="confidence-section">
+    <div class="section-header">
+      <h3 class="section-title">Visualize Your Career Path</h3>
     </div>
+    <div class="section-content">
+      <div class="tools-card">
+        <p>
+          Explore your potential career paths and discover what skills and roles
+          may be next for you. Our interactive tool helps you map out your
+          professional journey and set achievable goals.
+        </p>
+        <a href="{% url 'base:visualize_trajectory' %}"
+          >Go to Career Trajectories Tool</a
+        >
+      </div>
+    </div>
+  </section>
 
-    <!-- Career Trajectories Section -->
-    <section class="section">
-        <div class="section-title">
-            <h3>Visualize Your Career Path</h3>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <p>Explore your potential career paths and discover what skills and roles may be next for you.</p>
-                <a href="{% url 'base:visualize_trajectory' %}" class="btn btn-primary">Go to Career Trajectories Tool</a>
+  <!-- Success Stories Section -->
+  <section class="confidence-section">
+    <div class="section-header">
+      <h3 class="section-title">Success Stories</h3>
+    </div>
+    <div class="section-content">
+      <div class="success-stories-grid">
+        <!-- Sundar Pichai -->
+        <div class="success-story-card">
+          <div class="story-header">
+            <div class="person-info">
+              <div class="person-avatar">SP</div>
+              <div class="person-details">
+                <h4>Sundar Pichai</h4>
+                <p>Metallurgical Engineering (IIT Kharagpur)</p>
+              </div>
             </div>
+          </div>
+          <div class="story-content">
+            <p>
+              Career Path: Product Manager → SVP Chrome & Android → CEO of
+              Google & Alphabet
+            </p>
+            <a
+              href="https://advisorycloud.com/blog/uncovering-the-secrets-to-sundar-pichais-success"
+              target="_blank"
+              class="read-full-story"
+              >Read Full Story</a
+            >
+          </div>
         </div>
-    </section>
 
-    <!-- Success Stories Section -->
-    <section class="section">
-        <div class="section-title">
-            <h3>Success Stories</h3>
+        <!-- Melanie Perkins -->
+        <div class="success-story-card">
+          <div class="story-header">
+            <div class="person-info">
+              <div class="person-avatar">MP</div>
+              <div class="person-details">
+                <h4>Melanie Perkins</h4>
+                <p>Communications & Design (University of Western Australia)</p>
+              </div>
+            </div>
+          </div>
+          <div class="story-content">
+            <p>
+              Career Path: Started a yearbook tool → Co-founded Canva → CEO of a
+              $40B startup
+            </p>
+            <a
+              href="https://kitrum.com/blog/melanie-perkins-story-as-canva-ceo/"
+              target="_blank"
+              class="read-full-story"
+              >Read Full Story</a
+            >
+          </div>
         </div>
-        <div class="job-cards">
-            <!-- Sundar Pichai -->
-            <div class="job-card">
-                <div class="job-company">
-                    <div class="company-logo">SP</div>
-                    <div class="job-details">
-                        <h4>Sundar Pichai</h4>
-                        <p>Metallurgical Engineering (IIT Kharagpur)</p>
-                    </div>
-                </div>
-                <p>Career Path: Product Manager → SVP Chrome & Android → CEO of Google & Alphabet</p>
-                <a href="https://advisorycloud.com/blog/uncovering-the-secrets-to-sundar-pichais-success" target="_blank" class="btn btn-secondary">Read Full Story</a>
-            </div>
 
-            <!-- Melanie Perkins -->
-            <div class="job-card">
-                <div class="job-company">
-                    <div class="company-logo">MP</div>
-                    <div class="job-details">
-                        <h4>Melanie Perkins</h4>
-                        <p>Communications & Design (University of Western Australia)</p>
-                    </div>
-                </div>
-                <p>Career Path: Started a yearbook tool → Co-founded Canva → CEO of a $40B startup</p>
-                <a href="https://kitrum.com/blog/melanie-perkins-story-as-canva-ceo/" target="_blank" class="btn btn-secondary">Read Full Story</a>
+        <!-- Satya Nadella -->
+        <div class="success-story-card">
+          <div class="story-header">
+            <div class="person-info">
+              <div class="person-avatar">SN</div>
+              <div class="person-details">
+                <h4>Satya Nadella</h4>
+                <p>Electrical Engineering (India) → MBA (UChicago)</p>
+              </div>
             </div>
-
-            <!-- Satya Nadella -->
-            <div class="job-card">
-                <div class="job-company">
-                    <div class="company-logo">SN</div>
-                    <div class="job-details">
-                        <h4>Satya Nadella</h4>
-                        <p>Electrical Engineering (India) → MBA (UChicago)</p>
-                    </div>
-                </div>
-                <p>Career Path: Engineer → Cloud Head → CEO of Microsoft</p>
-                <a href="https://nofluffjobs.com/log/off-duty-en/satya-nadella-his-leadership-of-microsoft-and-path-for-success/" target="_blank" class="btn btn-secondary">Read Full Story</a>
-            </div>
-
-            <!-- Whitney Wolfe Herd -->
-            <div class="job-card">
-                <div class="job-company">
-                    <div class="company-logo">WH</div>
-                    <div class="job-details">
-                        <h4>Whitney Wolfe Herd</h4>
-                        <p>International Studies (SMU)</p>
-                    </div>
-                </div>
-                <p>Career Path: Co-founder at Tinder → Founder & CEO of Bumble</p>
-                <a href="https://www.forbes.com/profile/whitney-wolfe-herd/" target="_blank" class="btn btn-secondary">Read Full Story</a>
-            </div>
+          </div>
+          <div class="story-content">
+            <p>Career Path: Engineer → Cloud Head → CEO of Microsoft</p>
+            <a
+              href="https://nofluffjobs.com/log/off-duty-en/satya-nadella-his-leadership-of-microsoft-and-path-for-success/"
+              target="_blank"
+              class="read-full-story"
+              >Read Full Story</a
+            >
+          </div>
         </div>
-    </section>
 
-    <!-- Confidence Boosters Section -->
-    <section class="section">
-        <div class="section-title">
-            <h3>Boost Your Confidence</h3>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <ul class="list-unstyled">
-                    <li class="mb-3">
-                        <strong>Self-Assessment Tools:</strong> Understand your strengths and weaknesses with personalized assessments.
-                        <a href="https://www.16personalities.com/" class="btn btn-primary" target="_blank">Try Now</a>
-                    </li>
-                    <li class="mb-3">
-                        <strong>Career Coaching:</strong> Access career coaches and mentors who can guide you in making decisions and overcoming challenges.
-                        <a href="https://career.charlotte.edu/career-coaching" class="btn btn-primary" target="_blank">Find a Coach</a>
-                    </li>
-                    <li class="mb-3">
-                        <strong>Workshops and Webinars:</strong> Attend events designed to boost your skills and career knowledge.
-                        <a href="https://myhealth.charlotte.edu/virtual-resources-temporary-closure/virtual-webinarsworkshops/" class="btn btn-primary" target="_blank">View Events</a>
-                    </li>
-                    <li class="mb-3">
-                        <strong>Success Visualization:</strong> Use interactive tools to track and visualize your career growth.
-                        <a href="https://www.careerplanner.com/" class="btn btn-primary" target="_blank">Visualize</a>
-                    </li>
-                    <li>
-                        <strong>Motivational Quotes:</strong> "The only way to do great work is to love what you do." – Steve Jobs
-                        <a href="https://www.brainyquote.com/topics/motivational-quotes" class="btn btn-primary" target="_blank">More Quotes</a>
-                    </li>
-                </ul>
+        <!-- Whitney Wolfe Herd -->
+        <div class="success-story-card">
+          <div class="story-header">
+            <div class="person-info">
+              <div class="person-avatar">WH</div>
+              <div class="person-details">
+                <h4>Whitney Wolfe Herd</h4>
+                <p>International Studies (SMU)</p>
+              </div>
             </div>
+          </div>
+          <div class="story-content">
+            <p>Career Path: Co-founder at Tinder → Founder & CEO of Bumble</p>
+            <a
+              href="https://www.forbes.com/profile/whitney-wolfe-herd/"
+              target="_blank"
+              class="read-full-story"
+              >Read Full Story</a
+            >
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- Confidence Boosters Section -->
+  <section class="confidence-section">
+    <div class="section-header">
+      <h3 class="section-title">Boost Your Confidence</h3>
+    </div>
+    <div class="section-content">
+      <ul class="boosters-list">
+        <li class="booster-item">
+          <strong>Self-Assessment Tools</strong>
+          <p>
+            Understand your strengths and weaknesses with personalized
+            assessments.
+          </p>
+          <a href="https://www.16personalities.com/" target="_blank">Try Now</a>
+        </li>
+
+        <li class="booster-item">
+          <strong>Career Coaching</strong>
+          <p>
+            Access career coaches and mentors who can guide you in making
+            decisions and overcoming challenges.
+          </p>
+          <a href="https://career.charlotte.edu/career-coaching" target="_blank"
+            >Find a Coach</a
+          >
+        </li>
+
+        <li class="booster-item">
+          <strong>Workshops and Webinars</strong>
+          <p>
+            Attend events designed to boost your skills and career knowledge.
+          </p>
+          <a
+            href="https://myhealth.charlotte.edu/virtual-resources-temporary-closure/virtual-webinarsworkshops/"
+            target="_blank"
+            >View Events</a
+          >
+        </li>
+
+        <li class="booster-item">
+          <strong>Success Visualization</strong>
+          <p>
+            Use interactive tools to track and visualize your career growth.
+          </p>
+          <a href="https://www.careerplanner.com/" target="_blank">Visualize</a>
+        </li>
+
+        <li class="booster-item">
+          <strong>Motivational Quotes</strong>
+          <p>
+            "The only way to do great work is to love what you do." – Steve Jobs
+          </p>
+          <a
+            href="https://www.brainyquote.com/topics/motivational-quotes"
+            target="_blank"
+            >More Quotes</a
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>
 {% endblock %}
